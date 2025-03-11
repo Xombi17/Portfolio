@@ -18,11 +18,11 @@ const experiences: ExperienceItem[] = [
     skills: ["Photography", "Team Leadership", "Event Coverage", "Media Management"]
   },
   {
-    title: "Content Creator",
-    company: "YouTube Channel (12K+ Subscribers, 2.3M+ Views)",
-    period: "2020 - Present",
-    description: "Produced engaging tech and creative content. Built an online community with high engagement.",
-    skills: ["Content Creation", "Video Production", "Community Building", "Social Media"]
+    title: "Web Development Enthusiast",
+    company: "College Projects",
+    period: "2024 - Present",
+    description: "Building responsive web applications using modern frameworks. Learning full-stack development through hands-on projects. Exploring UI/UX design principles and implementing them in real-world applications.",
+    skills: ["React.js", "TypeScript", "Tailwind CSS", "Next.js", "Responsive Design"]
   },
   {
     title: "Event Management & Video Editing",
