@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Utilities
-import { initScroll } from './utils/scrollUtils';
+import { initScroll, disableScroll, enableScroll } from './utils/scrollUtils';
 
 // Components
 import Navbar from './components/Navbar';
@@ -20,7 +20,21 @@ import Contact from './sections/Contact';
 function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [contentVisible, setContentVisible] = useState(false);
   const [scrollInstance, setScrollInstance] = useState<any>(null);
+
+  // Disable scrolling when the app loads
+  useEffect(() => {
+    if (isLoading) {
+      disableScroll();
+    } else {
+      enableScroll();
+    }
+    
+    return () => {
+      enableScroll();
+    };
+  }, [isLoading]);
 
   // Initialize smooth scrolling
   useEffect(() => {
@@ -37,15 +51,68 @@ function App() {
   }, [isLoading]);
 
   const handleLoadingComplete = () => {
-    setIsLoading(false);
+    setContentVisible(true);
+    // Reset scroll position to top
+    window.scrollTo(0, 0);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 100);
+  };
+
+  // Animation variants for main content
+  const mainContentVariants = {
+    hidden: { 
+      opacity: 0,
+      scale: 0.95
+    },
+    visible: { 
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.8,
+        ease: [0.43, 0.13, 0.23, 0.96],
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const sectionVariants = {
+    hidden: { 
+      opacity: 0,
+      y: 30
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
+  };
+
+  const navVariants = {
+    hidden: { 
+      y: -20, 
+      opacity: 0 
+    },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: {
+        duration: 0.4,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
   };
 
   const projects = [
     {
-      title: "Digital Experience Platform",
-      description: "Enterprise-scale platform built with React and Node.js",
-      image: "https://source.unsplash.com/random/800x600?technology",
-      link: "#"
+      title: "HUMAN HEART WEBSITE",
+      description: "A website which showcases the human heart and its functions.",
+      image: "",
+      link: "https://hhs-heart.vercel.app/"
     },
     {
       title: "E-commerce Solution",
@@ -93,7 +160,7 @@ function App() {
   return (
     <div className="bg-black text-white">
       {/* Preloader */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isLoading && <Preloader onLoadingComplete={handleLoadingComplete} />}
       </AnimatePresence>
 
@@ -101,25 +168,58 @@ function App() {
       <CustomCursor />
 
       {/* Theme toggle */}
-      <ThemeToggle />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: contentVisible ? 1 : 0 }}
+        transition={{ duration: 0.8, delay: 0.8 }}
+      >
+        <ThemeToggle />
+      </motion.div>
 
       {/* Navigation */}
-      <Navbar />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: contentVisible ? 1 : 0 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
+      >
+        <Navbar />
+      </motion.div>
 
       {/* Main content */}
-      <div 
+      <motion.div 
         ref={containerRef} 
         className="main-container"
         data-scroll-container
+        variants={mainContentVariants}
+        initial="hidden"
+        animate={contentVisible ? "visible" : "hidden"}
       >
-        <Hero />
-        <About />
-        <Projects />
-        <Experience />
-        <Contact />
+        <motion.div variants={sectionVariants}>
+          <Hero />
+        </motion.div>
+        
+        <motion.div variants={sectionVariants}>
+          <About />
+        </motion.div>
+        
+        <motion.div variants={sectionVariants}>
+          <Projects />
+        </motion.div>
+        
+        <motion.div variants={sectionVariants}>
+          <Experience />
+        </motion.div>
+        
+        <motion.div variants={sectionVariants}>
+          <Contact />
+        </motion.div>
 
         {/* Footer */}
-        <footer className="py-10 px-4 text-center text-gray-400 text-sm" data-scroll-section>
+        <motion.footer 
+          className="py-10 px-4 text-center text-gray-400 text-sm" 
+          data-scroll-section
+          variants={sectionVariants}
+        >
           <div className="max-w-6xl mx-auto">
             <div className="mb-4">
               <div className="text-2xl font-bold text-white mb-2">
@@ -131,8 +231,8 @@ function App() {
               © {new Date().getFullYear()} Varad Joshi. All rights reserved.
             </div>
           </div>
-        </footer>
-      </div>
+        </motion.footer>
+      </motion.div>
     </div>
   );
 }

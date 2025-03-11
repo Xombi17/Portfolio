@@ -3,8 +3,8 @@ import { motion, useInView } from 'framer-motion';
 
 const skills = [
   'React.js', 'TypeScript', 'Next.js', 'Node.js',
-  'Tailwind CSS', 'JavaScript', 'GraphQL', 'CSS/SCSS',
-  'Framer Motion', 'UI/UX Design', 'Three.js', 'WebGL'
+  'Tailwind CSS', 'JavaScript', 'Cinematography', 'CSS/SCSS',
+  'Framer Motion', 'UI/UX Design', 'Three.js', 'VideoEditing'
 ];
 
 const About = () => {

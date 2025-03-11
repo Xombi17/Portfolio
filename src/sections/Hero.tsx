@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { scrollTo } from '../utils/scrollUtils';
 
@@ -12,6 +12,12 @@ const ArrowDownIcon = () => (
 
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Ensure we're at the top when this component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"]
@@ -26,28 +32,52 @@ const Hero = () => {
     scrollTo('#about');
   };
 
-  // Text animation variants
-  const titleVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { 
-      opacity: 1, 
+  const welcomeVariants = {
+    initial: { 
+      opacity: 0,
+      y: -40,
+      scale: 0.9
+    },
+    animate: { 
+      opacity: 1,
       y: 0,
-      transition: { 
+      scale: 1,
+      transition: {
+        duration: 1,
+        ease: [0.76, 0, 0.24, 1],
+        delay: 0.8
+      }
+    }
+  };
+
+  const titleVariants = {
+    initial: { 
+      opacity: 0,
+      y: 40
+    },
+    animate: { 
+      opacity: 1,
+      y: 0,
+      transition: {
         duration: 0.8,
-        ease: [0.215, 0.61, 0.355, 1]
+        ease: [0.76, 0, 0.24, 1],
+        delay: 1.2
       }
     }
   };
 
   const subtitleVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    initial: { 
+      opacity: 0,
+      y: 20
+    },
+    animate: { 
+      opacity: 1,
       y: 0,
       transition: { 
-        duration: 0.6,
-        delay: 0.3,
-        ease: [0.215, 0.61, 0.355, 1]
+        duration: 0.8,
+        delay: 1.6,
+        ease: [0.76, 0, 0.24, 1]
       }
     }
   };
@@ -56,14 +86,21 @@ const Hero = () => {
     <motion.section 
       ref={containerRef}
       id="hero"
-      className="relative h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{ opacity }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
       data-scroll-section
     >
-      {/* Background layers for parallax effect */}
+      <div className="absolute top-0 left-0 w-full h-full" />
+      
       <motion.div 
         className="absolute inset-0 w-full h-full bg-gradient-to-b from-black to-zinc-900"
         style={{ scale }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
       />
       
       <motion.div
@@ -74,14 +111,32 @@ const Hero = () => {
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.3 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
       />
       
       <div className="relative z-10 max-w-6xl mx-auto px-4 text-center" data-scroll data-scroll-speed="0.5">
+        <motion.div
+          className="text-xl md:text-2xl text-blue-400 mb-6"
+          variants={welcomeVariants}
+          initial="initial"
+          animate="animate"
+        >
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-violet-500 to-blue-500"
+            style={{
+              backgroundSize: '200% 100%',
+              animation: 'gradient 2s linear infinite'
+            }}>
+            Welcome to my Portfolio
+          </span>
+        </motion.div>
+
         <motion.h1 
           className="text-6xl md:text-8xl lg:text-9xl font-bold mb-6"
           variants={titleVariants}
-          initial="hidden"
-          animate="visible"
+          initial="initial"
+          animate="animate"
         >
           <span className="block">Hello, I'm</span>
           <span className="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500">
@@ -92,8 +147,8 @@ const Hero = () => {
         <motion.p 
           className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto mb-12"
           variants={subtitleVariants}
-          initial="hidden"
-          animate="visible"
+          initial="initial"
+          animate="animate"
         >
           Creative Developer & Designer crafting immersive digital experiences
         </motion.p>
@@ -105,7 +160,7 @@ const Hero = () => {
           whileTap={{ scale: 0.9 }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 2 }}
         >
           <ArrowDownIcon />
           <span className="sr-only">Scroll Down</span>

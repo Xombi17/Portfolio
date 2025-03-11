@@ -37,15 +37,15 @@ interface Project {
 
 const projects: Project[] = [
   {
-    title: "Digital Experience Platform",
-    description: "Enterprise-scale platform built with React and Node.js for managing digital experiences across multiple channels.",
-    technologies: ["React", "Node.js", "GraphQL", "AWS"],
+    title: "Human Heart Website",
+    description: "A website which showcases the human heart and its functions.",
+    technologies: ["React", "Three.js", "Tailwind CSS", "Next.js"],
     gradient: placeholderColors[0],
-    projectUrl: "#",
-    githubUrl: "#"
+    projectUrl: "https://hhs-heart.vercel.app/",
+    githubUrl: "#https://github.com/Xombi17/HHS-HEART-local"
   },
   {
-    title: "E-commerce Solution",
+    title: "Virtual Travel Website",
     description: "Modern e-commerce platform with real-time inventory management and payment processing.",
     technologies: ["Next.js", "Stripe", "Tailwind CSS", "Prisma"],
     gradient: placeholderColors[1],
@@ -61,8 +61,8 @@ const projects: Project[] = [
     githubUrl: "#"
   },
   {
-    title: "Mobile Banking App",
-    description: "Secure and intuitive mobile banking solution with biometric authentication.",
+    title: "Health Vault",
+    description: "A Complete Health Management System",
     technologies: ["React Native", "Redux", "Node.js", "MongoDB"],
     gradient: placeholderColors[3],
     projectUrl: "#"

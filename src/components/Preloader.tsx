@@ -10,16 +10,16 @@ const Preloader = ({ onLoadingComplete }: PreloaderProps) => {
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
-    // Simulate loading progress
     const timer = setInterval(() => {
       setProgress((prevProgress) => {
         const nextProgress = prevProgress + Math.random() * 10;
-        
         if (nextProgress >= 100) {
           clearInterval(timer);
+          setTimeout(() => {
+            setIsComplete(true);
+          }, 500);
           return 100;
         }
-        
         return nextProgress;
       });
     }, 100);
@@ -27,64 +27,106 @@ const Preloader = ({ onLoadingComplete }: PreloaderProps) => {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    if (progress === 100) {
-      setTimeout(() => {
-        setIsComplete(true);
-        setTimeout(() => {
-          onLoadingComplete();
-        }, 800);
-      }, 500);
-    }
-  }, [progress, onLoadingComplete]);
-
   const containerVariants = {
-    hidden: { opacity: 1 },
-    visible: { opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }
+    initial: { 
+      opacity: 1,
+    },
+    exit: { 
+      opacity: 0,
+      transition: { 
+        duration: 0.8,
+        ease: [0.76, 0, 0.24, 1]
+      }
+    }
   };
 
-  const progressTextVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+  const textVariants = {
+    initial: {
+      opacity: 0,
+      scale: 0.8
+    },
+    animate: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.5,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.8,
+      transition: {
+        duration: 0.5,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
   };
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait" onExitComplete={() => {
+      // Reset scroll position before completing
+      window.scrollTo(0, 0);
+      onLoadingComplete();
+    }}>
       {!isComplete && (
         <motion.div
           variants={containerVariants}
-          initial="hidden"
-          animate={isComplete ? "visible" : "hidden"}
+          initial="initial"
+          exit="exit"
           className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50"
         >
-          <motion.h1 
-            className="text-5xl md:text-7xl font-bold mb-12"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
+          <motion.div
+            variants={textVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="relative"
           >
-            Portfolio
-          </motion.h1>
-          
-          <div className="w-full max-w-md px-8">
-            <div className="w-full h-1 bg-gray-800 mb-4 relative overflow-hidden">
-              <motion.div 
-                className="h-full bg-white absolute top-0 left-0"
-                style={{ width: `${progress}%` }}
-                initial={{ width: 0 }}
-              />
-            </div>
-            
-            <motion.div 
-              className="flex justify-between"
-              variants={progressTextVariants}
-              initial="hidden"
-              animate="visible"
+            <h1 
+              className="text-6xl md:text-8xl font-bold mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-violet-500 to-blue-500"
+              style={{
+                backgroundSize: '200% 100%',
+                animation: 'gradient 2s linear infinite'
+              }}
             >
-              <span className="text-sm text-gray-400">Loading experience</span>
-              <span className="text-sm font-medium">{Math.round(progress)}%</span>
-            </motion.div>
-          </div>
+              Portfolio
+            </h1>
+            
+            {progress < 100 && (
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-[200px]">
+                <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                  <motion.div 
+                    className="h-full bg-gradient-to-r from-blue-500 via-violet-500 to-blue-500"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 0.5 }}
+                    style={{
+                      backgroundSize: '200% 100%',
+                      animation: 'gradient 2s linear infinite'
+                    }}
+                  />
+                </div>
+                
+                <motion.div 
+                  className="mt-4 text-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <motion.span 
+                    className="text-lg font-medium text-white/80"
+                    key={Math.round(progress)}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {Math.round(progress)}%
+                  </motion.span>
+                </motion.div>
+              </div>
+            )}
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

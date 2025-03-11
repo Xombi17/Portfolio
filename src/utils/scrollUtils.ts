@@ -65,5 +65,43 @@ export const scrollTo = (target: string | HTMLElement) => {
       duration: 1500,
       easing: [0.25, 0.1, 0.25, 1],
     });
+  } else {
+    // Fallback for when Locomotive Scroll is not initialized
+    try {
+      const targetElement = typeof target === 'string'
+        ? document.querySelector(target)
+        : target;
+      
+      if (targetElement) {
+        window.scrollTo({
+          top: targetElement.getBoundingClientRect().top + window.pageYOffset - 50,
+          behavior: 'smooth'
+        });
+        
+        // Update URL hash
+        if (typeof target === 'string' && target.startsWith('#')) {
+          window.history.pushState(null, '', target);
+        }
+      }
+    } catch (error) {
+      console.error('Error scrolling to element:', error);
+    }
   }
+};
+
+// Function to disable scrolling
+export const disableScroll = () => {
+  // Get the current scroll position
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+  // Store the current scroll position
+  window.onscroll = () => {
+    window.scrollTo(scrollLeft, scrollTop);
+  };
+};
+
+// Function to enable scrolling
+export const enableScroll = () => {
+  window.onscroll = null;
 }; 
