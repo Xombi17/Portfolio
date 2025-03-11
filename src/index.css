@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Font loading optimization */
+@layer base {
+  @font-face {
+    font-family: 'Inter var';
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+    font-named-instance: 'Regular';
+    src: url("https://rsms.me/inter/font-files/Inter-roman.var.woff2") format("woff2");
+  }
+  
+  :root {
+    --color-background: 255 255 255;
+    --color-text: 17 24 39;
+    --color-primary: 37 99 235;
+    --color-secondary: 139 92 246;
+    --color-accent: 79 70 229;
+    --color-muted: 107 114 128;
+    --color-card: 249 250 251;
+    --color-card-border: 229 231 235;
+  }
+
+  .dark {
+    --color-background: 0 0 0;
+    --color-text: 255 255 255;
+    --color-primary: 59 130 246;
+    --color-secondary: 139 92 246;
+    --color-accent: 79 70 229;
+    --color-muted: 156 163 175;
+    --color-card: 24 24 27;
+    --color-card-border: 39 39 42;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+  }
+
+  body {
+    @apply bg-black text-white antialiased;
+    font-feature-settings: "salt", "ss01", "cv01", "cv02", "cv03", "cv04";
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    @apply bg-blue-500/30 text-white;
+  }
+
+  /* For Firefox */
+  ::-moz-selection {
+    @apply bg-blue-500/30 text-white;
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  html {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+/* Locomotive Scroll */
+html.has-scroll-smooth {
+  overflow: hidden;
+}
+
+html.has-scroll-dragging {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.has-scroll-smooth body {
+  overflow: hidden;
+}
+
+.has-scroll-smooth [data-scroll-container] {
+  min-height: 100vh;
+}
+
+.c-scrollbar {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 11px;
+  height: 100%;
+  transform-origin: center right;
+  transition: transform 0.3s, opacity 0.3s;
+  opacity: 0;
+}
+
+.c-scrollbar:hover {
+  transform: scaleX(1.45);
+}
+
+.c-scrollbar:hover,
+.has-scroll-scrolling .c-scrollbar,
+.has-scroll-dragging .c-scrollbar {
+  opacity: 1;
+}
+
+.c-scrollbar_thumb {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(59, 130, 246, 0.3);
+  opacity: 0.5;
+  width: 7px;
+  border-radius: 10px;
+  margin: 2px;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+.has-scroll-dragging .c-scrollbar_thumb {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 15s ease infinite;
+}
+
+/* Utils */
+.main-container {
+  min-height: 100vh;
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500;
+}
