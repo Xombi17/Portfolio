@@ -9,27 +9,27 @@ interface ExperienceItem {
   skills: string[];
 }
 
-const experienceData: ExperienceItem[] = [
+const experiences: ExperienceItem[] = [
   {
-    title: "Senior Frontend Developer",
-    company: "TechVision Inc.",
+    title: "Head Photographer",
+    company: "College Fest",
+    period: "2023",
+    description: "Led a team to capture the best moments of the event. Managed and organized the entire media coverage. Created professional-quality images and videos.",
+    skills: ["Photography", "Team Leadership", "Event Coverage", "Media Management"]
+  },
+  {
+    title: "Content Creator",
+    company: "YouTube Channel (12K+ Subscribers, 2.3M+ Views)",
     period: "2020 - Present",
-    description: "Led development of enterprise applications, mentored junior developers, and implemented modern development practices. Worked on large-scale applications with React, TypeScript, and GraphQL.",
-    skills: ["React", "TypeScript", "GraphQL", "Team Leadership"]
+    description: "Produced engaging tech and creative content. Built an online community with high engagement.",
+    skills: ["Content Creation", "Video Production", "Community Building", "Social Media"]
   },
   {
-    title: "Frontend Engineer",
-    company: "Digital Solutions",
-    period: "2018 - 2020",
-    description: "Developed responsive web applications with a focus on performance and accessibility. Collaborated with designers to implement pixel-perfect UI components and animations.",
-    skills: ["JavaScript", "React", "CSS/SCSS", "Performance Optimization"]
-  },
-  {
-    title: "Web Developer",
-    company: "CreativeTech Studio",
-    period: "2016 - 2018",
-    description: "Built interactive websites and web applications for clients across various industries. Focused on creating engaging user experiences with modern web technologies.",
-    skills: ["HTML/CSS", "JavaScript", "PHP", "WordPress"]
+    title: "Event Management & Video Editing",
+    company: "Freelance",
+    period: "2021 - Present",
+    description: "Designed presentations and promotional videos. Assisted in managing large-scale college events.",
+    skills: ["Video Editing", "Event Management", "Presentation Design", "Project Coordination"]
   }
 ];
 
@@ -101,7 +101,7 @@ const Experience = () => {
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
           >
-            {experienceData.map((item, index) => (
+            {experiences.map((item, index) => (
               <TimelineItem 
                 key={index} 
                 data={item} 

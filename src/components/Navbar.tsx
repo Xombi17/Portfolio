@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { scrollTo } from '../utils/scrollUtils';
+import { scrollTo, updateScroll } from '../utils/scrollUtils';
 
 // Custom SVG icons
 const MenuIcon = () => (
@@ -35,17 +35,44 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   
   const handleNavClick = (href: string) => {
     scrollTo(href);
     setIsOpen(false);
+    
+    // Update scroll after navigation
+    setTimeout(() => {
+      updateScroll();
+    }, 100);
   };
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const currentScrollY = window.scrollY;
+      
+      // Determine scroll direction
+      if (currentScrollY > lastScrollY) {
+        setScrollDirection('down');
+        // Hide navbar when scrolling down and not at the top
+        if (currentScrollY > 150) {
+          setIsVisible(false);
+        }
+      } else {
+        setScrollDirection('up');
+        // Always show navbar when scrolling up
+        setIsVisible(true);
+      }
+      
+      // Update last scroll position
+      setLastScrollY(currentScrollY);
+      
+      // Set scrolled state for styling
+      setIsScrolled(currentScrollY > 50);
     };
 
     const handleHashChange = () => {
@@ -60,13 +87,15 @@ const Navbar = () => {
           const id = entry.target.id;
           if (id) {
             setActiveSection(id);
+            // Update URL without triggering navigation
+            window.history.replaceState(null, '', `#${id}`);
           }
         }
       });
     };
 
     const observerOptions = {
-      threshold: 0.2,
+      threshold: 0.3, // Increased threshold for better accuracy
       rootMargin: '-10% 0% -40% 0%',
     };
 
@@ -77,7 +106,7 @@ const Navbar = () => {
       observer.observe(section);
     });
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('hashchange', handleHashChange);
     
     return () => {
@@ -85,35 +114,55 @@ const Navbar = () => {
       window.removeEventListener('hashchange', handleHashChange);
       observer.disconnect();
     };
-  }, []);
+  }, [lastScrollY]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   return (
-    <header className="fixed w-full z-50 transition-all duration-300">
+    <header className={`fixed w-full z-50 transition-all duration-500 navbar ${!isVisible ? '-translate-y-full' : 'translate-y-0'}`}>
       <motion.nav
-        className={`py-4 px-6 md:px-10 transition-colors duration-300 ${
-          isScrolled ? 'bg-black/80 backdrop-blur-md' : 'bg-transparent'
+        className={`py-4 px-6 md:px-10 transition-all duration-300 ${
+          isScrolled ? 'bg-black/80 backdrop-blur-md shadow-lg shadow-black/10' : 'bg-transparent'
         }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: [0.215, 0.61, 0.355, 1] }}
       >
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <a 
+          <motion.a 
             href="#hero"
-            className="text-xl font-bold"
+            className="text-xl font-bold relative group"
             onClick={(e) => {
               e.preventDefault();
               handleNavClick('#hero');
             }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             Varad<span className="text-blue-500">.</span>
-          </a>
+            <motion.span 
+              className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 group-hover:w-full"
+              transition={{ duration: 0.3 }}
+              whileHover={{ width: '100%' }}
+            />
+          </motion.a>
           
           {/* Desktop Navigation */}
           <ul className="hidden md:flex space-x-8">
             {navItems.map((item) => (
               <li key={item.name}>
-                <a
+                <motion.a
                   href={item.href}
                   className={`relative py-2 text-sm font-medium transition-colors hover:text-blue-400 ${
                     activeSection === item.href.replace('#', '') 
@@ -124,41 +173,53 @@ const Navbar = () => {
                     e.preventDefault();
                     handleNavClick(item.href);
                   }}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ y: 0 }}
                 >
-                  {item.name}
+                  <span className="hover-effect">{item.name}</span>
                   {activeSection === item.href.replace('#', '') && (
                     <motion.div
                       className="absolute -bottom-1 left-0 h-0.5 bg-blue-400 w-full"
                       layoutId="navIndicator"
-                      transition={{ type: 'spring', duration: 0.5 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     />
                   )}
-                </a>
+                </motion.a>
               </li>
             ))}
           </ul>
           
           {/* Contact Button (Desktop) */}
-          <a
+          <motion.a
             href="#contact"
-            className="hidden md:block py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+            className="hidden md:block py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors relative overflow-hidden group"
             onClick={(e) => {
               e.preventDefault();
               handleNavClick('#contact');
             }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            Get in Touch
-          </a>
+            <span className="relative z-10">Get in Touch</span>
+            <motion.span 
+              className="absolute inset-0 bg-blue-700 w-0"
+              initial={{ width: 0 }}
+              whileHover={{ width: '100%' }}
+              transition={{ duration: 0.3 }}
+            />
+          </motion.a>
           
           {/* Mobile Menu Button */}
-          <button
+          <motion.button
             className="md:hidden p-2 text-white/90 hover:text-white focus:outline-none"
             onClick={toggleMenu}
             aria-expanded={isOpen}
             aria-label="Toggle menu"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
             {isOpen ? <CloseIcon /> : <MenuIcon />}
-          </button>
+          </motion.button>
         </div>
       </motion.nav>
       
@@ -174,17 +235,17 @@ const Navbar = () => {
           >
             <nav className="px-6 py-8">
               <ul className="flex flex-col space-y-6">
-                {navItems.map((item) => (
+                {navItems.map((item, index) => (
                   <motion.li
                     key={item.name}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
                   >
-                    <a
+                    <motion.a
                       href={item.href}
-                      className={`text-lg font-medium hover:text-blue-400 transition-colors ${
+                      className={`text-lg font-medium hover:text-blue-400 transition-colors block ${
                         activeSection === item.href.replace('#', '') 
                           ? 'text-blue-400' 
                           : 'text-white/80'
@@ -193,9 +254,17 @@ const Navbar = () => {
                         e.preventDefault();
                         handleNavClick(item.href);
                       }}
+                      whileHover={{ x: 5 }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       {item.name}
-                    </a>
+                      {activeSection === item.href.replace('#', '') && (
+                        <motion.div
+                          className="h-0.5 bg-blue-400 w-10 mt-1"
+                          layoutId="mobileNavIndicator"
+                        />
+                      )}
+                    </motion.a>
                   </motion.li>
                 ))}
                 
@@ -203,19 +272,21 @@ const Navbar = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3, delay: 0.3 }}
+                  transition={{ duration: 0.3, delay: navItems.length * 0.05 }}
                   className="pt-6"
                 >
-                  <a
+                  <motion.a
                     href="#contact"
                     className="inline-block py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
                     onClick={(e) => {
                       e.preventDefault();
                       handleNavClick('#contact');
                     }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     Get in Touch
-                  </a>
+                  </motion.a>
                 </motion.li>
               </ul>
             </nav>

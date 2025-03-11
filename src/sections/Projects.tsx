@@ -37,33 +37,31 @@ interface Project {
 
 const projects: Project[] = [
   {
-    title: "Human Heart Website",
-    description: "A website which showcases the human heart and its functions.",
-    technologies: ["React", "Three.js", "Tailwind CSS", "Next.js"],
+    title: "Photography Projects",
+    description: "A collection of my best photography work, showcasing my skills in composition, lighting, and storytelling through images.",
+    technologies: ["Photography", "Composition", "Editing", "Storytelling"],
     gradient: placeholderColors[0],
-    projectUrl: "https://hhs-heart.vercel.app/",
-    githubUrl: "#https://github.com/Xombi17/HHS-HEART-local"
-  },
-  {
-    title: "Virtual Travel Website",
-    description: "Modern e-commerce platform with real-time inventory management and payment processing.",
-    technologies: ["Next.js", "Stripe", "Tailwind CSS", "Prisma"],
-    gradient: placeholderColors[1],
     projectUrl: "#",
     githubUrl: "#"
   },
   {
-    title: "AI-Powered Analytics",
-    description: "Data visualization dashboard with machine learning algorithms for predictive analytics.",
-    technologies: ["Python", "React", "TensorFlow", "D3.js"],
+    title: "YouTube Channel",
+    description: "My YouTube channel with 12K+ subscribers and 2.3M+ views, featuring tech reviews, tutorials, and creative content.",
+    technologies: ["Content Creation", "Video Editing", "Storytelling", "Tech Reviews"],
+    gradient: placeholderColors[1],
+    projectUrl: "https://youtube.com/c/varadjoshi",
+  },
+  {
+    title: "Video Editing & Presentations",
+    description: "Professional video editing work including promotional videos, presentations, and creative content for various clients.",
+    technologies: ["Video Editing", "Motion Graphics", "Storytelling", "Premiere Pro"],
     gradient: placeholderColors[2],
     projectUrl: "#",
-    githubUrl: "#"
   },
   {
-    title: "Health Vault",
-    description: "A Complete Health Management System",
-    technologies: ["React Native", "Redux", "Node.js", "MongoDB"],
+    title: "Event Photography",
+    description: "Event coverage and photography for college fests, corporate events, and special occasions.",
+    technologies: ["Event Photography", "Lighting", "Composition", "Editing"],
     gradient: placeholderColors[3],
     projectUrl: "#"
   }
@@ -141,70 +139,54 @@ interface ProjectCardProps {
 const ProjectCard = ({ project, variants, index }: ProjectCardProps) => {
   return (
     <motion.div
-      className="group h-[400px] relative rounded-xl overflow-hidden"
       variants={variants}
-      data-scroll
-      data-scroll-offset="30%"
+      className="group relative overflow-hidden rounded-xl bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 hover:border-blue-500/30 transition-all duration-300 h-full"
       whileHover={{ 
-        scale: 1.02,
-        transition: { duration: 0.3 }
+        y: -5,
+        transition: { duration: 0.2 }
       }}
     >
-      {/* Project Background with Gradient instead of Image */}
-      <motion.div 
-        className={`absolute inset-0 w-full h-full ${project.gradient}`}
-        whileHover={{
-          scale: 1.08,
-          transition: { duration: 0.5 }
-        }}
-      />
+      <div className={`absolute inset-0 ${project.gradient} opacity-20 group-hover:opacity-30 transition-opacity duration-300`}></div>
       
-      {/* Overlay Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300" />
-      
-      {/* Content */}
-      <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
-        <div className="transform transition-transform duration-300 group-hover:translate-y-0 translate-y-4">
-          <h3 className="text-2xl font-bold mb-3">{project.title}</h3>
-          
-          <p className="text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            {project.description}
-          </p>
+      <div className="relative p-6 flex flex-col h-full">
+        <div className="flex-1">
+          <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-blue-400 transition-colors duration-300">{project.title}</h3>
+          <p className="text-gray-400 mb-4">{project.description}</p>
           
           <div className="flex flex-wrap gap-2 mb-6">
-            {project.technologies.map((tech) => (
+            {project.technologies.map((tech, i) => (
               <span 
-                key={tech} 
-                className="text-xs font-medium px-2 py-1 bg-blue-500/20 rounded-full text-blue-300"
+                key={i} 
+                className="px-3 py-1 bg-zinc-800/50 text-sm rounded-full text-gray-300 border border-zinc-700 group-hover:border-blue-500/30 transition-colors duration-300"
               >
                 {tech}
               </span>
             ))}
           </div>
+        </div>
+        
+        <div className="flex items-center gap-4 mt-auto pt-4 border-t border-zinc-800 group-hover:border-blue-500/20 transition-colors duration-300">
+          <a 
+            href={project.projectUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors"
+          >
+            <ExternalLinkIcon />
+            <span>View Project</span>
+          </a>
           
-          <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          {project.githubUrl && (
             <a 
-              href={project.projectUrl} 
-              className="flex items-center gap-1 text-sm text-white/90 hover:text-blue-400 transition-colors"
-              target="_blank"
+              href={project.githubUrl} 
+              target="_blank" 
               rel="noopener noreferrer"
+              className="flex items-center gap-1 text-gray-400 hover:text-gray-300 transition-colors"
             >
-              <span>View Project</span>
-              <ExternalLinkIcon />
+              <GithubIcon />
+              <span>Source Code</span>
             </a>
-            
-            {project.githubUrl && (
-              <a 
-                href={project.githubUrl} 
-                className="flex items-center gap-1 text-sm text-white/90 hover:text-blue-400 transition-colors"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span>Source Code</span>
-                <GithubIcon />
-              </a>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </motion.div>

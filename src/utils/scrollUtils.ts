@@ -17,18 +17,36 @@ export const initScroll = (containerRef: HTMLElement | null) => {
     const scroll = new LocomotiveScroll({
       el: containerRef,
       smooth: true,
-      multiplier: 0.8,
-      lerp: 0.1,
+      multiplier: 0.7,
+      lerp: 0.08,
+      getDirection: true,
+      getSpeed: true,
       tablet: {
         smooth: true,
         breakpoint: 1024,
+        multiplier: 0.8,
       },
       smartphone: {
-        smooth: false,
+        smooth: true,
+        multiplier: 0.9,
       },
+      reloadOnContextChange: true,
+      class: "is-inview",
+    });
+    
+    scroll.on('scroll', (instance: any) => {
+      document.documentElement.setAttribute('data-scroll-direction', instance.direction || '');
+      document.documentElement.setAttribute('data-scroll-speed', Math.min(Math.abs(instance.speed || 0) * 10, 100).toString());
     });
     
     scrollInstance.scroll = scroll;
+    
+    window.addEventListener('resize', () => {
+      setTimeout(() => {
+        scroll.update();
+      }, 300);
+    });
+    
     return scroll;
   } catch (error) {
     console.error('Failed to initialize Locomotive Scroll:', error);
@@ -57,16 +75,15 @@ export const useScrollProgress = () => {
   return scrollProgress;
 };
 
-// Scroll to a specific section
 export const scrollTo = (target: string | HTMLElement) => {
   if (scrollInstance.scroll) {
     scrollInstance.scroll.scrollTo(target, {
       offset: -50,
-      duration: 1500,
-      easing: [0.25, 0.1, 0.25, 1],
+      duration: 1200,
+      easing: [0.25, 0.0, 0.35, 1.0],
+      disableLerp: false,
     });
   } else {
-    // Fallback for when Locomotive Scroll is not initialized
     try {
       const targetElement = typeof target === 'string'
         ? document.querySelector(target)
@@ -78,7 +95,6 @@ export const scrollTo = (target: string | HTMLElement) => {
           behavior: 'smooth'
         });
         
-        // Update URL hash
         if (typeof target === 'string' && target.startsWith('#')) {
           window.history.pushState(null, '', target);
         }
@@ -89,19 +105,26 @@ export const scrollTo = (target: string | HTMLElement) => {
   }
 };
 
-// Function to disable scrolling
+export const updateScroll = () => {
+  if (scrollInstance.scroll) {
+    setTimeout(() => {
+      scrollInstance.scroll?.update();
+    }, 200);
+  }
+};
+
 export const disableScroll = () => {
-  // Get the current scroll position
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 
-  // Store the current scroll position
+  document.body.classList.add('scroll-disabled');
+  
   window.onscroll = () => {
     window.scrollTo(scrollLeft, scrollTop);
   };
 };
 
-// Function to enable scrolling
 export const enableScroll = () => {
+  document.body.classList.remove('scroll-disabled');
   window.onscroll = null;
 }; 

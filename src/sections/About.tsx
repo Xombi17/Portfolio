@@ -62,27 +62,18 @@ const About = () => {
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
         >
-          <motion.div variants={itemVariants}>
-            <h2 className="text-4xl md:text-5xl font-bold mb-8">About Me</h2>
-            
-            <div className="space-y-4 text-lg text-gray-300">
-              <motion.p variants={itemVariants}>
-                I'm a creative developer and designer with a passion for 
-                building beautiful, functional, and user-friendly digital experiences.
-              </motion.p>
-              
-              <motion.p variants={itemVariants}>
-                With over 8 years of experience in web development, I specialize in
-                creating immersive interfaces and interactive experiences that push the
-                boundaries of web technology.
-              </motion.p>
-              
-              <motion.p variants={itemVariants}>
-                I believe that great design is not just about aesthetics, but also about
-                functionality, performance, and accessibility. Every project I work on
-                is an opportunity to create something that's both visually stunning and
-                technically excellent.
-              </motion.p>
+          <motion.div 
+            className="mb-8"
+            variants={itemVariants}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">About Me</h2>
+            <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6 hover:border-blue-500/30 transition-colors duration-300">
+              <p className="text-gray-300 mb-4">
+                I'm a Computer Engineering student with a deep passion for technology, photography, and creative media. Whether it's capturing high-quality images, producing engaging videos, or managing large-scale events, I always bring my creativity and technical skills to the table.
+              </p>
+              <p className="text-gray-300">
+                I also have a strong background in sports, having competed at state-level events in Table Tennis and Throwball. My ability to lead teams and think critically has helped me excel both in sports and in my professional endeavors.
+              </p>
             </div>
           </motion.div>
           
@@ -115,19 +106,36 @@ const About = () => {
                 </motion.div>
               ))}
             </motion.div>
-            
-            <motion.div 
-              className="mt-12"
-              variants={itemVariants}
-            >
-              <h3 className="text-2xl font-bold mb-6">Education</h3>
-              <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6">
-                <h4 className="text-xl font-semibold">Bachelor of Technology in Computer Engineering</h4>
-                <p className="text-gray-400">Fr. Conceicao Rodrigues College of Engineering</p>
-                <p className="text-gray-500 text-sm mt-2">2024 - 2028</p>
-              </div>
-            </motion.div>
           </div>
+          
+          <motion.div variants={itemVariants}>
+            <h3 className="text-2xl font-bold mb-6">Education</h3>
+            <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6">
+              <h4 className="text-xl font-semibold">Bachelor of Technology in Computer Engineering</h4>
+              <p className="text-gray-400">Fr. Conceicao Rodrigues College of Engineering</p>
+              <p className="text-gray-500 text-sm mt-2">2024 - 2028</p>
+            </div>
+          </motion.div>
+          
+          <motion.div variants={itemVariants}>
+            <h3 className="text-2xl font-bold mb-6">Sports Achievements</h3>
+            <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6">
+              <ul className="space-y-3">
+                <li className="flex items-start">
+                  <span className="text-purple-400 mr-2">🏆</span>
+                  <span>State-Level Table Tennis – Gold Medalist (Team Event)</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-purple-400 mr-2">🏆</span>
+                  <span>State-Level Throwball Player</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-purple-400 mr-2">🏏</span>
+                  <span>Cricket & Badminton – Active participant in tournaments</span>
+                </li>
+              </ul>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>

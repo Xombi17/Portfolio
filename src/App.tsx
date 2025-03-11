@@ -8,7 +8,6 @@ import { initScroll, disableScroll, enableScroll } from './utils/scrollUtils';
 import Navbar from './components/Navbar';
 import CustomCursor from './components/CustomCursor';
 import Preloader from './components/Preloader';
-import ThemeToggle from './components/ThemeToggle';
 
 // Sections
 import Hero from './sections/Hero';
@@ -56,7 +55,7 @@ function App() {
     window.scrollTo(0, 0);
     setTimeout(() => {
       setIsLoading(false);
-    }, 100);
+    }, 300); // Shorter delay for faster transition
   };
 
   // Animation variants for main content
@@ -166,15 +165,6 @@ function App() {
 
       {/* Custom cursor for desktop */}
       <CustomCursor />
-
-      {/* Theme toggle */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: contentVisible ? 1 : 0 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
-      >
-        <ThemeToggle />
-      </motion.div>
 
       {/* Navigation */}
       <motion.div
