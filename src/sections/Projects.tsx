@@ -1,5 +1,6 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
+import Carousel from '../components/Carousel';
 
 // Custom SVG icons to replace Lucide icons
 const ExternalLinkIcon = () => (
@@ -17,20 +18,40 @@ const GithubIcon = () => (
   </svg>
 );
 
-// Local placeholder images (these will be created in assets/images folder)
-// For now, we'll use background gradients as placeholders
-const placeholderColors = [
-  'bg-gradient-to-br from-blue-600 to-purple-700',
-  'bg-gradient-to-br from-green-600 to-teal-700',
-  'bg-gradient-to-br from-red-600 to-pink-700',
-  'bg-gradient-to-br from-amber-600 to-orange-700',
-];
+// Project images
+const projectImages = {
+  photography: [
+    "https://source.unsplash.com/random/800x600?photography,camera",
+    "https://source.unsplash.com/random/800x600?photography,portrait",
+    "https://source.unsplash.com/random/800x600?photography,landscape"
+  ],
+  youtube: [
+    "https://source.unsplash.com/random/800x600?youtube,video",
+    "https://source.unsplash.com/random/800x600?youtube,content",
+    "https://source.unsplash.com/random/800x600?youtube,creator"
+  ],
+  videoEditing: [
+    "https://source.unsplash.com/random/800x600?video,editing",
+    "https://source.unsplash.com/random/800x600?video,production",
+    "https://source.unsplash.com/random/800x600?video,film"
+  ],
+  eventPhotography: [
+    "https://source.unsplash.com/random/800x600?event,photography",
+    "https://source.unsplash.com/random/800x600?event,concert",
+    "https://source.unsplash.com/random/800x600?event,corporate"
+  ],
+  webDevelopment: [
+    "https://source.unsplash.com/random/800x600?web,development",
+    "https://source.unsplash.com/random/800x600?coding,programming",
+    "https://source.unsplash.com/random/800x600?website,design"
+  ]
+};
 
 interface Project {
   title: string;
   description: string;
   technologies: string[];
-  gradient: string; // Using gradients instead of imageUrl
+  images: string[];
   projectUrl: string;
   githubUrl?: string;
 }
@@ -40,7 +61,7 @@ const projects: Project[] = [
     title: "Photography Projects",
     description: "A collection of my best photography work, showcasing my skills in composition, lighting, and storytelling through images.",
     technologies: ["Photography", "Composition", "Editing", "Storytelling"],
-    gradient: placeholderColors[0],
+    images: projectImages.photography,
     projectUrl: "#",
     githubUrl: "#"
   },
@@ -48,21 +69,29 @@ const projects: Project[] = [
     title: "YouTube Channel",
     description: "My YouTube channel with 12K+ subscribers and 2.3M+ views, featuring tech reviews, tutorials, and creative content.",
     technologies: ["Content Creation", "Video Editing", "Storytelling", "Tech Reviews"],
-    gradient: placeholderColors[1],
+    images: projectImages.youtube,
     projectUrl: "https://youtube.com/c/varadjoshi",
+  },
+  {
+    title: "Web Development Portfolio",
+    description: "A showcase of my web development projects built with modern technologies like React, Next.js, and Tailwind CSS.",
+    technologies: ["React", "TypeScript", "Tailwind CSS", "Next.js", "Responsive Design"],
+    images: projectImages.webDevelopment,
+    projectUrl: "#",
+    githubUrl: "https://github.com/varadjoshi"
   },
   {
     title: "Video Editing & Presentations",
     description: "Professional video editing work including promotional videos, presentations, and creative content for various clients.",
     technologies: ["Video Editing", "Motion Graphics", "Storytelling", "Premiere Pro"],
-    gradient: placeholderColors[2],
+    images: projectImages.videoEditing,
     projectUrl: "#",
   },
   {
     title: "Event Photography",
     description: "Event coverage and photography for college fests, corporate events, and special occasions.",
     technologies: ["Event Photography", "Lighting", "Composition", "Editing"],
-    gradient: placeholderColors[3],
+    images: projectImages.eventPhotography,
     projectUrl: "#"
   }
 ];
@@ -70,6 +99,7 @@ const projects: Project[] = [
 const Projects = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: false, amount: 0.1 });
+  const [activeTab, setActiveTab] = useState<string>("all");
   
   const containerVariants = {
     hidden: {},
@@ -91,6 +121,22 @@ const Projects = () => {
       }
     }
   };
+
+  const categories = [
+    { id: "all", name: "All Projects" },
+    { id: "web", name: "Web Development" },
+    { id: "photo", name: "Photography" },
+    { id: "video", name: "Video" }
+  ];
+
+  const filteredProjects = activeTab === "all" 
+    ? projects 
+    : projects.filter(project => {
+        if (activeTab === "web") return project.technologies.some(tech => ["React", "TypeScript", "Next.js", "Web"].some(webTech => tech.includes(webTech)));
+        if (activeTab === "photo") return project.technologies.some(tech => tech.includes("Photography") || tech.includes("Composition"));
+        if (activeTab === "video") return project.technologies.some(tech => tech.includes("Video") || tech.includes("Editing"));
+        return true;
+      });
   
   return (
     <section 
@@ -99,15 +145,33 @@ const Projects = () => {
       data-scroll-section
     >
       <div className="max-w-6xl mx-auto" data-scroll data-scroll-speed="0.2">
-        <motion.h2 
-          className="text-4xl md:text-5xl font-bold mb-16"
+        <motion.div
+          className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.2 }}
           transition={{ duration: 0.5 }}
         >
-          Selected Projects
-        </motion.h2>
+          <h2 className="text-4xl md:text-5xl font-bold">My Projects</h2>
+          
+          <div className="flex flex-wrap gap-2 mt-6 md:mt-0">
+            {categories.map((category) => (
+              <motion.button
+                key={category.id}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  activeTab === category.id 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-zinc-800/50 text-gray-300 hover:bg-zinc-700/50'
+                }`}
+                onClick={() => setActiveTab(category.id)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {category.name}
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
         
         <motion.div
           ref={containerRef}
@@ -116,7 +180,7 @@ const Projects = () => {
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
         >
-          {projects.map((project, index) => (
+          {filteredProjects.map((project, index) => (
             <ProjectCard 
               key={index} 
               project={project} 
@@ -140,13 +204,20 @@ const ProjectCard = ({ project, variants, index }: ProjectCardProps) => {
   return (
     <motion.div
       variants={variants}
-      className="group relative overflow-hidden rounded-xl bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 hover:border-blue-500/30 transition-all duration-300 h-full"
+      className="group relative overflow-hidden rounded-xl bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 hover:border-blue-500/30 transition-all duration-300 h-full hover-lift"
       whileHover={{ 
         y: -5,
         transition: { duration: 0.2 }
       }}
     >
-      <div className={`absolute inset-0 ${project.gradient} opacity-20 group-hover:opacity-30 transition-opacity duration-300`}></div>
+      <div className="h-56 overflow-hidden">
+        <Carousel 
+          images={project.images} 
+          className="w-full h-full"
+          autoPlay={true}
+          interval={5000}
+        />
+      </div>
       
       <div className="relative p-6 flex flex-col h-full">
         <div className="flex-1">

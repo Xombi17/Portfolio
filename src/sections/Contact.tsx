@@ -30,7 +30,7 @@ const GlobeIcon = () => (
 );
 
 const SendIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
     <line x1="22" y1="2" x2="11" y2="13"></line>
     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
   </svg>
@@ -64,6 +64,8 @@ const Contact = () => {
     message: ''
   });
   
+  const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -71,10 +73,17 @@ const Contact = () => {
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Form submission logic would go here
-    console.log('Form submitted:', formData);
-    alert('Thank you for your message! I will get back to you soon.');
-    setFormData({ name: '', email: '', message: '' });
+    setFormStatus('submitting');
+    
+    // Simulate form submission
+    setTimeout(() => {
+      console.log('Form submitted:', formData);
+      setFormStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+      
+      // Reset form status after 3 seconds
+      setTimeout(() => setFormStatus('idle'), 3000);
+    }, 1500);
   };
   
   const containerVariants = {
@@ -98,6 +107,18 @@ const Contact = () => {
     }
   };
 
+  const titleVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.7,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
+  };
+
   const socialLinks = [
     { name: 'LinkedIn', icon: <LinkedinIcon />, url: 'https://linkedin.com/in/varadjoshi' },
     { name: 'YouTube', icon: <YoutubeIcon />, url: 'https://youtube.com/c/varadjoshi' },
@@ -105,8 +126,11 @@ const Contact = () => {
   ];
 
   return (
-    <section id="contact" className="py-20 bg-black" data-scroll-section>
-      <div className="container mx-auto px-4">
+    <section id="contact" className="py-20 relative" data-scroll-section>
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-blue-950/20 pointer-events-none"></div>
+      
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           ref={containerRef}
           variants={containerVariants}
@@ -114,66 +138,101 @@ const Contact = () => {
           animate={isInView ? "visible" : "hidden"}
           className="max-w-6xl mx-auto"
         >
-          <motion.h2 
-            className="text-4xl md:text-5xl font-bold mb-16 text-center"
-            variants={itemVariants}
-          >
-            Get In Touch
-          </motion.h2>
+          <motion.div className="text-center mb-16" variants={titleVariants}>
+            <motion.h2 
+              className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500"
+            >
+              Get In Touch
+            </motion.h2>
+            <motion.p className="text-gray-400 max-w-2xl mx-auto text-lg">
+              Have a question or want to work together? Feel free to reach out!
+            </motion.p>
+          </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <motion.div 
-              className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6"
+              className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-xl p-8 hover:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-blue-500/10"
               variants={itemVariants}
+              whileHover={{ y: -5 }}
             >
-              <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
+              <h3 className="text-2xl font-bold mb-8 relative">
+                Contact Information
+                <span className="absolute bottom-0 left-0 w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 -mb-3"></span>
+              </h3>
               
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <MailIcon />
-                  <a href="mailto:varadaj47@gmail.com" className="ml-3 text-gray-300 hover:text-blue-400 transition-colors">
+              <div className="space-y-6 mt-8">
+                <motion.div 
+                  className="flex items-center group"
+                  whileHover={{ x: 5 }}
+                >
+                  <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                    <MailIcon />
+                  </div>
+                  <a 
+                    href="mailto:varadaj47@gmail.com" 
+                    className="ml-4 text-gray-300 group-hover:text-blue-400 transition-colors"
+                  >
                     varadaj47@gmail.com
                   </a>
-                </div>
+                </motion.div>
                 
-                <div className="flex items-center">
-                  <PhoneIcon />
-                  <span className="ml-3 text-gray-300">9082158583</span>
-                </div>
+                <motion.div 
+                  className="flex items-center group"
+                  whileHover={{ x: 5 }}
+                >
+                  <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
+                    <PhoneIcon />
+                  </div>
+                  <span className="ml-4 text-gray-300 group-hover:text-purple-400 transition-colors">9082158583</span>
+                </motion.div>
                 
-                <div className="flex items-center">
-                  <GlobeIcon />
-                  <span className="ml-3 text-gray-300">Thane, India</span>
-                </div>
+                <motion.div 
+                  className="flex items-center group"
+                  whileHover={{ x: 5 }}
+                >
+                  <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500/20 transition-colors">
+                    <GlobeIcon />
+                  </div>
+                  <span className="ml-4 text-gray-300 group-hover:text-indigo-400 transition-colors">Thane, India</span>
+                </motion.div>
               </div>
               
-              <h3 className="text-2xl font-bold mt-8 mb-6">Social Media</h3>
+              <h3 className="text-2xl font-bold mt-12 mb-8 relative">
+                Social Media
+                <span className="absolute bottom-0 left-0 w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 -mb-3"></span>
+              </h3>
               
-              <div className="flex space-x-4">
+              <div className="flex space-x-5 mt-8">
                 {socialLinks.map((link, index) => (
-                  <a 
+                  <motion.a 
                     key={index}
                     href={link.url} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="text-gray-400 hover:text-blue-400 transition-colors"
+                    className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-gray-400 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 transition-all duration-300"
                     aria-label={link.name}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     {link.icon}
-                  </a>
+                  </motion.a>
                 ))}
               </div>
             </motion.div>
             
             <motion.div 
               variants={itemVariants}
-              className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6"
+              className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-xl p-8 hover:border-purple-500/50 transition-all duration-300 shadow-lg hover:shadow-purple-500/10"
+              whileHover={{ y: -5 }}
             >
-              <h3 className="text-2xl font-bold mb-6">Send Me a Message</h3>
+              <h3 className="text-2xl font-bold mb-8 relative">
+                Send Me a Message
+                <span className="absolute bottom-0 left-0 w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 -mb-3"></span>
+              </h3>
               
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-5 mt-8">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">
                     Name
                   </label>
                   <input
@@ -183,12 +242,14 @@ const Contact = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                    className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white transition-all duration-300"
+                    placeholder="Your name"
+                    disabled={formStatus === 'submitting'}
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">
                     Email
                   </label>
                   <input
@@ -198,12 +259,14 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                    className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white transition-all duration-300"
+                    placeholder="your.email@example.com"
+                    disabled={formStatus === 'submitting'}
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-400 mb-2">
                     Message
                   </label>
                   <textarea
@@ -213,20 +276,58 @@ const Contact = () => {
                     onChange={handleChange}
                     required
                     rows={5}
-                    className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white resize-none"
+                    className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white transition-all duration-300 resize-none"
+                    placeholder="Your message here..."
+                    disabled={formStatus === 'submitting'}
                   ></textarea>
                 </div>
                 
-                <button
+                <motion.button
                   type="submit"
-                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-300 flex items-center"
+                  className={`w-full px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center ${
+                    formStatus === 'submitting' 
+                      ? 'bg-purple-700 cursor-wait' 
+                      : formStatus === 'success'
+                      ? 'bg-green-600 hover:bg-green-700'
+                      : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+                  }`}
+                  disabled={formStatus === 'submitting'}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  Send Message
-                  <SendIcon />
-                </button>
+                  {formStatus === 'submitting' ? (
+                    <span className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Sending...
+                    </span>
+                  ) : formStatus === 'success' ? (
+                    <span className="flex items-center">
+                      <svg className="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      Message Sent!
+                    </span>
+                  ) : (
+                    <span className="flex items-center">
+                      Send Message
+                      <SendIcon />
+                    </span>
+                  )}
+                </motion.button>
               </form>
             </motion.div>
           </div>
+          
+          {/* Map or additional content could go here */}
+          <motion.div 
+            className="mt-16 text-center text-gray-500 text-sm"
+            variants={itemVariants}
+          >
+            © {new Date().getFullYear()} Varad Joshi. All rights reserved.
+          </motion.div>
         </motion.div>
       </div>
     </section>
