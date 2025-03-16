@@ -65,6 +65,83 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  /* Perspective styles for 3D effects */
+  .perspective-1000 {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+  }
+
+  /* Matrix text animation styles */
+  @keyframes matrix-flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+
+  .matrix-text-container {
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 0.95em;
+    animation: matrix-flicker 2s infinite;
+  }
+
+  .matrix-text-container span {
+    display: inline-block;
+    transition: all 0.2s ease;
+  }
+
+  .matrix-text-container:hover span {
+    color: #00ff00;
+    text-shadow: 0 0 8px #00ff00, 0 0 12px #00ff00;
+  }
+
+  /* Floating animation for technologies/languages */
+  @keyframes float-randomly {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+      opacity: 0.1;
+    }
+    25% {
+      opacity: 0.3;
+    }
+    50% {
+      transform: translate(20px, -15px) rotate(5deg);
+      opacity: 0.2;
+    }
+    75% {
+      opacity: 0.3;
+    }
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+      opacity: 0.1;
+    }
+  }
+
+  .float-random {
+    animation: float-randomly 15s ease-in-out infinite;
+  }
+
+  .float-random:nth-child(2n) {
+    animation-duration: 18s;
+    animation-delay: 1s;
+  }
+
+  .float-random:nth-child(3n) {
+    animation-duration: 25s;
+    animation-delay: 2s;
+  }
+
+  .float-random:nth-child(4n) {
+    animation-duration: 22s;
+    animation-delay: 3s;
+  }
+
+  .float-random:nth-child(5n) {
+    animation-duration: 28s;
+    animation-delay: 4s;
+  }
 }
 
 /* Locomotive Scroll */
