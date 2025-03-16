@@ -298,8 +298,6 @@ const Hero = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.3 }}
         transition={{ duration: 1.2, delay: 0.5 }}
-        data-scroll
-        data-scroll-speed="-0.5"
       />
       
       <div className="relative z-20 max-w-6xl mx-auto px-4 text-center" data-scroll data-scroll-speed="0.5">
@@ -308,8 +306,6 @@ const Hero = () => {
           variants={welcomeVariants}
           initial="initial"
           animate="animate"
-          data-scroll
-          data-scroll-delay="0.05"
         >
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-violet-500 to-blue-500"
             style={{
@@ -325,8 +321,6 @@ const Hero = () => {
           variants={titleVariants}
           initial="initial"
           animate="animate"
-          data-scroll
-          data-scroll-delay="0.1"
         >
           <span className="bg-clip-text text-transparent bg-gradient-to-br from-blue-400 to-cyan-300">Hello I am,</span>
           <br />
@@ -335,8 +329,6 @@ const Hero = () => {
             onHoverStart={() => setIsNameHovered(true)}
             onHoverEnd={() => setIsNameHovered(false)}
             style={{ cursor: 'pointer' }}
-            data-scroll
-            data-scroll-delay="0.15"
           >
             <div className="matrix-text-container inline-flex">
               <MatrixWord word="Varad" delay={0} />
@@ -350,8 +342,6 @@ const Hero = () => {
           variants={subtitleVariants}
           initial="initial"
           animate="animate"
-          data-scroll
-          data-scroll-delay="0.2"
         >
           Tech Enthusiast | Photographer | Web Developer
         </motion.p>
@@ -366,16 +356,12 @@ const Hero = () => {
             delay: 1.5,
             ease: [0.43, 0.13, 0.23, 0.96]
           }}
-          data-scroll
-          data-scroll-delay="0.25"
         >
         </motion.p>
         <motion.div
           variants={buttonVariants}
           initial="initial"
           animate="animate"
-          data-scroll
-          data-scroll-delay="0.3"
         >
           <button 
             onClick={handleScrollDown}
@@ -391,8 +377,6 @@ const Hero = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.3 }}
           transition={{ duration: 1.5, delay: 0.8 }}
-          data-scroll
-          data-scroll-speed="0.2"
         >
           <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
           <div className="absolute top-0 -right-4 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>

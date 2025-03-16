@@ -198,7 +198,7 @@
   }
 }
 
-/* Enhanced Locomotive Scroll Styles */
+/* Locomotive Scroll */
 html.has-scroll-smooth {
   overflow: hidden;
 }
@@ -227,7 +227,6 @@ html.has-scroll-dragging {
   transform-origin: center right;
   transition: transform 0.3s, opacity 0.3s;
   opacity: 0;
-  z-index: 9999;
 }
 
 .c-scrollbar:hover {
@@ -244,8 +243,8 @@ html.has-scroll-dragging {
   position: absolute;
   top: 0;
   right: 0;
-  background-color: rgba(59, 130, 246, 0.6);
-  opacity: 0.8;
+  background-color: rgba(59, 130, 246, 0.3);
+  opacity: 0.5;
   width: 7px;
   border-radius: 10px;
   margin: 2px;
@@ -256,136 +255,6 @@ html.has-scroll-dragging {
 .has-scroll-dragging .c-scrollbar_thumb {
   cursor: -webkit-grabbing;
   cursor: grabbing;
-}
-
-/* Enhanced scroll-triggered animations */
-[data-scroll] {
-  transition: opacity 0.8s cubic-bezier(0.215, 0.61, 0.355, 1), 
-              transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
-  will-change: transform, opacity;
-}
-
-[data-scroll="in"] {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-[data-scroll="out"] {
-  opacity: 0;
-  transform: translateY(40px);
-}
-
-/* Scroll-triggered fade in animations for sections */
-[data-scroll-section] {
-  opacity: 0;
-  transition: opacity 1.2s ease, transform 1.2s ease;
-  transform: translateY(30px);
-}
-
-[data-scroll-section].is-inview {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Section-specific scroll animations */
-[data-scroll-section].hero-section.is-inview {
-  transition-delay: 0.2s;
-}
-
-[data-scroll-section].about-section.is-inview {
-  transition-delay: 0.1s;
-}
-
-[data-scroll-section].projects-section.is-inview {
-  transition-delay: 0.1s;
-}
-
-/* Scroll progress based effects */
-html[data-scroll-progress="0"] .go-to-top {
-  opacity: 0;
-  pointer-events: none;
-}
-
-html[data-scroll-progress="25"] .go-to-top,
-html[data-scroll-progress="50"] .go-to-top,
-html[data-scroll-progress="75"] .go-to-top,
-html[data-scroll-progress="100"] .go-to-top {
-  opacity: 1;
-  pointer-events: all;
-}
-
-/* Improved scroll direction based effects */
-html[data-scroll-direction="up"] .navbar {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-html[data-scroll-direction="down"] .navbar {
-  transform: translateY(-100%);
-  opacity: 0.5;
-}
-
-/* Improved Animations */
-@keyframes fade-up {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-up {
-  animation: fade-up 1s ease forwards;
-}
-
-.animate-delay-100 {
-  animation-delay: 0.1s;
-}
-
-.animate-delay-200 {
-  animation-delay: 0.2s;
-}
-
-.animate-delay-300 {
-  animation-delay: 0.3s;
-}
-
-/* Add smooth scrolling for browsers without Locomotive */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Custom scroll snap for browsers that support it */
-@supports (scroll-snap-type: y mandatory) {
-  .main-container {
-    scroll-snap-type: y mandatory;
-    height: 100vh;
-    overflow-y: scroll;
-  }
-
-  section {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
-}
-
-/* Scroll disabled state - improved for Locomotive */
-.scroll-disabled {
-  overflow: hidden !important;
-  height: 100% !important;
-}
-
-/* Smooth image reveal animations */
-.img-reveal {
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 1.5s cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-.is-inview .img-reveal {
-  clip-path: inset(0 0 0 0);
 }
 
 /* Animations */
@@ -718,6 +587,12 @@ html[data-scroll-speed="80"] .parallax-bg {
   -webkit-background-clip: text;
   color: transparent;
   background-image: linear-gradient(to right, var(--primary), var(--secondary));
+}
+
+/* Scroll disabled */
+.scroll-disabled {
+  overflow: hidden;
+  height: 100%;
 }
 
 /* Reveal animations */

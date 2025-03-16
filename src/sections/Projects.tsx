@@ -64,7 +64,7 @@ const projects: Project[] = [
       "https://images.unsplash.com/photo-1533101585792-27f81a845550?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
       "https://images.unsplash.com/photo-1505775561242-727b7fba20f0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
     ],
-    projectUrl: "https://youtu.be/UjQMxau9nO0",
+    projectUrl: "#",
     color: "#EF4444", // red
     icon: "🎬",
     featured: true
@@ -233,23 +233,23 @@ const Projects = () => {
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
       transition: {
         staggerChildren: 0.1
       }
     }
   };
-
+  
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
+    visible: {
+      y: 0,
       opacity: 1,
       transition: { duration: 0.5 }
     }
   };
-
+  
   return (
     <section 
       id="projects" 
@@ -361,7 +361,7 @@ const Projects = () => {
           {filteredProjects.map((project) => (
             <motion.div
               key={project.id}
-              variants={itemVariants}
+              variants={itemVariants} 
               className="relative group rounded-xl overflow-hidden cursor-pointer"
               style={{ 
                 backgroundColor: `${project.color}10`,
@@ -523,7 +523,7 @@ const Projects = () => {
                 
                 {/* Project Images - Image Carousel */}
                 <div className="md:w-1/2 h-72 md:h-auto relative overflow-hidden">
-                  <motion.div
+    <motion.div
                     className="absolute inset-0 flex"
                     initial={{ x: 0 }}
                     animate={{ 
@@ -577,8 +577,8 @@ const Projects = () => {
                       >
                         {activeProject.title}
                       </h3>
-                    </div>
-                    
+      </div>
+      
                     <p className="text-gray-300 mb-8">
                       {activeProject.description}
                     </p>
@@ -588,7 +588,7 @@ const Projects = () => {
                       <div className="flex flex-wrap gap-2">
                         {activeProject.technologies.map((tech, i) => (
                           <motion.span 
-                            key={i} 
+                key={i} 
                             className="px-3 py-1.5 text-sm rounded-full border"
                             style={{ 
                               backgroundColor: `${activeProject.color}15`,
@@ -598,20 +598,20 @@ const Projects = () => {
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.1 * i, duration: 0.3 }}
-                          >
-                            {tech}
+              >
+                {tech}
                           </motion.span>
-                        ))}
-                      </div>
-                    </div>
-                    
+            ))}
+          </div>
+        </div>
+        
                     {/* Only show buttons for non-coming soon projects */}
                     {activeProject.category !== 'blank1' && activeProject.category !== 'blank2' && (
                       <div className="flex flex-wrap gap-4">
                         <motion.a 
                           href={activeProject.projectUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
+            target="_blank" 
+            rel="noopener noreferrer"
                           className="flex items-center gap-2 font-medium rounded-full px-6 py-3 text-base"
                           style={{ 
                             backgroundColor: activeProject.color,
@@ -619,21 +619,21 @@ const Projects = () => {
                           }}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                        >
-                          <ExternalLinkIcon />
-                          <span>View Project</span>
+          >
+            <ExternalLinkIcon />
+            <span>View Project</span>
                         </motion.a>
                         
                         {activeProject.githubUrl && (
                           <motion.a 
                             href={activeProject.githubUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
+              target="_blank" 
+              rel="noopener noreferrer"
                             className="flex items-center gap-2 border border-gray-700 rounded-full px-6 py-3 text-base text-gray-300 hover:text-white"
                             whileHover={{ scale: 1.05, borderColor: activeProject.color }}
                             whileTap={{ scale: 0.95 }}
-                          >
-                            <GithubIcon />
+            >
+              <GithubIcon />
                             <span>View Code</span>
                           </motion.a>
                         )}
