@@ -19,7 +19,7 @@ const certificates: Certificate[] = [
     title: 'Python Design Contest',
     issuer: 'College',
     date: 'Jan 2025',
-    image: '/certificates/react-certificate.jpg', // Replace with your actual certificate image path
+    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1470&auto=format&fit=crop', // Temporary online image
     category: 'hackathon',
     credentialUrl: 'https://www.udemy.com/certificate/example/'
   },
@@ -40,6 +40,55 @@ const certificates: Certificate[] = [
     image: '/certificates/somaiya-hackathon.jpg', // Replace with your actual certificate image path
     category: 'hackathon'
   },
+  // Add more placeholder certificates
+  {
+    id: 'cert-004',
+    title: 'To be added',
+    issuer: 'To be added',
+    date: 'To be added',
+    image: 'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600&q=80',
+    category: 'tbd'
+  },
+  {
+    id: 'cert-005',
+    title: 'To be added',
+    issuer: 'To be added',
+    date: 'To be added',
+    image: 'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600&q=80',
+    category: 'tbd'
+  },
+  {
+    id: 'cert-006',
+    title: 'To be added',
+    issuer: 'To be added',
+    date: 'To be added',
+    image: 'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600&q=80',
+    category: 'tbd'
+  },
+  {
+    id: 'cert-007',
+    title: 'To be added',
+    issuer: 'To be added',
+    date: 'To be added',
+    image: 'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600&q=80',
+    category: 'tbd'
+  },
+  {
+    id: 'cert-008',
+    title: 'To be added',
+    issuer: 'To be added',
+    date: 'To be added',
+    image: 'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600&q=80',
+    category: 'tbd'
+  },
+  {
+    id: 'cert-009',
+    title: 'To be added',
+    issuer: 'To be added',
+    date: 'To be added',
+    image: 'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600&q=80',
+    category: 'tbd'
+  }
   /*{
     id: 'cert-004',
     title: 'Video Editing Masterclass',
