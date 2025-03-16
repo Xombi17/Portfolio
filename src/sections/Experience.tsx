@@ -11,18 +11,18 @@ interface ExperienceItem {
 
 const experiences: ExperienceItem[] = [
   {
-    title: "Head Photographer",
-    company: "College Fest",
-    period: "2023",
-    description: "Led a team to capture the best moments of the event. Managed and organized the entire media coverage. Created professional-quality images and videos.",
-    skills: ["Photography", "Team Leadership", "Event Coverage", "Media Management"]
-  },
-  {
     title: "Event Management & Video Editing",
     company: "",
     period: "2021 - Present", 
     description: "Designed presentations and promotional videos. Assisted in managing large-scale college events.",
     skills: ["Video Editing", "Event Management", "Presentation Design", "Project Coordination"]
+  },
+  {
+    title: "Head Photographer",
+    company: "College Fest",
+    period: "2023",
+    description: "Led a team to capture the best moments of the event. Managed and organized the entire media coverage. Created professional-quality images and videos.",
+    skills: ["Photography", "Team Leadership", "Event Coverage", "Media Management"]
   },
   {
     title: "Web Development Enthusiast",
