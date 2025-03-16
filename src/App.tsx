@@ -15,6 +15,7 @@ import About from './sections/About';
 import Projects from './sections/Projects';
 import Experience from './sections/Experience';
 import Contact from './sections/Contact';
+import Certificates from './sections/Certificates';
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -203,6 +204,10 @@ function App() {
         
         <motion.div variants={sectionVariants}>
           <Projects />
+        </motion.div>
+        
+        <motion.div variants={sectionVariants}>
+          <Certificates />
         </motion.div>
         
         <motion.div variants={sectionVariants}>

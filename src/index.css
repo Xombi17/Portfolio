@@ -73,6 +73,52 @@
     backface-visibility: hidden;
   }
 
+  /* 3D Transform Styles for Project Showcase */
+  .transform-style-3d {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* Prevent text selection on interactive 3D elements */
+  .project-showcase * {
+    user-select: none;
+  }
+
+  /* Smooth transformations for 3D elements */
+  .project-card {
+    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+  }
+
+  /* Creating depth with box shadows */
+  .project-card-active {
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5),
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                0 20px 40px -20px rgba(0, 0, 0, 0.7);
+  }
+
+  /* Explosion animation for project transitions */
+  @keyframes card-explode {
+    0% { 
+      transform: scale(1) translateZ(0);
+      opacity: 1;
+    }
+    50% { 
+      transform: scale(0.8) translateZ(-20px) rotateY(10deg);
+      opacity: 0.5;
+    }
+    100% { 
+      transform: scale(1) translateZ(0);
+      opacity: 1;
+    }
+  }
+
+  .card-explode {
+    animation: card-explode 0.5s ease-out forwards;
+  }
+
   /* Matrix text animation styles */
   @keyframes matrix-flicker {
     0%, 100% { opacity: 1; }
@@ -635,4 +681,41 @@ html[data-scroll-speed="80"] .parallax-bg {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.6s;
+}
+
+/* 3D Transform Styles */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+/* Ensure projects and certificates sections have proper spacing */
+#projects, #certificates {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Ensure no content overlaps between sections */
+.main-container > div {
+  position: relative;
+  z-index: 1;
+}
+
+/* Fix for any potential overflow issues */
+.project-showcase {
+  isolation: isolate;
+}
+
+.certificate-card {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* Smooth transitions between sections */
+section {
+  position: relative;
 }

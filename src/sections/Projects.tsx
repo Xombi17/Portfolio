@@ -1,8 +1,10 @@
 import { useRef, useState, useEffect } from 'react';
-import { motion, useInView, useScroll, useTransform, useSpring, AnimatePresence, Variants } from 'framer-motion';
-import Carousel from '../components/Carousel';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 
-// Custom SVG icons to replace Lucide icons
+// Project Category Types
+type ProjectCategory = 'photo' | 'film' | 'web' | 'blank1' | 'blank2';
+
+// Custom SVG icons
 const ExternalLinkIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -18,437 +20,568 @@ const GithubIcon = () => (
   </svg>
 );
 
-// Project images
-const projectImages = {
-  photography: [
-    "https://source.unsplash.com/random/800x600?photography,camera",
-    "https://source.unsplash.com/random/800x600?photography,portrait",
-    "https://source.unsplash.com/random/800x600?photography,landscape"
-  ],
-  youtube: [
-    "https://source.unsplash.com/random/800x600?youtube,video",
-    "https://source.unsplash.com/random/800x600?youtube,content",
-    "https://source.unsplash.com/random/800x600?youtube,creator"
-  ],
-  videoEditing: [
-    "https://source.unsplash.com/random/800x600?video,editing",
-    "https://source.unsplash.com/random/800x600?video,production",
-    "https://source.unsplash.com/random/800x600?video,film"
-  ],
-  eventPhotography: [
-    "https://source.unsplash.com/random/800x600?event,photography",
-    "https://source.unsplash.com/random/800x600?event,concert",
-    "https://source.unsplash.com/random/800x600?event,corporate"
-  ],
-  webDevelopment: [
-    "https://source.unsplash.com/random/800x600?web,development",
-    "https://source.unsplash.com/random/800x600?coding,programming",
-    "https://source.unsplash.com/random/800x600?website,design"
-  ]
-};
-
+// Project interface
 interface Project {
+  id: string;
   title: string;
+  category: ProjectCategory;
   description: string;
   technologies: string[];
   images: string[];
   projectUrl: string;
   githubUrl?: string;
+  color: string;
+  icon: string;
+  featured: boolean;
 }
 
+// Project data
 const projects: Project[] = [
   {
-    title: "Photography Projects",
-    description: "A collection of my best photography work, showcasing my skills in composition, lighting, and storytelling through images.",
-    technologies: ["Photography", "Composition", "Editing", "Storytelling"],
-    images: projectImages.photography,
+    id: 'photo-1',
+    title: "Award-Winning Photography",
+    category: 'photo',
+    description: "A collection of my award-winning photographs submitted to national and international competitions, focusing on creative compositions and storytelling.",
+    technologies: ["Composition", "Lighting", "Post-processing", "Visual Storytelling"],
+    images: [
+      "https://source.unsplash.com/random/800x600?photography,award",
+      "https://source.unsplash.com/random/800x600?photography,competition",
+      "https://source.unsplash.com/random/800x600?photography,professional"
+    ],
     projectUrl: "#",
-    githubUrl: "#"
+    color: "#3B82F6", // blue
+    icon: "📸",
+    featured: true
   },
   {
-    title: "YouTube Channel",
-    description: "My YouTube channel with 12K+ subscribers and 2.3M+ views, featuring tech reviews, tutorials, and creative content.",
-    technologies: ["Content Creation", "Video Editing", "Storytelling", "Tech Reviews"],
-    images: projectImages.youtube,
-    projectUrl: "https://youtube.com/c/varadjoshi",
-  },
-  {
-    title: "Web Development Portfolio",
-    description: "A showcase of my web development projects built with modern technologies like React, Next.js, and Tailwind CSS.",
-    technologies: ["React", "TypeScript", "Tailwind CSS", "Next.js", "Responsive Design"],
-    images: projectImages.webDevelopment,
+    id: 'film-1',
+    title: "Short Film: 'Echoes'",
+    category: 'film',
+    description: "A 10-minute short film exploring themes of memory and identity, showcasing my skills in directing, cinematography, and storytelling.",
+    technologies: ["Direction", "Cinematography", "Editing", "Sound Design"],
+    images: [
+      "https://source.unsplash.com/random/800x600?film,short",
+      "https://source.unsplash.com/random/800x600?film,cinema",
+      "https://source.unsplash.com/random/800x600?film,director"
+    ],
     projectUrl: "#",
-    githubUrl: "https://github.com/varadjoshi"
+    color: "#EF4444", // red
+    icon: "🎬",
+    featured: true
   },
   {
-    title: "Video Editing & Presentations",
-    description: "Professional video editing work including promotional videos, presentations, and creative content for various clients.",
-    technologies: ["Video Editing", "Motion Graphics", "Storytelling", "Premiere Pro"],
-    images: projectImages.videoEditing,
+    id: 'web-1',
+    title: "Interactive Portfolio Website",
+    category: 'web',
+    description: "A responsive portfolio website built with React, TypeScript, and Framer Motion, featuring interactive animations and 3D elements.",
+    technologies: ["React", "TypeScript", "Tailwind CSS", "Framer Motion", "Three.js"],
+    images: [
+      "https://source.unsplash.com/random/800x600?website,portfolio",
+      "https://source.unsplash.com/random/800x600?coding,website",
+      "https://source.unsplash.com/random/800x600?webdevelopment,ui"
+    ],
     projectUrl: "#",
+    githubUrl: "https://github.com/varadjoshi",
+    color: "#10B981", // green
+    icon: "💻",
+    featured: true
   },
   {
-    title: "Event Photography",
-    description: "Event coverage and photography for college fests, corporate events, and special occasions.",
-    technologies: ["Event Photography", "Lighting", "Composition", "Editing"],
-    images: projectImages.eventPhotography,
-    projectUrl: "#"
+    id: 'photo-2',
+    title: "Urban Photography Series",
+    category: 'photo',
+    description: "A series of urban landscape photographs capturing the essence of city life, architecture, and the interplay of light and shadow.",
+    technologies: ["Urban Photography", "Architecture", "Street", "Black & White"],
+    images: [
+      "https://source.unsplash.com/random/800x600?urban,photography",
+      "https://source.unsplash.com/random/800x600?city,street",
+      "https://source.unsplash.com/random/800x600?architecture,building"
+    ],
+    projectUrl: "#",
+    color: "#6366F1", // indigo
+    icon: "🏙️",
+    featured: false
+  },
+  {
+    id: 'film-2',
+    title: "Documentary: 'Local Heroes'",
+    category: 'film',
+    description: "A mini-documentary highlighting local community leaders and their impact on society, featuring interviews and cinematic b-roll.",
+    technologies: ["Documentary", "Interviews", "Storytelling", "Production"],
+    images: [
+      "https://source.unsplash.com/random/800x600?documentary,film",
+      "https://source.unsplash.com/random/800x600?interview,filming",
+      "https://source.unsplash.com/random/800x600?documentary,camera"
+    ],
+    projectUrl: "#",
+    color: "#8B5CF6", // purple
+    icon: "🎥",
+    featured: false
+  },
+  {
+    id: 'web-2',
+    title: "E-Commerce Platform",
+    category: 'web',
+    description: "A full-stack e-commerce platform with secure payment processing, user authentication, and inventory management.",
+    technologies: ["React", "Node.js", "MongoDB", "Stripe", "JWT"],
+    images: [
+      "https://source.unsplash.com/random/800x600?ecommerce,website",
+      "https://source.unsplash.com/random/800x600?shopping,online",
+      "https://source.unsplash.com/random/800x600?store,digital"
+    ],
+    projectUrl: "#",
+    githubUrl: "https://github.com/varadjoshi",
+    color: "#F59E0B", // amber
+    icon: "🛒",
+    featured: false
+  },
+  {
+    id: 'blank-1',
+    title: "Coming Soon",
+    category: 'blank1',
+    description: "A new project currently in development. Stay tuned for updates!",
+    technologies: ["TBA"],
+    images: [
+      "https://source.unsplash.com/random/800x600?coming,soon",
+      "https://source.unsplash.com/random/800x600?future,project",
+      "https://source.unsplash.com/random/800x600?development,progress"
+    ],
+    projectUrl: "#",
+    color: "#EC4899", // pink
+    icon: "✨",
+    featured: false
+  },
+  {
+    id: 'blank-2',
+    title: "Future Project",
+    category: 'blank2',
+    description: "Another exciting project in the pipeline. Details will be revealed soon!",
+    technologies: ["TBA"],
+    images: [
+      "https://source.unsplash.com/random/800x600?future,concept",
+      "https://source.unsplash.com/random/800x600?idea,creative",
+      "https://source.unsplash.com/random/800x600?innovation,new"
+    ],
+    projectUrl: "#",
+    color: "#0EA5E9", // sky blue
+    icon: "🚀",
+    featured: false
   }
 ];
 
-// Motion paths for project cards
-const generateCardPath = (index: number) => {
-  // Create different paths based on index to make each card's animation unique
-  const pathVariations = [
-    [[0, -100], [50, -80], [20, -40], [0, 0]],  // Path 1: Falling from top with slight S curve
-    [[100, -80], [50, -60], [20, -30], [0, 0]],  // Path 2: Falling from top-right
-    [[-100, -80], [-50, -60], [-20, -30], [0, 0]],  // Path 3: Falling from top-left
-    [[0, -120], [-30, -90], [-15, -45], [0, 0]],  // Path 4: Falling from top with different curve
-    [[150, -50], [100, -30], [50, -15], [0, 0]],  // Path 5: Coming from far right
-  ];
-  
-  // Select a path based on index
-  return pathVariations[index % pathVariations.length];
-};
-
 const Projects = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(containerRef, { once: false, amount: 0.1 });
-  const [activeTab, setActiveTab] = useState<string>("all");
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [windowHeight, setWindowHeight] = useState(0);
-  
-  // Scroll animation - adjusted to start much earlier
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "start center"] // Changed from "end start" to "start center" to complete earlier
-  });
-  
-  const smoothProgress = useSpring(scrollYProgress, { 
-    stiffness: 150, // Increased from 100 for faster response
-    damping: 25,    // Decreased from 30 for quicker animation
-    restDelta: 0.001 
-  });
-  
-  // Update window height on mount
+  const isInView = useInView(sectionRef, { once: false, amount: 0.2 });
+  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | 'all'>('all');
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Initialize with a featured project
   useEffect(() => {
-    setWindowHeight(window.innerHeight);
-    
-    const handleResize = () => {
-      setWindowHeight(window.innerHeight);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const featured = projects.find(p => p.featured);
+    if (featured) setActiveProject(featured);
   }, []);
-  
-  // Update scroll progress for animation calculations
-  useEffect(() => {
-    const unsubscribe = scrollYProgress.onChange(value => {
-      // Accelerate the progress to complete animations earlier
-      // This maps the 0-1 range to 0-2, making animations complete twice as fast
-      setScrollProgress(Math.min(value * 1.75, 1)); 
-    });
-    
-    return () => unsubscribe();
-  }, [scrollYProgress]);
-  
-  // Header animations based on scroll - start and complete earlier
-  const headerY = useTransform(smoothProgress, [0, 0.15], [50, 0]); // Changed from [0, 0.2]
-  const headerOpacity = useTransform(smoothProgress, [0, 0.15], [0, 1]); // Changed from [0, 0.2]
-  
-  // Filter tabs animation based on scroll - start and complete earlier
-  const tabsX = useTransform(smoothProgress, [0.05, 0.2], [50, 0]); // Changed from [0.1, 0.3]
-  const tabsOpacity = useTransform(smoothProgress, [0.05, 0.2], [0, 1]); // Changed from [0.1, 0.3]
-  
+
+  // Filter projects by selected category
+  const filteredProjects = selectedCategory === 'all' 
+    ? projects 
+    : projects.filter(project => project.category === selectedCategory);
+
+  // Category data for filter buttons
   const categories = [
-    { id: "all", name: "All Projects" },
-    { id: "web", name: "Web Development" },
-    { id: "photo", name: "Photography" },
-    { id: "video", name: "Video" }
+    { id: 'all', label: 'All Projects', icon: '🔍', color: '#6366F1' },
+    { id: 'photo', label: 'Photography', icon: '📸', color: '#3B82F6' },
+    { id: 'film', label: 'Short Films', icon: '🎬', color: '#EF4444' },
+    { id: 'web', label: 'Web Development', icon: '💻', color: '#10B981' }
   ];
 
-  const filteredProjects = activeTab === "all" 
-    ? projects 
-    : projects.filter(project => {
-        if (activeTab === "web") return project.technologies.some(tech => ["React", "TypeScript", "Next.js", "Web"].some(webTech => tech.includes(webTech)));
-        if (activeTab === "photo") return project.technologies.some(tech => tech.includes("Photography") || tech.includes("Composition"));
-        if (activeTab === "video") return project.technologies.some(tech => tech.includes("Video") || tech.includes("Editing"));
-        return true;
-      });
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
-  // 3D card perspective values  
-  const perspective = 1000;
-  const initialRotation = 45;
-  
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { duration: 0.5 }
+    }
+  };
+
   return (
     <section 
       id="projects" 
       ref={sectionRef}
-      className="py-32 px-4 bg-black relative min-h-screen" 
-      data-scroll-section
+      className="py-24 px-4 bg-black relative min-h-screen overflow-hidden"
     >
-      {/* Background animation */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Dynamic background with gradient and particles */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-80" />
+        
+        {/* Background gradient inspired by selected project */}
         <motion.div 
-          className="absolute inset-0 bg-gradient-to-b from-blue-900/10 to-purple-900/10 backdrop-blur-3xl"
-          style={{ 
-            opacity: smoothProgress,
-            scale: useTransform(smoothProgress, [0, 1], [0.9, 1.05]), // Less extreme scale change
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: isInView ? 0.2 : 0,
+            backgroundColor: activeProject?.color || '#6366F1'
+          }}
+          transition={{ duration: 1.5 }}
+          style={{
+            filter: 'blur(120px)',
           }}
         />
         
-        {/* Animated particles/dots in background */}
-        {Array.from({ length: 15 }).map((_, i) => (
-          <motion.div
-            key={`particle-${i}`}
-            className="absolute w-1 h-1 rounded-full bg-blue-400/40"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              filter: 'blur(1px)',
-              x: useTransform(
-                smoothProgress, 
-                [0, 1], 
-                [0, (Math.random() * 200) - 100]
-              ),
-              y: useTransform(
-                smoothProgress, 
-                [0, 1], 
-                [0, (Math.random() * 200) - 100]
-              ),
-              scale: useTransform(
-                smoothProgress, 
-                [0, 0.5, 1], 
-                [0, Math.random() * 3 + 1, 0]
-              ),
-              opacity: useTransform(
-                smoothProgress, 
-                [0, 0.2, 0.8, 1], 
-                [0, 1, 1, 0]
-              ),
-            }}
-          />
-        ))}
+        {/* Floating particles */}
+        <div className="absolute inset-0">
+          {Array.from({ length: 30 }).map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute rounded-full"
+              style={{
+                backgroundColor: i % 3 === 0 ? '#3B82F6' : i % 3 === 1 ? '#8B5CF6' : '#10B981',
+                width: Math.random() * 6 + 2,
+                height: Math.random() * 6 + 2,
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                opacity: Math.random() * 0.3 + 0.1,
+              }}
+              animate={{
+                y: [null, Math.random() * -300 - 50],
+                opacity: [null, 0],
+              }}
+              transition={{
+                duration: Math.random() * 10 + 15,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+          ))}
+        </div>
       </div>
       
-      <div className="max-w-6xl mx-auto relative z-10" data-scroll data-scroll-speed="0.2">
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Section Header */}
         <motion.div
-          className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16"
-          style={{ 
-            y: headerY,
-            opacity: headerOpacity,
-          }}
+          className="mb-16 text-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
+          transition={{ duration: 0.8 }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500">
-            My Projects
+          <h2 className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4">
+            Creative Portfolio
           </h2>
-          
-          <motion.div 
-            className="flex flex-wrap gap-2 mt-6 md:mt-0"
-            style={{ 
-              x: tabsX,
-              opacity: tabsOpacity,
-            }}
-          >
-            {categories.map((category) => (
+          <p className="text-gray-400 max-w-xl mx-auto">
+            Explore my diverse projects across photography, filmmaking, and web development.
+          </p>
+        </motion.div>
+        
+        {/* Category Filters - Horizontal Scrollable Menu */}
+        <motion.div 
+          className="mb-12 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <div className="flex space-x-3 md:justify-center">
+            {categories.map(category => (
               <motion.button
                 key={category.id}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                  activeTab === category.id 
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
-                    : 'bg-zinc-800/50 text-gray-300 hover:bg-zinc-700/50'
+                className={`px-5 py-3 rounded-full text-sm md:text-base flex items-center gap-2 whitespace-nowrap transition-all duration-300 ${
+                  selectedCategory === category.id 
+                    ? 'bg-opacity-20 border border-opacity-50 shadow-lg' 
+                    : 'bg-black/30 border-gray-800 hover:border-gray-700'
                 }`}
-                onClick={() => setActiveTab(category.id)}
+                style={{
+                  backgroundColor: selectedCategory === category.id ? `${category.color}20` : '',
+                  borderColor: selectedCategory === category.id ? category.color : '',
+                  color: selectedCategory === category.id ? category.color : 'white',
+                  boxShadow: selectedCategory === category.id ? `0 4px 20px ${category.color}20` : ''
+                }}
+                onClick={() => setSelectedCategory(category.id as ProjectCategory | 'all')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {category.name}
+                <span>{category.icon}</span>
+                <span>{category.label}</span>
               </motion.button>
             ))}
-          </motion.div>
+          </div>
         </motion.div>
         
-        <div 
-          ref={containerRef}
-          className="perspective-1000"
+        {/* Project Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
-          <AnimatePresence mode="wait">
+          {filteredProjects.map((project) => (
             <motion.div
-              key={activeTab}
+              key={project.id}
+              variants={itemVariants}
+              className="relative group rounded-xl overflow-hidden cursor-pointer"
+              style={{ 
+                backgroundColor: `${project.color}10`,
+                borderColor: `${project.color}30`, 
+              }}
+              onClick={() => {
+                setActiveProject(project);
+                setIsExpanded(true);
+              }}
+              whileHover={{ 
+                y: -10, 
+                boxShadow: `0 10px 30px ${project.color}30` 
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Project Image */}
+              <div className="h-60 overflow-hidden relative">
+                <img 
+                  src={project.images[0]} 
+                  alt={project.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80" />
+                
+                {/* Category Tag */}
+                <div 
+                  className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs uppercase tracking-wider"
+                  style={{ backgroundColor: `${project.color}90` }}
+                >
+                  {project.category === 'photo' ? 'Photography' : 
+                   project.category === 'film' ? 'Film' : 
+                   project.category === 'web' ? 'Web Dev' : 'Coming Soon'}
+                </div>
+              </div>
+              
+              {/* Project Info */}
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="text-xl font-semibold" style={{ color: project.color }}>
+                    {project.title}
+                  </h3>
+                  <span className="text-2xl">{project.icon}</span>
+                </div>
+                
+                <p className="text-gray-400 text-sm line-clamp-2 mb-4">
+                  {project.description}
+                </p>
+                
+                {/* Tech Tags */}
+                <div className="flex flex-wrap gap-2 mt-auto">
+                  {project.technologies.slice(0, 2).map((tech, i) => (
+                    <span 
+                      key={i}
+                      className="inline-block px-2 py-1 rounded-full text-xs" 
+                      style={{ 
+                        backgroundColor: `${project.color}20`,
+                        color: project.color
+                      }}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                  {project.technologies.length > 2 && (
+                    <span 
+                      className="inline-block px-2 py-1 rounded-full text-xs text-gray-400"
+                      style={{ backgroundColor: '#ffffff10' }}  
+                    >
+                      +{project.technologies.length - 2} more
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              {/* Hover Overlay with View Project Button */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <motion.div 
+                  className="px-6 py-3 rounded-full"
+                  style={{ backgroundColor: project.color }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <span className="text-black font-semibold">View Project</span>
+                </motion.div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+        
+        {/* Expanded Project Modal */}
+        <AnimatePresence>
+          {isExpanded && activeProject && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-12"
             >
-              {filteredProjects.map((project, index) => {
-                // Calculate when this card should start animating based on scroll progress
-                // Start points are much earlier now to ensure animations complete when section is visible
-                const startPoint = 0.15 + (index * 0.03); // Reduced from 0.3 + (index * 0.05)
-                const endPoint = Math.min(startPoint + 0.15, 0.8); // Reduced from startPoint + 0.2, 0.95
+              {/* Backdrop */}
+              <motion.div 
+                className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsExpanded(false)}
+              />
+              
+              {/* Modal Content */}
+              <motion.div
+                className="relative bg-zinc-900 border border-gray-800 rounded-2xl overflow-hidden max-w-5xl w-full max-h-[90vh] shadow-2xl flex flex-col md:flex-row"
+                style={{ 
+                  borderColor: `${activeProject.color}30`,
+                  boxShadow: `0 20px 60px ${activeProject.color}20` 
+                }}
+                initial={{ scale: 0.9, y: 20, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                exit={{ scale: 0.9, y: 20, opacity: 0 }}
+                transition={{ duration: 0.4, type: "spring" }}
+              >
+                {/* Close Button */}
+                <button 
+                  className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+                  onClick={() => setIsExpanded(false)}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
                 
-                // Interpolate values for animation - calculation remains the same
-                const progress = Math.max(0, Math.min(1, (scrollProgress - startPoint) / (endPoint - startPoint)));
+                {/* Project Images - Image Carousel */}
+                <div className="md:w-1/2 h-72 md:h-auto relative overflow-hidden">
+                  <motion.div
+                    className="absolute inset-0 flex"
+                    initial={{ x: 0 }}
+                    animate={{ 
+                      x: [-activeProject.images.length * 100, 0],
+                      transition: { 
+                        repeat: Infinity, 
+                        duration: 20,
+                        ease: "linear" 
+                      }
+                    }}
+                  >
+                    {[...activeProject.images, ...activeProject.images].map((image, index) => (
+                      <div 
+                        key={index} 
+                        className="w-full h-full flex-shrink-0"
+                        style={{ aspectRatio: "16/9" }}
+                      >
+                        <img 
+                          src={image} 
+                          alt={`${activeProject.title} ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </motion.div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent opacity-50" />
+                  
+                  {/* Category Badge */}
+                  <div 
+                    className="absolute top-4 left-4 px-4 py-2 rounded-full text-sm uppercase tracking-wider"
+                    style={{ backgroundColor: `${activeProject.color}90` }}
+                  >
+                    {activeProject.category === 'photo' ? 'Photography' : 
+                     activeProject.category === 'film' ? 'Film' : 
+                     activeProject.category === 'web' ? 'Web Dev' : 'Coming Soon'}
+                  </div>
+                </div>
                 
-                // Movement path for this card
-                const path = generateCardPath(index);
-                
-                return (
-                  <CardWithScrollAnimation 
-                    key={`${activeTab}-${project.title}`} 
-                    project={project}
-                    index={index}
-                    progress={progress}
-                    path={path}
-                    initialRotation={initialRotation}
-                    perspective={perspective}
-                  />
-                );
-              })}
+                {/* Project Details */}
+                <div className="md:w-1/2 p-8 overflow-y-auto custom-scrollbar max-h-[60vh] md:max-h-[90vh]">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <div className="flex items-center gap-3 mb-6">
+                      <span className="text-3xl">{activeProject.icon}</span>
+                      <h3 
+                        className="text-2xl md:text-3xl font-bold"
+                        style={{ color: activeProject.color }}
+                      >
+                        {activeProject.title}
+                      </h3>
+                    </div>
+                    
+                    <p className="text-gray-300 mb-8">
+                      {activeProject.description}
+                    </p>
+                    
+                    <div className="mb-8">
+                      <h4 className="text-lg font-semibold mb-3 text-white">Technologies & Skills</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {activeProject.technologies.map((tech, i) => (
+                          <motion.span 
+                            key={i} 
+                            className="px-3 py-1.5 text-sm rounded-full border"
+                            style={{ 
+                              backgroundColor: `${activeProject.color}15`,
+                              borderColor: `${activeProject.color}30`,
+                              color: activeProject.color
+                            }}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.1 * i, duration: 0.3 }}
+                          >
+                            {tech}
+                          </motion.span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-4">
+                      <motion.a 
+                        href={activeProject.projectUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 font-medium rounded-full px-6 py-3 text-base"
+                        style={{ 
+                          backgroundColor: activeProject.color,
+                          color: '#000' 
+                        }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <ExternalLinkIcon />
+                        <span>View Project</span>
+                      </motion.a>
+                      
+                      {activeProject.githubUrl && (
+                        <motion.a 
+                          href={activeProject.githubUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 border border-gray-700 rounded-full px-6 py-3 text-base text-gray-300 hover:text-white"
+                          whileHover={{ scale: 1.05, borderColor: activeProject.color }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <GithubIcon />
+                          <span>View Code</span>
+                        </motion.a>
+                      )}
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
             </motion.div>
-          </AnimatePresence>
-        </div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
-  );
-};
-
-interface CardAnimationProps {
-  project: Project;
-  index: number;
-  progress: number;
-  path: number[][];
-  initialRotation: number;
-  perspective: number;
-}
-
-const CardWithScrollAnimation = ({ 
-  project, 
-  index, 
-  progress,
-  path,
-  initialRotation,
-  perspective
-}: CardAnimationProps) => {
-  // Calculate position along the path based on progress
-  const calculatePosition = (progress: number, path: number[][]) => {
-    if (progress <= 0) return path[0];
-    if (progress >= 1) return path[path.length - 1];
-    
-    const segmentLength = 1 / (path.length - 1);
-    const segmentIndex = Math.min(path.length - 2, Math.floor(progress / segmentLength));
-    const segmentProgress = (progress - segmentIndex * segmentLength) / segmentLength;
-    
-    const start = path[segmentIndex];
-    const end = path[segmentIndex + 1];
-    
-    return [
-      start[0] + (end[0] - start[0]) * segmentProgress,
-      start[1] + (end[1] - start[1]) * segmentProgress
-    ];
-  };
-  
-  const position = calculatePosition(progress, path);
-  
-  // Calculate rotation based on progress - slightly reduced rotation for smoother animations
-  const rotateX = initialRotation * 0.8 * (1 - progress); // Reduced by multiplying by 0.8
-  const rotateY = (index % 2 === 0 ? -1 : 1) * initialRotation * 0.8 * (1 - progress);
-  const rotateZ = (index % 2 === 0 ? -4 : 4) * (1 - progress); // Reduced from -5/5 to -4/4
-  
-  // Calculate opacity and scale - reach full opacity faster
-  const opacity = Math.min(1, progress * 3); // Changed from progress * 2
-  const scale = 0.8 + (progress * 0.2); // Changed from 0.7 + (progress * 0.3) for less extreme scaling
-  
-  return (
-    <motion.div
-      className="card-container"
-      style={{
-        x: position[0],
-        y: position[1],
-        rotateX: rotateX,
-        rotateY: rotateY,
-        rotateZ: rotateZ,
-        opacity: opacity,
-        scale: scale,
-        transformPerspective: perspective,
-        position: 'relative',
-        zIndex: Math.round(progress * 10),
-      }}
-      transition={{ 
-        type: "spring", 
-        stiffness: 200, 
-        damping: 30 
-      }}
-    >
-      <motion.div
-        className="group relative overflow-hidden rounded-xl bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 hover:border-blue-500/30 transition-all duration-300 h-full hover-lift"
-        whileHover={{ 
-          y: -5,
-          scale: 1.02,
-          transition: { duration: 0.2 }
-        }}
-      >
-        <div className="h-56 overflow-hidden">
-          <Carousel 
-            images={project.images} 
-            className="w-full h-full"
-            autoPlay={true}
-            interval={5000}
-          />
-        </div>
-        
-        <div className="relative p-6 flex flex-col h-full">
-          <div className="flex-1">
-            <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-blue-400 transition-colors duration-300">{project.title}</h3>
-            <p className="text-gray-400 mb-4">{project.description}</p>
-            
-            <div className="flex flex-wrap gap-2 mb-6">
-              {project.technologies.map((tech, i) => (
-                <motion.span 
-                  key={i} 
-                  className="px-3 py-1 bg-zinc-800/50 text-sm rounded-full text-gray-300 border border-zinc-700 group-hover:border-blue-500/30 transition-colors duration-300"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * i, duration: 0.2 }}
-                >
-                  {tech}
-                </motion.span>
-              ))}
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-4 mt-auto pt-4 border-t border-zinc-800 group-hover:border-blue-500/20 transition-colors duration-300">
-            <a 
-              href={project.projectUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors"
-            >
-              <ExternalLinkIcon />
-              <span>View Project</span>
-            </a>
-            
-            {project.githubUrl && (
-              <a 
-                href={project.githubUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-gray-400 hover:text-gray-300 transition-colors"
-              >
-                <GithubIcon />
-                <span>View Code</span>
-              </a>
-            )}
-          </div>
-        </div>
-        
-        {/* Decorative corner accent */}
-        <div className="absolute top-0 right-0 w-12 h-12 bg-gradient-to-bl from-blue-500/20 via-transparent to-transparent" />
-        <div className="absolute bottom-0 left-0 w-12 h-12 bg-gradient-to-tr from-purple-500/20 via-transparent to-transparent" />
-      </motion.div>
-    </motion.div>
   );
 };
 

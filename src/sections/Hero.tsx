@@ -14,7 +14,7 @@ const floatingTerms = [
   "React", "JavaScript", "TypeScript", "NextJS", "NodeJS", 
   "HTML", "CSS", "Tailwind", "Photography", "Framer Motion", 
   "GSAP", "VideoEditing", "UI/UX", "Three.js", "Web Dev",
-  "Git", "SCSS", "Express", "REST API", "Redux", "MongoDB"
+  "Git", "SCSS", "Express", "Github", "Redux", "MongoDB"
 ];
 
 // Matrix characters for the random effect
@@ -73,6 +73,33 @@ const MatrixWord = ({ word, delay }: { word: string, delay: number }) => {
   const controls = useAnimationControls();
   const [currentWord, setCurrentWord] = useState(word); // Keep original capitalization
   const [isHovering, setIsHovering] = useState(false);
+  
+  // Run animation on initial load with proper coordination to page load sequence
+  useEffect(() => {
+    // Delay the matrix effect to start after the hero section has appeared
+    // The title appears with a 1.0s delay + ~0.5s for the animation
+    const initialDelay = 2000 + (delay * 200); // Base delay + word-specific offset
+    
+    const timer = setTimeout(() => {
+      // Trigger animation after hero section is visible
+      setIsHovering(true);
+      
+      // Run the bouncing animation
+      controls.start({
+        y: [0, -8, 0],
+        transition: { duration: 0.6 }
+      });
+      
+      // Set a timer to stop the hover effect after the animation duration
+      const stopTimer = setTimeout(() => {
+        setIsHovering(false);
+      }, 4000); // Run for 4 seconds on page load to be more noticeable
+      
+      return () => clearTimeout(stopTimer);
+    }, initialDelay);
+    
+    return () => clearTimeout(timer);
+  }, [controls, delay]);
   
   useEffect(() => {
     if (isHovering) {

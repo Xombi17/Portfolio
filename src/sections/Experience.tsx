@@ -18,18 +18,18 @@ const experiences: ExperienceItem[] = [
     skills: ["Photography", "Team Leadership", "Event Coverage", "Media Management"]
   },
   {
+    title: "Event Management & Video Editing",
+    company: "",
+    period: "2021 - Present", 
+    description: "Designed presentations and promotional videos. Assisted in managing large-scale college events.",
+    skills: ["Video Editing", "Event Management", "Presentation Design", "Project Coordination"]
+  },
+  {
     title: "Web Development Enthusiast",
     company: "College Projects",
     period: "2024 - Present",
-    description: "Building responsive web applications using modern frameworks. Learning full-stack development through hands-on projects. Exploring UI/UX design principles and implementing them in real-world applications.",
+    description: "Building responsive web applications using modern frameworks. Learning Web development through hands-on projects. Exploring UI/UX design principles and implementing them in real-world applications.",
     skills: ["React.js", "TypeScript", "Tailwind CSS", "Next.js", "Responsive Design"]
-  },
-  {
-    title: "Event Management & Video Editing",
-    company: "Freelance",
-    period: "2021 - Present",
-    description: "Designed presentations and promotional videos. Assisted in managing large-scale college events.",
-    skills: ["Video Editing", "Event Management", "Presentation Design", "Project Coordination"]
   }
 ];
 
