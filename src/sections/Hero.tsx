@@ -68,90 +68,89 @@ const FloatingTerm = ({ term, index }: { term: string; index: number }) => {
   );
 };
 
-// Component for Matrix-style whole word animation - updated to preserve case
+// Component for Matrix-style whole word animation
 const MatrixWord = ({ word, delay }: { word: string, delay: number }) => {
   const controls = useAnimationControls();
-  const [currentWord, setCurrentWord] = useState(word); // Keep original capitalization
-  const [isHovering, setIsHovering] = useState(false);
+  const [currentWord, setCurrentWord] = useState(word);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const hasRunInitialAnimation = useRef(false);
   
-  // Run animation on initial load with proper coordination to page load sequence
-  useEffect(() => {
-    // Delay the matrix effect to start after the hero section has appeared
-    // The title appears with a 1.0s delay + ~0.5s for the animation
-    const initialDelay = 2000 + (delay * 200); // Base delay + word-specific offset
+  // Simple function to run the animation (used for both hover and auto-trigger)
+  const runAnimation = () => {
+    if (isAnimating) return;
     
+    setIsAnimating(true);
+    console.log(`Starting matrix animation for: ${word}`); // Debug log
+    
+    // More dramatic bounce animation
+    controls.start({
+      y: [0, -12, 0],
+      scale: [1, 1.05, 1],
+      transition: { duration: 0.8 }
+    });
+    
+    // Matrix text scramble effect - run for 2 seconds
+    let startTime = Date.now();
+    const duration = 2000; // 2 seconds
+    
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      
+      if (elapsed < duration) {
+        // Generate random word of the same length
+        let randomWord = '';
+        for (let i = 0; i < word.length; i++) {
+          // More dramatic effect with less of the original characters showing through
+          if (Math.random() > 0.85 && elapsed > 300) {
+            randomWord += word[i];
+          } else if (word[i] === word[i].toUpperCase() && word[i] !== word[i].toLowerCase()) {
+            randomWord += matrixChars[Math.floor(Math.random() * matrixChars.length)].toUpperCase();
+          } else {
+            randomWord += matrixChars[Math.floor(Math.random() * matrixChars.length)].toLowerCase();
+          }
+        }
+        setCurrentWord(randomWord);
+      } else {
+        clearInterval(interval);
+        setCurrentWord(word);
+        setIsAnimating(false);
+        console.log(`Finished matrix animation for: ${word}`); // Debug log
+      }
+    }, 20); // Faster updates for more dramatic effect
+  };
+  
+  // Auto-trigger the hover animation after component loads
+  useEffect(() => {
+    // Make sure this only runs once per component instance
+    if (hasRunInitialAnimation.current) return;
+    
+    // Calculate a delay that happens AFTER all blob animations
+    // The last blob starts at 4.8s (0.8s base delay + 4s animation delay)
+    // Let's wait for it to complete at least one animation cycle (estimated ~2-3s)
+    const baseDelay = 8000; // 8 seconds after page load - this is after all blob animations have clearly started
+
+    // Set up the animation to run
     const timer = setTimeout(() => {
-      // Trigger animation after hero section is visible
-      setIsHovering(true);
-      
-      // Run the bouncing animation
-      controls.start({
-        y: [0, -8, 0],
-        transition: { duration: 0.6 }
-      });
-      
-      // Set a timer to stop the hover effect after the animation duration
-      const stopTimer = setTimeout(() => {
-        setIsHovering(false);
-      }, 4000); // Run for 4 seconds on page load to be more noticeable
-      
-      return () => clearTimeout(stopTimer);
-    }, initialDelay);
+      console.log(`Triggering initial animation for ${word} at ${Date.now()}`); // Debug log with timestamp
+      hasRunInitialAnimation.current = true;
+      runAnimation();
+    }, baseDelay + (delay * 300)); // More separation between words
     
     return () => clearTimeout(timer);
-  }, [controls, delay]);
-  
-  useEffect(() => {
-    if (isHovering) {
-      let count = 0;
-      const interval = setInterval(() => {
-        if (count < 20) {
-          // Generate random word of the same length
-          let randomWord = '';
-          for (let i = 0; i < word.length; i++) {
-            // For capital letters in the original word, use capital random letters
-            if (word[i] === word[i].toUpperCase() && word[i] !== word[i].toLowerCase()) {
-              randomWord += matrixChars[Math.floor(Math.random() * matrixChars.length)].toUpperCase();
-            } else {
-              randomWord += matrixChars[Math.floor(Math.random() * matrixChars.length)].toLowerCase();
-            }
-          }
-          setCurrentWord(randomWord);
-          count++;
-        } else {
-          // Return to original word with original capitalization
-          setCurrentWord(word);
-          clearInterval(interval);
-        }
-      }, 25); // Super fast animation
-      
-      return () => clearInterval(interval);
-    } else {
-      setCurrentWord(word);
-    }
-  }, [isHovering, word]);
+  }, []);
   
   return (
     <motion.span
       className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-500 mx-2"
       style={{
-        textShadow: isHovering ? '0 0 10px rgba(139, 92, 246, 0.7)' : 'none',
+        textShadow: isAnimating ? '0 0 20px rgba(139, 92, 246, 1.0)' : 'none',
         transition: 'text-shadow 0.3s ease',
         fontFamily: "'OnePlus Sans', sans-serif",
         fontWeight: 700,
       }}
       initial={{ opacity: 1 }}
       animate={controls}
-      onHoverStart={() => {
-        setIsHovering(true);
-        controls.start({
-          y: [0, -8, 0],
-          transition: { duration: 0.6, delay: delay * 0.05 }
-        });
-      }}
-      onHoverEnd={() => {
-        setIsHovering(false);
-      }}
+      onHoverStart={runAnimation}
     >
       {currentWord}
     </motion.span>
