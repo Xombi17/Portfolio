@@ -50,35 +50,49 @@ const About = () => {
   
   // Animation variants
   const containerVariants = {
-    hidden: {},
+    hidden: { opacity: 0 },
     visible: {
+      opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.12,
+        delayChildren: 0.1
       }
     }
   };
   
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { 
+      y: 40, 
+      opacity: 0,
+      scale: 0.95
+    },
     visible: {
       y: 0,
       opacity: 1,
+      scale: 1,
       transition: {
-        duration: 0.5,
-        ease: [0.215, 0.61, 0.355, 1]
+        type: "spring",
+        stiffness: 100,
+        damping: 12,
+        duration: 0.6
       }
     }
   };
 
   const skillVariants = {
-    hidden: { scale: 0.8, opacity: 0 },
-    visible: {
+    hidden: { scale: 0.8, opacity: 0, y: 20 },
+    visible: (i: number) => ({
       scale: 1,
       opacity: 1,
+      y: 0,
       transition: {
-        duration: 0.4
+        type: "spring",
+        stiffness: 100,
+        damping: 10,
+        delay: i * 0.04,
+        duration: 0.5
       }
-    }
+    })
   };
 
   return (
@@ -94,12 +108,14 @@ const About = () => {
         data-scroll 
         data-scroll-speed="0.3"
         style={{ opacity, y }}
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: false, amount: 0.1 }}
       >
         <motion.div
           className="mb-16 text-center"
           variants={itemVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4 inline-block relative">
             About Me
@@ -118,16 +134,10 @@ const About = () => {
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-2 gap-16"
           variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
         >
           <motion.div 
             className="mb-8"
             variants={itemVariants}
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: false, amount: 0.3 }}
           >
             <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-8 hover:border-blue-500/30 transition-colors duration-300 hover-lift h-full">
               <div className="flex items-center mb-6">
@@ -152,10 +162,6 @@ const About = () => {
           <div className="grid grid-cols-1 gap-8">
             <motion.div 
               variants={itemVariants}
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: false, amount: 0.3 }}
             >
               <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6 hover:border-blue-500/30 transition-colors duration-300 hover-lift">
                 <div className="flex items-center mb-4">
@@ -178,10 +184,6 @@ const About = () => {
             
             <motion.div 
               variants={itemVariants}
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: false, amount: 0.3 }}
             >
               <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6 hover:border-purple-500/30 transition-colors duration-300 hover-lift">
                 <div className="flex items-center mb-4">
@@ -223,10 +225,6 @@ const About = () => {
           <motion.div 
             variants={itemVariants}
             className="lg:col-span-2"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: false, amount: 0.2 }}
           >
             <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-8 hover:border-blue-500/30 transition-colors duration-300">
               <div className="flex items-center justify-between mb-8">
@@ -246,22 +244,12 @@ const About = () => {
                     key={skill}
                     className="p-3 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-lg flex items-center justify-center hover:border-blue-500/50 transition-colors duration-300 h-full"
                     variants={skillVariants}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ 
-                      opacity: 1, 
-                      scale: 1,
-                      transition: { 
-                        duration: 0.4, 
-                        delay: 0.05 * index 
-                      }
-                    }}
+                    custom={index}
                     whileHover={{ 
                       scale: 1.05,
                       backgroundColor: 'rgba(59, 130, 246, 0.1)',
                       transition: { duration: 0.2 } 
                     }}
-                    viewport={{ once: false, amount: 0.1 }}
-                    custom={index}
                     data-scroll
                     data-scroll-offset="30%"
                   >
