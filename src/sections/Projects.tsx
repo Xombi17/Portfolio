@@ -44,10 +44,10 @@ const projects: Project[] = [
     description: "First place winner in college photography competition, showcasing creative composition and visual storytelling techniques.",
     technologies: ["Composition", "Lighting", "Post-processing", "Visual Storytelling"],
     images: [
-      "https://source.unsplash.com/random/800x600?photography,award",
-      "https://source.unsplash.com/random/800x600?photography,competition", 
-      "https://source.unsplash.com/random/800x600?photography,professional"
-    ],
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1554080353-a576cf803bda?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
+      ],
     projectUrl: "#",
     color: "#3B82F6", // blue
     icon: "📸",
@@ -55,14 +55,14 @@ const projects: Project[] = [
   },
   {
     id: 'film-1',
-    title: "Short Film: 'Echoes'",
+    title: "Short Film: 'Wakeup'",
     category: 'film',
-    description: "A 10-minute short film exploring themes of memory and identity, showcasing my skills in directing, cinematography, and storytelling.",
+    description: "A short film exploring the cyclical nature of daily routines, depicting a person caught in an endless time loop of mundane moments that gradually become surreal and meaningful.",
     technologies: ["Direction", "Cinematography", "Editing", "Sound Design"],
     images: [
-      "https://source.unsplash.com/random/800x600?film,short",
-      "https://source.unsplash.com/random/800x600?film,cinema",
-      "https://source.unsplash.com/random/800x600?film,director"
+      "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1533101585792-27f81a845550?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1505775561242-727b7fba20f0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
     ],
     projectUrl: "#",
     color: "#EF4444", // red
@@ -73,19 +73,20 @@ const projects: Project[] = [
     id: 'web-1',
     title: "Interactive Portfolio Website",
     category: 'web',
-    description: "A responsive portfolio website built with React, TypeScript, and Framer Motion, featuring interactive animations and 3D elements.",
-    technologies: ["React", "TypeScript", "Tailwind CSS", "Framer Motion", "Three.js"],
+    description: "My personal portfolio website showcasing my work in web development, photography, and filmmaking. Built with React, TypeScript, and Framer Motion, featuring interactive animations, floating elements, and matrix-style text effects.",
+    technologies: ["React", "TypeScript", "Tailwind CSS", "Framer Motion","Next.js", "GSAP", "Lucide Icons", "Vercel"],
     images: [
-      "https://source.unsplash.com/random/800x600?website,portfolio",
-      "https://source.unsplash.com/random/800x600?coding,website",
-      "https://source.unsplash.com/random/800x600?webdevelopment,ui"
+      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
     ],
-    projectUrl: "#",
-    githubUrl: "https://github.com/varadjoshi",
+    projectUrl: "https://portfolio-bay-seven-10.vercel.app/#hero",
+    githubUrl: "https://github.com/Xombi17/Portfolio",
     color: "#10B981", // green
     icon: "💻",
     featured: true
   },
+  /*
   {
     id: 'photo-2',
     title: "Urban Photography Series",
@@ -102,35 +103,36 @@ const projects: Project[] = [
     icon: "🏙️",
     featured: false
   },
+  */
   {
     id: 'film-2',
-    title: "Documentary: 'Local Heroes'",
+    title: "Short Film: 'Until Silence Breaks'",
     category: 'film',
-    description: "A mini-documentary highlighting local community leaders and their impact on society, featuring interviews and cinematic b-roll.",
-    technologies: ["Documentary", "Interviews", "Storytelling", "Production"],
+    description: "A poignant short film exploring the bond between a student and their mentor. When the teacher suddenly departs, the student struggles with the void left behind until discovering a mysterious USB drive containing an unexpected message that changes everything.",
+    technologies: ["Narrative Filmmaking", "Cinematography", "Directing", "Editing", "Sound Design"],
     images: [
-      "https://source.unsplash.com/random/800x600?documentary,film",
-      "https://source.unsplash.com/random/800x600?interview,filming",
-      "https://source.unsplash.com/random/800x600?documentary,camera"
+      "https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1540655037529-dec987208707?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
     ],
-    projectUrl: "#",
+    projectUrl: "https://youtu.be/xrlxXv1WIwc",
     color: "#8B5CF6", // purple
     icon: "🎥",
     featured: false
   },
   {
     id: 'web-2',
-    title: "E-Commerce Platform",
+    title: "Health Vault ",
     category: 'web',
-    description: "A full-stack e-commerce platform with secure payment processing, user authentication, and inventory management.",
+    description: "A comprehensive healthcare platform for securely storing and managing personal health records. Currently in development and not yet available to the public.",
     technologies: ["React", "Node.js", "MongoDB", "Stripe", "JWT"],
     images: [
-      "https://source.unsplash.com/random/800x600?ecommerce,website",
-      "https://source.unsplash.com/random/800x600?shopping,online",
-      "https://source.unsplash.com/random/800x600?store,digital"
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
     ],
-    projectUrl: "#",
-    githubUrl: "https://github.com/varadjoshi",
+    projectUrl: "https://he6dqskmv7ghd4np.vercel.app/",
+    githubUrl: "https://github.com/Xombi17/Health-Vault",
     color: "#F59E0B", // amber
     icon: "🛒",
     featured: false
@@ -142,16 +144,17 @@ const projects: Project[] = [
     description: "A new project currently in development. Stay tuned for updates!",
     technologies: ["TBA"],
     images: [
-      "https://source.unsplash.com/random/800x600?coming,soon",
-      "https://source.unsplash.com/random/800x600?future,project",
-      "https://source.unsplash.com/random/800x600?development,progress"
+      "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1590479773265-7464e5d48118?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
     ],
     projectUrl: "#",
     color: "#EC4899", // pink
     icon: "✨",
     featured: false
   },
-  {
+  /*
+ {
     id: 'blank-2',
     title: "Future Project",
     category: 'blank2',
@@ -167,6 +170,7 @@ const projects: Project[] = [
     icon: "🚀",
     featured: false
   }
+  */
 ];
 
 const Projects = () => {
@@ -181,6 +185,37 @@ const Projects = () => {
     const featured = projects.find(p => p.featured);
     if (featured) setActiveProject(featured);
   }, []);
+
+  // Add keyboard navigation for modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isExpanded) {
+        setIsExpanded(false);
+      } else if (e.key === 'ArrowRight' && isExpanded) {
+        navigateProject(1);
+      } else if (e.key === 'ArrowLeft' && isExpanded) {
+        navigateProject(-1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isExpanded, activeProject]);
+
+  // Function to navigate between projects
+  const navigateProject = (direction: number) => {
+    if (!activeProject) return;
+
+    const currentProjects = selectedCategory === 'all' 
+      ? projects 
+      : projects.filter(project => project.category === selectedCategory);
+    
+    const currentIndex = currentProjects.findIndex(p => p.id === activeProject.id);
+    if (currentIndex === -1) return;
+    
+    const nextIndex = (currentIndex + direction + currentProjects.length) % currentProjects.length;
+    setActiveProject(currentProjects[nextIndex]);
+  };
 
   // Filter projects by selected category
   const filteredProjects = selectedCategory === 'all' 
@@ -400,19 +435,21 @@ const Projects = () => {
                 </div>
               </div>
               
-              {/* Hover Overlay with View Project Button */}
+              {/* Hover Overlay with View Project Button - ONLY for non-Coming Soon projects */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <motion.div 
-                  className="px-6 py-3 rounded-full"
-                  style={{ backgroundColor: project.color }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <span className="text-black font-semibold">View Project</span>
-                </motion.div>
+                {project.category !== 'blank1' && project.category !== 'blank2' && (
+                  <motion.div 
+                    className="px-6 py-3 rounded-full"
+                    style={{ backgroundColor: project.color }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <span className="text-black font-semibold">View Project</span>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           ))}
@@ -449,6 +486,31 @@ const Projects = () => {
                 exit={{ scale: 0.9, y: 20, opacity: 0 }}
                 transition={{ duration: 0.4, type: "spring" }}
               >
+                {/* Navigation arrows */}
+                <button 
+                  className="absolute top-1/2 left-4 z-10 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-gray-400 hover:text-white transition-colors transform -translate-y-1/2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigateProject(-1);
+                  }}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                
+                <button 
+                  className="absolute top-1/2 right-4 z-10 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-gray-400 hover:text-white transition-colors transform -translate-y-1/2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigateProject(1);
+                  }}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+
                 {/* Close Button */}
                 <button 
                   className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
@@ -543,37 +605,40 @@ const Projects = () => {
                       </div>
                     </div>
                     
-                    <div className="flex flex-wrap gap-4">
-                      <motion.a 
-                        href={activeProject.projectUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 font-medium rounded-full px-6 py-3 text-base"
-                        style={{ 
-                          backgroundColor: activeProject.color,
-                          color: '#000' 
-                        }}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <ExternalLinkIcon />
-                        <span>View Project</span>
-                      </motion.a>
-                      
-                      {activeProject.githubUrl && (
+                    {/* Only show buttons for non-coming soon projects */}
+                    {activeProject.category !== 'blank1' && activeProject.category !== 'blank2' && (
+                      <div className="flex flex-wrap gap-4">
                         <motion.a 
-                          href={activeProject.githubUrl} 
+                          href={activeProject.projectUrl} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 border border-gray-700 rounded-full px-6 py-3 text-base text-gray-300 hover:text-white"
-                          whileHover={{ scale: 1.05, borderColor: activeProject.color }}
+                          className="flex items-center gap-2 font-medium rounded-full px-6 py-3 text-base"
+                          style={{ 
+                            backgroundColor: activeProject.color,
+                            color: '#000' 
+                          }}
+                          whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
-                          <GithubIcon />
-                          <span>View Code</span>
+                          <ExternalLinkIcon />
+                          <span>View Project</span>
                         </motion.a>
-                      )}
-                    </div>
+                        
+                        {activeProject.githubUrl && (
+                          <motion.a 
+                            href={activeProject.githubUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 border border-gray-700 rounded-full px-6 py-3 text-base text-gray-300 hover:text-white"
+                            whileHover={{ scale: 1.05, borderColor: activeProject.color }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <GithubIcon />
+                            <span>View Code</span>
+                          </motion.a>
+                        )}
+                      </div>
+                    )}
                   </motion.div>
                 </div>
               </motion.div>
