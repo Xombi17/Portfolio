@@ -1,13 +1,20 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 
+// Consolidate all skills into a single flat array
 const skills = [
-  'React.js', 'TypeScript', 'Next.js', 'Node.js',
-  'Tailwind CSS', 'JavaScript', 'Cinematography', 'CSS/SCSS',
-  'Framer Motion', 'UI/UX Design', 'Three.js', 'VideoEditing'
+  // Frontend
+  "React.js", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion", "Three.js",
+  // Backend
+  "Node.js", "Express", "RESTful APIs",
+  // Creative
+  "Cinematography", "VideoEditing", "UI/UX Design", "Photography",
+  // Languages
+  "JavaScript", "HTML", "CSS/SCSS"
 ];
 
-// Skill categories for better organization
+// Skill categories for better organization (commented out as we're not using categories anymore)
+/*
 const skillCategories = [
   {
     name: "Frontend",
@@ -26,6 +33,7 @@ const skillCategories = [
     skills: ["JavaScript", "TypeScript", "HTML", "CSS/SCSS"]
   }
 ];
+*/
 
 const About = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -201,31 +209,24 @@ const About = () => {
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {skillCategories.map((category, categoryIndex) => (
-                  <div key={category.name} className="space-y-4">
-                    <h4 className="text-lg font-semibold text-blue-400">{category.name}</h4>
-                    <div className="space-y-2">
-                      {category.skills.map((skill, skillIndex) => (
-                        <motion.div
-                          key={skill}
-                          className="p-3 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-lg flex items-center hover:border-blue-500/50 transition-colors duration-300"
-                          variants={skillVariants}
-                          whileHover={{ 
-                            scale: 1.03,
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            transition: { duration: 0.2 } 
-                          }}
-                          custom={categoryIndex + skillIndex}
-                          data-scroll
-                          data-scroll-offset="30%"
-                        >
-                          <div className="w-2 h-2 rounded-full bg-blue-500 mr-3"></div>
-                          <span>{skill}</span>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {skills.map((skill, index) => (
+                  <motion.div
+                    key={skill}
+                    className="p-3 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-lg flex items-center justify-center hover:border-blue-500/50 transition-colors duration-300 h-full"
+                    variants={skillVariants}
+                    whileHover={{ 
+                      scale: 1.05,
+                      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                      transition: { duration: 0.2 } 
+                    }}
+                    custom={index}
+                    data-scroll
+                    data-scroll-offset="30%"
+                  >
+                    <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+                    <span className="text-center">{skill}</span>
+                  </motion.div>
                 ))}
               </div>
             </div>
