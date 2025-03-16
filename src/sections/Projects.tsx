@@ -64,7 +64,7 @@ const projects: Project[] = [
       "https://images.unsplash.com/photo-1533101585792-27f81a845550?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
       "https://images.unsplash.com/photo-1505775561242-727b7fba20f0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
     ],
-    projectUrl: "#",
+    projectUrl: "https://youtu.be/UjQMxau9nO0",
     color: "#EF4444", // red
     icon: "🎬",
     featured: true

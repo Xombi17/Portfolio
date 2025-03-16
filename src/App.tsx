@@ -8,6 +8,7 @@ import { initScroll, disableScroll, enableScroll } from './utils/scrollUtils';
 import Navbar from './components/Navbar';
 import CustomCursor from './components/CustomCursor';
 import Preloader from './components/Preloader';
+import GoToTop from './components/GoToTop';
 
 // Sections
 import Hero, { FloatingBackground } from './sections/Hero';
@@ -166,6 +167,9 @@ function App() {
 
       {/* Custom cursor for desktop */}
       <CustomCursor />
+      
+      {/* Add GoToTop button */}
+      <GoToTop />
 
       {/* Floating background that appears throughout the site */}
       <motion.div
@@ -194,27 +198,27 @@ function App() {
         initial="hidden"
         animate={contentVisible ? "visible" : "hidden"}
       >
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section className="hero-section">
           <Hero />
         </motion.div>
         
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section className="about-section">
           <About />
         </motion.div>
         
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section className="projects-section">
           <Projects />
         </motion.div>
         
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section className="certificates-section">
           <Certificates />
         </motion.div>
         
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section className="experience-section">
           <Experience />
         </motion.div>
         
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section className="contact-section">
           <Contact />
         </motion.div>
 
