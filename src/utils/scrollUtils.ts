@@ -105,6 +105,29 @@ export const scrollTo = (target: string | HTMLElement) => {
   }
 };
 
+export const scrollToSection = (id: string, offset: number = 0) => {
+  const element = document.querySelector(id);
+  if (element) {
+    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+    window.scrollTo({
+      top: elementPosition - offset,
+      behavior: 'smooth'
+    });
+  }
+};
+
+export const initSmoothScroll = () => {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const href = this.getAttribute('href');
+      if (href) {
+        scrollTo(href);
+      }
+    });
+  });
+};
+
 export const updateScroll = () => {
   if (scrollInstance.scroll) {
     setTimeout(() => {

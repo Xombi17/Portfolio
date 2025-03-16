@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Utilities
-import { initScroll, disableScroll, enableScroll } from './utils/scrollUtils';
+import { initScroll, disableScroll, enableScroll, initSmoothScroll } from './utils/scrollUtils';
 
 // Components
 import Navbar from './components/Navbar';
@@ -47,6 +47,14 @@ function App() {
           instance.destroy();
         }
       };
+    }
+  }, [isLoading]);
+
+  // Initialize smooth scrolling
+  useEffect(() => {
+    // Only initialize smooth scrolling after the loading sequence
+    if (!isLoading) {
+      initSmoothScroll();
     }
   }, [isLoading]);
 
@@ -194,27 +202,27 @@ function App() {
         initial="hidden"
         animate={contentVisible ? "visible" : "hidden"}
       >
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section>
           <Hero />
         </motion.div>
         
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section>
           <About />
         </motion.div>
         
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section>
           <Projects />
         </motion.div>
         
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section>
           <Certificates />
         </motion.div>
         
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section>
           <Experience />
         </motion.div>
         
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sectionVariants} data-scroll-section>
           <Contact />
         </motion.div>
 
