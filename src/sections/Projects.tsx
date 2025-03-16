@@ -39,13 +39,13 @@ interface Project {
 const projects: Project[] = [
   {
     id: 'photo-1',
-    title: "Award-Winning Photography",
+    title: "College Photography Contest Winner",
     category: 'photo',
-    description: "A collection of my award-winning photographs submitted to national and international competitions, focusing on creative compositions and storytelling.",
+    description: "First place winner in college photography competition, showcasing creative composition and visual storytelling techniques.",
     technologies: ["Composition", "Lighting", "Post-processing", "Visual Storytelling"],
     images: [
       "https://source.unsplash.com/random/800x600?photography,award",
-      "https://source.unsplash.com/random/800x600?photography,competition",
+      "https://source.unsplash.com/random/800x600?photography,competition", 
       "https://source.unsplash.com/random/800x600?photography,professional"
     ],
     projectUrl: "#",
