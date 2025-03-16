@@ -10,7 +10,7 @@ import CustomCursor from './components/CustomCursor';
 import Preloader from './components/Preloader';
 
 // Sections
-import Hero from './sections/Hero';
+import Hero, { FloatingBackground } from './sections/Hero';
 import About from './sections/About';
 import Projects from './sections/Projects';
 import Experience from './sections/Experience';
@@ -165,6 +165,15 @@ function App() {
 
       {/* Custom cursor for desktop */}
       <CustomCursor />
+
+      {/* Floating background that appears throughout the site */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: contentVisible ? 1 : 0 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
+      >
+        <FloatingBackground />
+      </motion.div>
 
       {/* Navigation */}
       <motion.div

@@ -76,25 +76,33 @@
   /* Matrix text animation styles */
   @keyframes matrix-flicker {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; }
+    50% { opacity: 0.9; }
   }
 
   .matrix-text-container {
-    font-family: "Courier New", monospace;
-    font-weight: bold;
-    letter-spacing: 1px;
-    font-size: 0.95em;
-    animation: matrix-flicker 2s infinite;
+    font-family: 'OnePlus Sans', 'Audiowide', sans-serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-size: 1.05em;
+    background-size: 200% auto;
+    text-transform: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
   }
 
   .matrix-text-container span {
     display: inline-block;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    background-size: 200% auto;
+    text-transform: none !important;
   }
 
-  .matrix-text-container:hover span {
-    color: #00ff00;
-    text-shadow: 0 0 8px #00ff00, 0 0 12px #00ff00;
+  .matrix-text-container span:hover {
+    transform: translateY(-5px);
+    filter: brightness(1.2);
   }
 
   /* Floating animation for technologies/languages */

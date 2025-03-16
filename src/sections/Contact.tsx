@@ -122,7 +122,7 @@ const Contact = () => {
   const socialLinks = [
     { name: 'LinkedIn', icon: <LinkedinIcon />, url: 'https://linkedin.com/in/varadjoshi' },
     { name: 'YouTube', icon: <YoutubeIcon />, url: 'https://youtube.com/c/varadjoshi' },
-    { name: 'Instagram', icon: <InstagramIcon />, url: 'https://instagram.com/varad_captures' },
+    { name: 'Instagram', icon: <InstagramIcon />, url: 'https://www.instagram.com/varad_joshi17/' },
   ];
 
   return (

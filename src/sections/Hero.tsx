@@ -18,20 +18,28 @@ const floatingTerms = [
 ];
 
 // Matrix characters for the random effect
-const matrixChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
+const matrixChars = "abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
 
-// Component for floating terms/languages
+// Component for floating terms/languages - updated for better visibility
 const FloatingTerm = ({ term, index }: { term: string; index: number }) => {
-  const size = Math.floor(Math.random() * 10) + 14; // Random size between 14px and 24px
-  const opacity = Math.random() * 0.6 + 0.3; // Random opacity between 0.3 and 0.9
+  // More scattered distribution across the viewport
+  const totalTerms = floatingTerms.length;
+  const scale = window.innerWidth / 1200; // Scaling factor based on viewport
   
-  // Calculate initial position spread across viewport 
-  const xPos = (index % 5) * 20 + Math.random() * 5; // More horizontal spread
-  const yPos = Math.floor(index / 5) * 15 + Math.random() * 10; // More vertical spread
+  // Calculate position with wider distribution
+  const angle = (index / totalTerms) * 2 * Math.PI; // Position in a circle
+  const radius = Math.random() * 40 + 25; // Random radius (25-65% of viewport)
+  
+  // Convert to x,y coordinates with center of screen as origin
+  const xPos = 50 + Math.cos(angle) * radius + (Math.random() * 20 - 10);
+  const yPos = 50 + Math.sin(angle) * radius + (Math.random() * 20 - 10);
+  
+  const size = Math.floor(Math.random() * 12) + 16; // Random size between 16px and 28px
+  const opacity = Math.random() * 0.3 + 0.2; // Reduced opacity range: 0.2-0.5
   
   return (
     <motion.div
-      className="absolute text-blue-300 whitespace-nowrap z-10 pointer-events-none"
+      className="fixed text-blue-300 whitespace-nowrap z-10 pointer-events-none"
       style={{ 
         fontSize: `${size}px`,
         fontWeight: 'bold',
@@ -43,16 +51,16 @@ const FloatingTerm = ({ term, index }: { term: string; index: number }) => {
       initial={{ opacity: 0 }}
       animate={{ 
         opacity,
-        y: [0, -20, 0],
-        x: [0, 10, 0],
+        y: [0, -30 * scale, 0],
+        x: [0, 15 * scale, 0],
         rotate: [0, 5, 0],
       }}
       transition={{
-        duration: 10 + index % 5,
+        duration: 12 + index % 8,
         repeat: Infinity,
         repeatType: 'reverse',
         ease: 'easeInOut',
-        delay: index * 0.3,
+        delay: index * 0.2,
       }}
     >
       {term}
@@ -60,55 +68,81 @@ const FloatingTerm = ({ term, index }: { term: string; index: number }) => {
   );
 };
 
-// Component for Matrix-style letter animation
-const MatrixLetter = ({ letter, delay }: { letter: string, delay: number }) => {
+// Component for Matrix-style whole word animation - updated to preserve case
+const MatrixWord = ({ word, delay }: { word: string, delay: number }) => {
   const controls = useAnimationControls();
-  const [currentChar, setCurrentChar] = useState(letter);
+  const [currentWord, setCurrentWord] = useState(word); // Keep original capitalization
   const [isHovering, setIsHovering] = useState(false);
   
   useEffect(() => {
     if (isHovering) {
       let count = 0;
       const interval = setInterval(() => {
-        if (count < 10) {
-          // Show random characters during animation
-          setCurrentChar(matrixChars[Math.floor(Math.random() * matrixChars.length)]);
+        if (count < 20) {
+          // Generate random word of the same length
+          let randomWord = '';
+          for (let i = 0; i < word.length; i++) {
+            // For capital letters in the original word, use capital random letters
+            if (word[i] === word[i].toUpperCase() && word[i] !== word[i].toLowerCase()) {
+              randomWord += matrixChars[Math.floor(Math.random() * matrixChars.length)].toUpperCase();
+            } else {
+              randomWord += matrixChars[Math.floor(Math.random() * matrixChars.length)].toLowerCase();
+            }
+          }
+          setCurrentWord(randomWord);
           count++;
         } else {
-          // Return to original letter
-          setCurrentChar(letter);
+          // Return to original word with original capitalization
+          setCurrentWord(word);
           clearInterval(interval);
         }
-      }, 50);
+      }, 25); // Super fast animation
       
       return () => clearInterval(interval);
     } else {
-      setCurrentChar(letter);
+      setCurrentWord(word);
     }
-  }, [isHovering, letter]);
+  }, [isHovering, word]);
   
   return (
     <motion.span
-      className="inline-block text-[#0f0] origin-center"
+      className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-500 mx-2"
       style={{
-        textShadow: isHovering ? '0 0 10px #0f0, 0 0 20px #0f0' : 'none',
-        transition: 'text-shadow 0.3s ease'
+        textShadow: isHovering ? '0 0 10px rgba(139, 92, 246, 0.7)' : 'none',
+        transition: 'text-shadow 0.3s ease',
+        fontFamily: "'OnePlus Sans', sans-serif",
+        fontWeight: 700,
       }}
       initial={{ opacity: 1 }}
       animate={controls}
       onHoverStart={() => {
         setIsHovering(true);
         controls.start({
-          y: [0, -5, 0],
-          transition: { duration: 0.5, delay: delay * 0.05 }
+          y: [0, -8, 0],
+          transition: { duration: 0.6, delay: delay * 0.05 }
         });
       }}
       onHoverEnd={() => {
         setIsHovering(false);
       }}
     >
-      {currentChar}
+      {currentWord}
     </motion.span>
+  );
+};
+
+// FloatingBackground component to be used throughout the site
+const FloatingBackground = () => {
+  return (
+    <div className="fixed inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+      {floatingTerms.map((term, index) => (
+        <FloatingTerm 
+          key={index} 
+          term={term}
+          index={index}
+        />
+      ))}
+    </div>
   );
 };
 
@@ -198,9 +232,6 @@ const Hero = () => {
     }
   };
 
-  // Split the name into individual characters for matrix effect
-  const nameArray = "Varad Joshi".split("");
-
   return (
     <motion.section 
       ref={containerRef}
@@ -217,17 +248,6 @@ const Hero = () => {
       data-scroll-section
     >
       <div className="absolute top-0 left-0 w-full h-full" />
-      
-      {/* Floating terms/languages in background */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden">
-        {floatingTerms.map((term, index) => (
-          <FloatingTerm 
-            key={index} 
-            term={term}
-            index={index}
-          />
-        ))}
-      </div>
       
       <motion.div 
         className="absolute inset-0 w-full h-full bg-gradient-to-b from-black to-zinc-900"
@@ -284,10 +304,9 @@ const Hero = () => {
             onHoverEnd={() => setIsNameHovered(false)}
             style={{ cursor: 'pointer' }}
           >
-            <div className="matrix-text-container inline-block">
-              {nameArray.map((char, index) => (
-                <MatrixLetter key={index} letter={char} delay={index} />
-              ))}
+            <div className="matrix-text-container inline-flex">
+              <MatrixWord word="Varad" delay={0} />
+              <MatrixWord word="Joshi" delay={1} />
             </div>
           </motion.div>
         </motion.h1>
@@ -342,4 +361,6 @@ const Hero = () => {
   );
 };
 
+// Export the FloatingBackground component to be used in App.tsx
+export { FloatingBackground };
 export default Hero; 
