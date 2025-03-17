@@ -6,11 +6,11 @@ const skills = [
   // Frontend
   "React.js", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion", "Three.js",
   // Backend
-  "Node.js", "MongoDB", "C++",
+  "Node.js", "MongoDB", "C/C++",
   // Creative
   "Cinematography", "VideoEditing", "UI/UX Design", "Photography",
   // Languages
-  "JavaScript", "HTML", "CSS/SCSS"
+  "JavaScript", "HTML"
 ];
 
 // Skill categories for better organization (commented out as we're not using categories anymore)
