@@ -232,21 +232,38 @@ const Projects = () => {
 
   // Animation variants
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { 
+      opacity: 0,
+      transition: {
+        when: "afterChildren"
+      }
+    },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        when: "beforeChildren",
+        staggerChildren: 0.2,
+        delayChildren: 0.1
       }
     }
   };
   
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { 
+      y: 40, 
+      opacity: 0,
+      scale: 0.9
+    },
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.5 }
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 12,
+        duration: 0.6
+      }
     }
   };
   
@@ -307,26 +324,55 @@ const Projects = () => {
         <motion.div
           className="mb-16 text-center"
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
-          transition={{ duration: 0.8 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.2 }}
+          transition={{ 
+            duration: 0.8,
+            type: "spring",
+            stiffness: 100,
+            damping: 20
+          }}
         >
-          <h2 className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4">
+          <motion.h2 
+            className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             Creative Portfolio
-          </h2>
-          <p className="text-gray-400 max-w-xl mx-auto">
+            <motion.div
+              className="h-1 w-24 bg-gradient-to-r from-blue-400 to-violet-500 mx-auto mt-4"
+              initial={{ width: 0 }}
+              whileInView={{ width: 96 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+            />
+          </motion.h2>
+          <motion.p 
+            className="text-gray-400 max-w-xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
             Explore my diverse projects across photography, filmmaking, and web development.
-          </p>
+          </motion.p>
         </motion.div>
         
         {/* Category Filters - Horizontal Scrollable Menu */}
         <motion.div 
           className="mb-12 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent"
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.2 }}
+          transition={{ 
+            duration: 0.5, 
+            delay: 0.4,
+            type: "spring",
+            stiffness: 100,
+            damping: 20
+          }}
         >
           <div className="flex space-x-3 md:justify-center">
-            {categories.map(category => (
+            {categories.map((category, index) => (
               <motion.button
                 key={category.id}
                 className={`px-5 py-3 rounded-full text-sm md:text-base flex items-center gap-2 whitespace-nowrap transition-all duration-300 ${
@@ -341,6 +387,15 @@ const Projects = () => {
                   boxShadow: selectedCategory === category.id ? `0 4px 20px ${category.color}20` : ''
                 }}
                 onClick={() => setSelectedCategory(category.id as ProjectCategory | 'all')}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.3, 
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 20
+                }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -355,13 +410,15 @@ const Projects = () => {
         <motion.div
           variants={containerVariants}
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.2 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project, index) => (
             <motion.div
               key={project.id}
-              variants={itemVariants} 
+              variants={itemVariants}
+              custom={index}
               className="relative group rounded-xl overflow-hidden cursor-pointer"
               style={{ 
                 backgroundColor: `${project.color}10`,
@@ -373,9 +430,15 @@ const Projects = () => {
               }}
               whileHover={{ 
                 y: -10, 
+                scale: 1.02,
                 boxShadow: `0 10px 30px ${project.color}30` 
               }}
-              transition={{ duration: 0.3 }}
+              transition={{ 
+                duration: 0.3,
+                type: "spring",
+                stiffness: 300,
+                damping: 20
+              }}
             >
               {/* Project Image */}
               <div className="h-60 overflow-hidden relative">
