@@ -6,7 +6,7 @@ const skills = [
   // Frontend
   "React.js", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion", "Three.js",
   // Backend
-  "Node.js", "Express", "RESTful APIs",
+  "Node.js", "MongoDB", "C++",
   // Creative
   "Cinematography", "VideoEditing", "UI/UX Design", "Photography",
   // Languages
