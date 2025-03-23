@@ -1,6 +1,11 @@
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, useInView, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import '../font-loader.css'; // Corrected import path
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger);
 
 // Project Category Types
 type ProjectCategory = 'photo' | 'film' | 'web' | 'blank1' | 'blank2';
@@ -395,6 +400,70 @@ const Projects = () => {
     }));
   }, []);
   
+  // Reference to the project grid for GSAP ScrollTrigger
+  const projectGridRef = useRef<HTMLDivElement>(null);
+  
+  // Initialize GSAP ScrollTrigger for project cards
+  useEffect(() => {
+    // Skip if on low-performance device, we'll use simpler animations
+    if (isLowPerfDevice) return;
+    
+    let triggers: ScrollTrigger[] = [];
+    
+    if (projectGridRef.current && filteredProjects.length > 0) {
+      // Clear existing animations when category changes
+      gsap.set(`#projects .project-item`, { clearProps: "all" });
+      
+      // Setup animations for each project card
+      const projectCards = projectGridRef.current.querySelectorAll('.project-item');
+      
+      projectCards.forEach((card, index) => {
+        // Initial state
+        gsap.set(card, { 
+          opacity: 0, 
+          y: 50,
+          scale: 0.95
+        });
+        
+        // Create ScrollTrigger
+        const trigger = ScrollTrigger.create({
+          trigger: card,
+          start: "top bottom-=100px",
+          end: "center center",
+          toggleActions: "play none none reverse",
+          onEnter: () => {
+            gsap.to(card, {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.8,
+              ease: "power2.out",
+              delay: index * 0.1, // Staggered animation
+              overwrite: true
+            });
+          },
+          onLeaveBack: () => {
+            gsap.to(card, {
+              opacity: 0,
+              y: 50,
+              scale: 0.95,
+              duration: 0.5,
+              ease: "power2.in",
+              overwrite: true
+            });
+          }
+        });
+        
+        triggers.push(trigger);
+      });
+    }
+    
+    // Cleanup function to kill all ScrollTrigger instances
+    return () => {
+      triggers.forEach(trigger => trigger.kill());
+    };
+  }, [filteredProjects, selectedCategory, isLowPerfDevice]);
+  
   return (
     <section 
       id="projects" 
@@ -605,8 +674,9 @@ const Projects = () => {
           </div>
         </motion.div>
         
-        {/* Project Grid - optimized with better viewport detection */}
+        {/* Project Grid - now with GSAP ScrollTrigger */}
         <motion.div
+          ref={projectGridRef}
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -620,9 +690,7 @@ const Projects = () => {
               filteredProjects.map((project, index) => (
                 <motion.div
                   key={project.id}
-              variants={itemVariants} 
-                  custom={index}
-                  className="relative group rounded-xl overflow-hidden cursor-pointer"
+                  className="relative group rounded-xl overflow-hidden cursor-pointer project-item"
                   style={{ 
                     backgroundColor: `${project.color}10`,
                     borderColor: `${project.color}30`,
@@ -636,6 +704,7 @@ const Projects = () => {
                       rotateY: springY
                     })
                   }}
+                  data-speed={0.5 + (index % 3) * 0.2} // Varying speeds for parallax effect
                   onClick={() => {
                     setActiveProject(project);
                     setIsExpanded(true);
@@ -654,9 +723,9 @@ const Projects = () => {
                     stiffness: 300,
                     damping: 20
                   }}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -50 }}
+                  initial={isLowPerfDevice ? { opacity: 0, y: 50 } : undefined}
+                  animate={isLowPerfDevice ? { opacity: 1, y: 0 } : undefined}
+                  exit={isLowPerfDevice ? { opacity: 0, y: -50 } : undefined}
                 >
                   {/* Project Image with optimized 3D effect */}
                   <motion.div 

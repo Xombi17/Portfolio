@@ -11,6 +11,36 @@
     <!-- Inter font (with display=swap for better loading) -->
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     
+    <!-- GSAP ScrollSmoother styles -->
+    <style>
+      html.has-scroll-smooth {
+        overflow: hidden;
+      }
+      
+      html.has-scroll-dragging {
+        user-select: none;
+      }
+      
+      #smooth-content {
+        will-change: transform;
+      }
+      
+      /* Parallax effect for data-speed elements */
+      [data-speed] {
+        will-change: transform;
+      }
+      
+      /* Hide ugly scrollbar during smooth scroll */
+      .scrollbar-hidden::-webkit-scrollbar {
+        display: none;
+      }
+      
+      .scrollbar-hidden {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+    
     <title>My portfolio</title>
   </head>
   <body>

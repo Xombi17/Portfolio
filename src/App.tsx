@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Utilities
 import { initScroll, disableScroll, enableScroll, initSmoothScroll } from './utils/scrollUtils';
+import { initSmoothScrolling, setupParallaxEffects, refreshScrollTrigger } from './utils/gsapScrollUtils';
 
 // Components
 import Navbar from './components/Navbar';
@@ -22,6 +23,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [contentVisible, setContentVisible] = useState(false);
   const [scrollInstance, setScrollInstance] = useState<any>(null);
+  const [useGsapScroll, setUseGsapScroll] = useState(true); // Use GSAP by default
 
   // Disable scrolling when the app loads
   useEffect(() => {
@@ -36,23 +38,43 @@ function App() {
     };
   }, [isLoading]);
 
-  // Initialize smooth scrolling
+  // Initialize scroll behavior based on preference
   useEffect(() => {
-    if (!isLoading && containerRef.current) {
-      const instance = initScroll(containerRef.current);
-      setScrollInstance(instance);
-
-      return () => {
-        if (instance) {
-          instance.destroy();
+    let cleanup: (() => void) | undefined;
+    
+    if (!isLoading) {
+      if (useGsapScroll) {
+        // Initialize GSAP-based smooth scrolling
+        cleanup = initSmoothScrolling();
+        
+        // Setup parallax effects for elements with data-speed attribute
+        setupParallaxEffects();
+        
+        // Refresh ScrollTrigger when all content is loaded
+        window.addEventListener('load', refreshScrollTrigger);
+        
+        return () => {
+          if (cleanup) cleanup();
+          window.removeEventListener('load', refreshScrollTrigger);
+        };
+      } else {
+        // Use original Locomotive Scroll implementation as fallback
+        if (containerRef.current) {
+          const instance = initScroll(containerRef.current);
+          setScrollInstance(instance);
+          
+          return () => {
+            if (instance) {
+              instance.destroy();
+            }
+          };
         }
-      };
+      }
     }
-  }, [isLoading]);
+  }, [isLoading, useGsapScroll]);
 
-  // Initialize smooth scrolling
+  // Initialize anchor link smooth scrolling
   useEffect(() => {
-    // Only initialize smooth scrolling after the loading sequence
     if (!isLoading) {
       initSmoothScroll();
     }
@@ -166,7 +188,7 @@ function App() {
   ];
 
   return (
-    <div className="bg-black text-white">
+    <div className="bg-black text-white" id="smooth-wrapper">
       {/* Preloader */}
       <AnimatePresence mode="wait">
         {isLoading && <Preloader onLoadingComplete={handleLoadingComplete} />}
@@ -198,28 +220,29 @@ function App() {
         ref={containerRef} 
         className="main-container"
         data-scroll-container
-        variants={mainContentVariants}
+        id="smooth-content"
         initial="hidden"
         animate={contentVisible ? "visible" : "hidden"}
+        variants={mainContentVariants}
       >
         <motion.div variants={sectionVariants} data-scroll-section>
           <Hero />
         </motion.div>
-        
+
         <motion.div variants={sectionVariants} data-scroll-section>
           <About />
         </motion.div>
-        
+
         <motion.div variants={sectionVariants} data-scroll-section>
           <Projects />
         </motion.div>
-        
-        <motion.div variants={sectionVariants} data-scroll-section>
-          <Certificates />
-        </motion.div>
-        
+
         <motion.div variants={sectionVariants} data-scroll-section>
           <Experience />
+        </motion.div>
+
+        <motion.div variants={sectionVariants} data-scroll-section>
+          <Certificates />
         </motion.div>
         
         <motion.div variants={sectionVariants} data-scroll-section>
