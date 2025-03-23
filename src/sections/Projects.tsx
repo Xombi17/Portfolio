@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, useInView, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import '../font-loader.css'; // Corrected import path
 
 // Project Category Types
 type ProjectCategory = 'photo' | 'film' | 'web' | 'blank1' | 'blank2';
@@ -210,7 +211,7 @@ const Projects = () => {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   
-  // 3D text animation values
+  // 3D text animation values - defined unconditionally
   const textY = useMotionValue(0);
   const textZ = useTransform(textY, [-100, 100], [50, -50]);
   const textRotateX = useTransform(textY, [-100, 100], [30, -30]);
@@ -218,11 +219,22 @@ const Projects = () => {
   // Mouse position state for section background parallax
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
+  // Create motion values for project items outside the map function
+  // These will be used for all project tiles
+  const tileX = useMotionValue(0);
+  const tileY = useMotionValue(0);
+  const rotateX = useTransform(tileY, [-100, 100], [10, -10]);
+  const rotateY = useTransform(tileX, [-100, 100], [-10, 10]);
+  const springX = useSpring(rotateX, { stiffness: 300, damping: 30 });
+  const springY = useSpring(rotateY, { stiffness: 300, damping: 30 });
+  
+  // Modal animation values - to prevent hooks in conditionals
+  const modalBackgroundX = useMotionValue(0);
+  const modalBackgroundY = useMotionValue(0);
+  
   // Effect for parallax background movement - throttled for performance
   useEffect(() => {
-    // Skip mouse tracking on low performance devices
-    if (isLowPerfDevice) return;
-    
+    // Handle mouse movement for all effects
     const handleMouseMove = throttle((event: MouseEvent) => {
       const { clientX, clientY } = event;
       const windowWidth = window.innerWidth;
@@ -235,11 +247,27 @@ const Projects = () => {
       
       // Update the 3D text motion value based on mouse position
       textY.set((clientY / windowHeight - 0.5) * 100);
+      
+      // Update tile motion values
+      if (!isLowPerfDevice) {
+        const tileCenterX = windowWidth / 2;
+        const tileCenterY = windowHeight / 2;
+        tileX.set((clientX - tileCenterX) / 10);
+        tileY.set((clientY - tileCenterY) / 10);
+      }
+      
+      // Update modal background if modal is open
+      if (isExpanded) {
+        modalBackgroundX.set((clientX / windowWidth - 0.5) * 20);
+        modalBackgroundY.set((clientY / windowHeight - 0.5) * 20);
+      }
     }, 16); // Throttle to ~60fps
     
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [textY, isLowPerfDevice]);
+    if (!isLowPerfDevice) {
+      window.addEventListener('mousemove', handleMouseMove);
+      return () => window.removeEventListener('mousemove', handleMouseMove);
+    }
+  }, [textY, isLowPerfDevice, tileX, tileY, isExpanded, modalBackgroundX, modalBackgroundY]);
 
   // Initialize with a featured project
   useEffect(() => {
@@ -330,7 +358,43 @@ const Projects = () => {
       }
     }
   };
+
+  // Handler functions for tile effects - use the shared motion values
+  const handleTileMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (isLowPerfDevice) return;
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    tileX.set(e.clientX - centerX);
+    tileY.set(e.clientY - centerY);
+  }, [isLowPerfDevice, tileX, tileY]);
   
+  const handleTileMouseLeave = useCallback(() => {
+    if (isLowPerfDevice) return;
+    tileX.set(0);
+    tileY.set(0);
+  }, [isLowPerfDevice, tileX, tileY]);
+  
+  // Pre-compute random values for modal particles
+  const modalParticles = useMemo(() => {
+    return Array.from({ length: 20 }).map((_, i) => ({
+      color: i % 3 === 0 ? 'active' : i % 3 === 1 ? '#ffffff' : '#8B5CF6',
+      width: Math.random() * 6 + 2,
+      height: Math.random() * 6 + 2,
+      initialX: Math.random() * window.innerWidth,
+      initialY: Math.random() * window.innerHeight,
+      targetX: (Math.random() - 0.5) * window.innerWidth,
+      targetY: (Math.random() - 0.5) * window.innerHeight,
+      opacity: Math.random() * 0.2 + 0.05,
+      blur: Math.random() * 2,
+      duration: Math.random() * 20 + 20,
+      rotate: Math.random() * 360,
+      scale: Math.random() * 0.5 + 0.8
+    }));
+  }, []);
+
   return (
     <section 
       id="projects" 
@@ -348,6 +412,7 @@ const Projects = () => {
             filter: 'blur(120px)',
             willChange: 'transform, opacity',
             transform: 'translateZ(0)',
+            position: 'relative' /* Add position property */
           }}
           initial={{ opacity: 0 }}
           animate={{ 
@@ -379,6 +444,7 @@ const Projects = () => {
                 filter: `blur(${Math.random() * 2}px)`,
                 willChange: 'transform, opacity',
                 transform: 'translateZ(0)',
+                position: 'relative' /* Add position property */
               }}
               animate={isLowPerfDevice ? {
                 y: [null, Math.random() * -200 - 50],
@@ -419,6 +485,7 @@ const Projects = () => {
               className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4"
               style={{
                 textShadow: "0 10px 20px rgba(99, 102, 241, 0.6)",
+                position: 'relative' /* Add position property */
               }}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -444,6 +511,7 @@ const Projects = () => {
                 z: textZ,
                 willChange: 'transform',
                 transform: 'translateZ(0)',
+                position: 'relative' /* Add position property */
               }}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -515,6 +583,7 @@ const Projects = () => {
                   boxShadow: selectedCategory === category.id ? `0 4px 20px ${category.color}20` : '',
                   willChange: 'transform',
                   transform: 'translateZ(0)',
+                  position: 'relative' /* Add position property */
                 }}
                 onClick={() => setSelectedCategory(category.id as ProjectCategory | 'all')}
                 initial={{ opacity: 0, y: 20 }}
@@ -543,241 +612,222 @@ const Projects = () => {
           whileInView="visible"
           viewport={{ once: false, amount: 0.1, margin: "100px 0px" }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+          style={{ position: 'relative' }} /* Add position property */
         >
-          {filteredProjects.map((project, index) => {
-            // Setup for 3D tilt effect - optimized for performance
-            const x = useMotionValue(0);
-            const y = useMotionValue(0);
-            
-            // Skip complex transforms on low-performance devices
-            const rotateX = !isLowPerfDevice ? useTransform(y, [-100, 100], [10, -10]) : useMotionValue(0);
-            const rotateY = !isLowPerfDevice ? useTransform(x, [-100, 100], [-10, 10]) : useMotionValue(0);
-            
-            // Smoother spring physics for rotation - only on high-performance devices
-            const springX = !isLowPerfDevice ? useSpring(rotateX, { stiffness: 300, damping: 30 }) : rotateX;
-            const springY = !isLowPerfDevice ? useSpring(rotateY, { stiffness: 300, damping: 30 }) : rotateY;
-            
-            // Throttled mouse handler for 3D effect
-            const handleMouseMove = throttle((e: React.MouseEvent<HTMLDivElement>) => {
-              if (isLowPerfDevice) return;
-              
-              const rect = e.currentTarget.getBoundingClientRect();
-              const centerX = rect.left + rect.width / 2;
-              const centerY = rect.top + rect.height / 2;
-              
-              x.set(e.clientX - centerX);
-              y.set(e.clientY - centerY);
-            }, 16);
-            
-            const handleMouseLeave = () => {
-              if (isLowPerfDevice) return;
-              x.set(0);
-              y.set(0);
-            };
-            
-            return (
-              <motion.div
-                key={project.id}
-                variants={itemVariants}
-                custom={index}
-                className="relative group rounded-xl overflow-hidden cursor-pointer"
-                style={{ 
-                  backgroundColor: `${project.color}10`,
-                  borderColor: `${project.color}30`,
-                  willChange: 'transform, opacity, box-shadow',
+          {filteredProjects.map((project, index) => (
+            <motion.div
+              key={project.id}
+              variants={itemVariants}
+              custom={index}
+              className="relative group rounded-xl overflow-hidden cursor-pointer"
+              style={{ 
+                backgroundColor: `${project.color}10`,
+                borderColor: `${project.color}30`,
+                willChange: 'transform, opacity, box-shadow',
+                transform: 'translateZ(0)',
+                position: 'relative', /* Add position property */
+                ...(isLowPerfDevice ? {} : {
+                  perspective: "1000px",
+                  transformStyle: "preserve-3d",
+                  rotateX: springX,
+                  rotateY: springY
+                })
+              }}
+              onClick={() => {
+                setActiveProject(project);
+                setIsExpanded(true);
+              }}
+              onMouseMove={handleTileMouseMove}
+              onMouseLeave={handleTileMouseLeave}
+              whileHover={{ 
+                y: -10, 
+                scale: 1.02,
+                boxShadow: `0 20px 40px ${project.color}40`,
+                borderWidth: isLowPerfDevice ? "1px" : "2px"
+              }}
+              transition={{ 
+                duration: 0.3,
+                type: isLowPerfDevice ? "tween" : "spring",
+                stiffness: 300,
+                damping: 20
+              }}
+            >
+              {/* Project Image with optimized 3D effect */}
+              <motion.div 
+                className="h-60 overflow-hidden relative"
+                style={{
+                  willChange: isLowPerfDevice ? 'auto' : 'transform',
                   transform: 'translateZ(0)',
+                  position: 'relative', /* Add position property */
                   ...(isLowPerfDevice ? {} : {
-                    perspective: "1000px",
                     transformStyle: "preserve-3d",
-                    rotateX: springX,
-                    rotateY: springY
+                    zIndex: 1,
+                    translateZ: "20px"
                   })
                 }}
-                onClick={() => {
-                  setActiveProject(project);
-                  setIsExpanded(true);
-                }}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-                whileHover={{ 
-                  y: -10, 
-                  scale: 1.02,
-                  boxShadow: `0 20px 40px ${project.color}40`,
-                  borderWidth: isLowPerfDevice ? "1px" : "2px"
-                }}
-                transition={{ 
-                  duration: 0.3,
-                  type: isLowPerfDevice ? "tween" : "spring",
-                  stiffness: 300,
-                  damping: 20
-                }}
               >
-                {/* Project Image with optimized 3D effect */}
-                <motion.div 
-                  className="h-60 overflow-hidden relative"
+                <img 
+                  src={project.images[0]} 
+                  alt={project.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   style={{
+                    willChange: 'transform',
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80" />
+                
+                {/* Category Tag - simplified for performance */}
+                <motion.div 
+                  className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs uppercase tracking-wider"
+                  style={{ 
+                    backgroundColor: `${project.color}90`,
                     willChange: isLowPerfDevice ? 'auto' : 'transform',
-                    transform: 'translateZ(0)',
+                    position: 'absolute', /* Add position property */
                     ...(isLowPerfDevice ? {} : {
-                      transformStyle: "preserve-3d",
-                      zIndex: 1,
-                      translateZ: "20px"
+                      translateZ: "30px",
+                      boxShadow: `0 10px 20px ${project.color}40`,
                     })
                   }}
-                >
-                  <img 
-                    src={project.images[0]} 
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    style={{
-                      willChange: 'transform',
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80" />
-                  
-                  {/* Category Tag - simplified for performance */}
-                  <motion.div 
-                    className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs uppercase tracking-wider"
-                    style={{ 
-                      backgroundColor: `${project.color}90`,
-                      willChange: isLowPerfDevice ? 'auto' : 'transform',
-                      ...(isLowPerfDevice ? {} : {
-                        translateZ: "30px",
-                        boxShadow: `0 10px 20px ${project.color}40`,
-                      })
-                    }}
-                    animate={isLowPerfDevice ? {} : {
-                      y: [0, -5, 0],
-                      rotateZ: [0, 2, 0, -2, 0],
-                      scale: [1, 1.05, 1]
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    {project.category === 'photo' ? 'Photography' : 
-                     project.category === 'film' ? 'Film' : 
-                     project.category === 'web' ? 'Web Dev' : 'Coming Soon'}
-                  </motion.div>
-                </motion.div>
-                
-                {/* Project Info - simplified for performance */}
-                <motion.div 
-                  className="p-6"
-                  style={{
-                    willChange: 'transform',
-                    transform: 'translateZ(0)',
+                  animate={isLowPerfDevice ? {} : {
+                    y: [0, -5, 0],
+                    rotateZ: [0, 2, 0, -2, 0],
+                    scale: [1, 1.05, 1]
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
                   }}
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-xl font-semibold" style={{ color: project.color }}>
-                      {project.title}
-                    </h3>
-                    <motion.span 
-                      className="text-2xl"
-                      style={{ willChange: 'transform', transform: 'translateZ(35px)' }}
-                      animate={{
-                        y: [0, -8, 0],
-                        rotateY: [0, 180, 360],
-                        scale: [1, 1.2, 1]
-                      }}
-                      transition={{
-                        duration: 5,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        times: [0, 0.5, 1]
-                      }}
-                    >{project.icon}</motion.span>
-                  </div>
-                  
-                  <p className="text-gray-400 text-sm line-clamp-2 mb-4">
-                    {project.description}
-                  </p>
-                  
-                  {/* Tech Tags with 3D floating effect */}
-                  <div className="flex flex-wrap gap-2 mt-auto">
-                    {project.technologies.slice(0, 2).map((tech, i) => (
-                      <motion.span 
-                        key={i}
-                        className="inline-block px-2 py-1 rounded-full text-xs" 
-                        style={{ 
-                          backgroundColor: `${project.color}20`,
-                          color: project.color,
-                          willChange: 'transform',
-                          transform: 'translateZ(20px)',
-                          boxShadow: `0 ${5 + i * 2}px ${10 + i * 5}px ${project.color}30`
-                        }}
-                        animate={{
-                          y: [0, -5 - i * 2, 0],
-                          scale: [1, 1.05, 1],
-                          rotateZ: [0, i % 2 === 0 ? 2 : -2, 0]
-                        }}
-                        transition={{
-                          duration: 2 + i * 0.5,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: i * 0.2
-                        }}
-                      >
-                        {tech}
-                      </motion.span>
-                    ))}
-                    {project.technologies.length > 2 && (
-                      <motion.span 
-                        className="inline-block px-2 py-1 rounded-full text-xs text-gray-400"
-                        style={{ 
-                          backgroundColor: '#ffffff10',
-                          willChange: 'transform',
-                          transform: 'translateZ(15px)'
-                        }}
-                        animate={{
-                          y: [0, -4, 0],
-                          rotateZ: [0, -1, 0, 1, 0]
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      >
-                        +{project.technologies.length - 2} more
-                      </motion.span>
-                    )}
-                  </div>
-                </motion.div>
-                
-                {/* Hover Overlay with 3D effect */}
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
-                  style={{
-                    willChange: 'transform',
-                    transform: 'translateZ(25px)'
-                  }}
-                >
-                  {project.category !== 'blank1' && project.category !== 'blank2' && (
-                    <motion.div 
-                      className="px-6 py-3 rounded-full"
-                      style={{ 
-                        backgroundColor: project.color,
-                        boxShadow: `0 10px 30px ${project.color}80`,
-                        willChange: 'transform',
-                        transform: 'translateZ(0)'
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <span className="text-black font-semibold">View Project</span>
-                    </motion.div>
-                  )}
+                  {project.category === 'photo' ? 'Photography' : 
+                  project.category === 'film' ? 'Film' : 
+                  project.category === 'web' ? 'Web Dev' : 'Coming Soon'}
                 </motion.div>
               </motion.div>
-            );
-          })}
+                
+              {/* Project Info - simplified for performance */}
+              <motion.div 
+                className="p-6"
+                style={{
+                  willChange: 'transform',
+                  transform: 'translateZ(0)',
+                  position: 'relative' /* Add position property */
+                }}
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="text-xl font-semibold" style={{ color: project.color }}>
+                    {project.title}
+                  </h3>
+                  <motion.span 
+                    className="text-2xl"
+                    style={{ 
+                      willChange: 'transform', 
+                      transform: 'translateZ(35px)',
+                      position: 'relative' /* Add position property */
+                    }}
+                    animate={{
+                      y: [0, -8, 0],
+                      rotateY: [0, 180, 360],
+                      scale: [1, 1.2, 1]
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      times: [0, 0.5, 1]
+                    }}
+                  >{project.icon}</motion.span>
+                </div>
+                
+                <p className="text-gray-400 text-sm line-clamp-2 mb-4">
+                  {project.description}
+                </p>
+                
+                {/* Tech Tags with 3D floating effect */}
+                <div className="flex flex-wrap gap-2 mt-auto">
+                  {project.technologies.slice(0, 2).map((tech, i) => (
+                    <motion.span 
+                      key={i}
+                      className="inline-block px-2 py-1 rounded-full text-xs" 
+                      style={{ 
+                        backgroundColor: `${project.color}20`,
+                        color: project.color,
+                        willChange: 'transform',
+                        transform: 'translateZ(20px)',
+                        position: 'relative', /* Add position property */
+                        boxShadow: `0 ${5 + i * 2}px ${10 + i * 5}px ${project.color}30`
+                      }}
+                      animate={{
+                        y: [0, -5 - i * 2, 0],
+                        scale: [1, 1.05, 1],
+                        rotateZ: [0, i % 2 === 0 ? 2 : -2, 0]
+                      }}
+                      transition={{
+                        duration: 2 + i * 0.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: i * 0.2
+                      }}
+                    >
+                      {tech}
+                    </motion.span>
+                  ))}
+                  {project.technologies.length > 2 && (
+                    <motion.span 
+                      className="inline-block px-2 py-1 rounded-full text-xs text-gray-400"
+                      style={{ 
+                        backgroundColor: '#ffffff10',
+                        willChange: 'transform',
+                        transform: 'translateZ(15px)',
+                        position: 'relative' /* Add position property */
+                      }}
+                      animate={{
+                        y: [0, -4, 0],
+                        rotateZ: [0, -1, 0, 1, 0]
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      +{project.technologies.length - 2} more
+                    </motion.span>
+                  )}
+                </div>
+              </motion.div>
+              
+              {/* Hover Overlay with 3D effect */}
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                style={{
+                  willChange: 'transform',
+                  transform: 'translateZ(25px)',
+                  position: 'absolute' /* Add position property */
+                }}
+              >
+                {project.category !== 'blank1' && project.category !== 'blank2' && (
+                  <motion.div 
+                    className="px-6 py-3 rounded-full"
+                    style={{ 
+                      backgroundColor: project.color,
+                      boxShadow: `0 10px 30px ${project.color}80`,
+                      willChange: 'transform',
+                      transform: 'translateZ(0)',
+                      position: 'relative' /* Add position property */
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <span className="text-black font-semibold">View Project</span>
+                  </motion.div>
+                )}
+              </motion.div>
+            </motion.div>
+          ))}
         </motion.div>
         
         {/* Expanded Project Modal - optimized for performance */}
@@ -789,6 +839,7 @@ const Projects = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
+              style={{ position: 'fixed' }}
             >
               {/* Backdrop with 3D particles */}
               <motion.div 
@@ -797,35 +848,35 @@ const Projects = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setIsExpanded(false)}
+                style={{ position: 'absolute' }}
               >
                 {/* 3D floating particles in modal background */}
-                {Array.from({ length: 20 }).map((_, i) => (
+                {isExpanded && modalParticles.map((particle, i) => (
                   <motion.div
                     key={`modal-particle-${i}`}
                     className="absolute rounded-full"
                     style={{
-                      backgroundColor: i % 3 === 0 
+                      backgroundColor: particle.color === 'active' && activeProject 
                         ? activeProject.color 
-                        : i % 3 === 1 
-                          ? '#ffffff' 
-                          : '#8B5CF6',
-                      width: Math.random() * 6 + 2,
-                      height: Math.random() * 6 + 2,
-                      x: Math.random() * window.innerWidth,
-                      y: Math.random() * window.innerHeight,
-                      opacity: Math.random() * 0.2 + 0.05,
-                      filter: `blur(${Math.random() * 2}px)`,
+                        : particle.color,
+                      width: particle.width,
+                      height: particle.height,
+                      x: particle.initialX,
+                      y: particle.initialY,
+                      opacity: particle.opacity,
+                      filter: `blur(${particle.blur}px)`,
                       willChange: 'transform, opacity',
-                      transform: 'translateZ(0)'
+                      transform: 'translateZ(0)',
+                      position: 'absolute'
                     }}
                     animate={{
-                      y: [Math.random() * window.innerHeight, (Math.random() - 0.5) * window.innerHeight],
-                      x: [Math.random() * window.innerWidth, (Math.random() - 0.5) * window.innerWidth],
-                      rotate: [0, Math.random() * 360],
-                      scale: [1, Math.random() * 0.5 + 0.8],
+                      y: [particle.initialY, particle.targetY],
+                      x: [particle.initialX, particle.targetX],
+                      rotate: [0, particle.rotate],
+                      scale: [1, particle.scale],
                     }}
                     transition={{
-                      duration: Math.random() * 20 + 20,
+                      duration: particle.duration,
                       repeat: Infinity,
                       repeatType: "reverse",
                       ease: "easeInOut",
@@ -843,6 +894,7 @@ const Projects = () => {
                   willChange: 'transform',
                   transform: 'translateZ(0)',
                   perspective: "1500px",
+                  position: 'relative'
                 }}
                 initial={{ scale: 0.9, y: 20, opacity: 0, rotateX: 15 }}
                 animate={{ scale: 1, y: 0, opacity: 1, rotateX: 0 }}
