@@ -22,8 +22,8 @@ function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [contentVisible, setContentVisible] = useState(false);
-  const [scrollInstance, setScrollInstance] = useState<any>(null);
-  const [useGsapScroll, setUseGsapScroll] = useState(true); // Use GSAP by default
+  const [_scrollInstance, setScrollInstance] = useState<any>(null);
+  const [useGsapScroll, _setUseGsapScroll] = useState(true); // Use GSAP by default
 
   // Disable scrolling when the app loads
   useEffect(() => {
@@ -122,7 +122,7 @@ function App() {
     }
   };
 
-  const navVariants = {
+  const _navVariants = {
     hidden: { 
       y: -20, 
       opacity: 0 
@@ -137,7 +137,7 @@ function App() {
     }
   };
 
-  const projects = [
+  const _projects = [
     {
       title: "HUMAN HEART WEBSITE",
       description: "A website which showcases the human heart and its functions.",
@@ -164,7 +164,7 @@ function App() {
     }
   ];
 
-  const services = [
+  const _services = [
     {
       icon: <div className="w-8 h-8 flex items-center justify-center">{'</>'}</div>,
       title: "Web Development",
