@@ -163,23 +163,6 @@ const projects: Project[] = [
     featured: true
   },
   {
-    id: 'blank-1',
-    title: "Coming Soon",
-    category: 'blank1',
-    description: "A new project currently in development. Stay tuned for updates!",
-    technologies: ["TBA"],
-    images: [
-      "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1590479773265-7464e5d48118?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
-    ],
-    projectUrl: "#",
-    color: "#EC4899", // pink
-    icon: "✨",
-    featured: true
-  },
-  
- {
     id: 'web-3',
     title: "Human Heart System",
     category: 'web',
@@ -195,6 +178,23 @@ const projects: Project[] = [
     color: "#0EA5E9", // sky blue
     icon: "🚀",
     featured: true
+  },
+  
+  {
+    id: 'blank-1',
+    title: "Coming Soon",
+    category: 'blank1',
+    description: "A new project currently in development. Stay tuned for updates!",
+    technologies: ["TBA"],
+    images: [
+      "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1590479773265-7464e5d48118?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
+    ],
+    projectUrl: "#",
+    color: "#EC4899", // pink
+    icon: "✨",
+    featured: false
   }
 
 ];
