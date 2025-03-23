@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
+import emailjs from 'emailjs-com';
 
 // Custom SVG icons
 const GithubIcon = () => (
@@ -75,15 +76,18 @@ const Contact = () => {
     e.preventDefault();
     setFormStatus('submitting');
     
-    // Simulate form submission
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
-      setFormStatus('success');
-      setFormData({ name: '', email: '', message: '' });
-      
-      // Reset form status after 3 seconds
-      setTimeout(() => setFormStatus('idle'), 3000);
-    }, 1500);
+    emailjs.send('service_portfolio-ecse', 'template_jlklz85', formData, '-q6xWTq458NsSUngs')
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
+        setFormStatus('success');
+        setFormData({ name: '', email: '', message: '' });
+        
+        // Reset form status after 3 seconds
+        setTimeout(() => setFormStatus('idle'), 3000);
+      }, (err) => {
+        console.error('FAILED...', err);
+        setFormStatus('error');
+      });
   };
   
   const containerVariants = {
