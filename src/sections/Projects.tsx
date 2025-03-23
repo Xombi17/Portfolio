@@ -620,7 +620,7 @@ const Projects = () => {
               filteredProjects.map((project, index) => (
                 <motion.div
                   key={project.id}
-                  variants={itemVariants} 
+              variants={itemVariants} 
                   custom={index}
                   className="relative group rounded-xl overflow-hidden cursor-pointer"
                   style={{ 
