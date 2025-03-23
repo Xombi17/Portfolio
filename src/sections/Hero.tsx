@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform, useAnimationControls } from 'framer-motion';
+import { motion, useScroll, useTransform, useAnimationControls, AnimatePresence } from 'framer-motion';
 import { scrollTo } from '../utils/scrollUtils';
 
 // Custom SVG icon to replace Lucide ArrowDown
@@ -247,6 +247,111 @@ const FloatingBackground = () => {
   );
 };
 
+// Add SplashCursor component definition
+const SplashCursor = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isVisible, setIsVisible] = useState(false);
+  
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+      if (!isVisible) setIsVisible(true);
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [isVisible]);
+  
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div 
+          className="fixed w-8 h-8 rounded-full pointer-events-none z-50 mix-blend-screen"
+          style={{
+            left: mousePosition.x,
+            top: mousePosition.y,
+            translateX: "-50%",
+            translateY: "-50%",
+          }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ 
+            scale: [1, 3.5, 1],
+            opacity: [0.7, 0, 0.7],
+            background: [
+              "radial-gradient(circle, rgba(99,102,241,0.8) 0%, rgba(99,102,241,0.4) 50%, transparent 80%)",
+              "radial-gradient(circle, rgba(139,92,246,0.8) 0%, rgba(139,92,246,0.4) 50%, transparent 80%)",
+              "radial-gradient(circle, rgba(99,102,241,0.8) 0%, rgba(99,102,241,0.4) 50%, transparent 80%)"
+            ]
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut"
+          }}
+          exit={{ scale: 0, opacity: 0 }}
+        />
+      )}
+    </AnimatePresence>
+  );
+};
+
+// Add OutwardDuct component definition
+const OutwardDuct = () => {
+  const [mousePosition, setMousePosition] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+  const [isVisible, setIsVisible] = useState(false);
+  
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+      if (!isVisible) setIsVisible(true);
+    };
+    
+    setTimeout(() => setIsVisible(true), 1000);
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [isVisible]);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              left: mousePosition.x,
+              top: mousePosition.y,
+              translateX: "-50%",
+              translateY: "-50%",
+              background: "radial-gradient(circle, rgba(120,119,198,0.4) 0%, rgba(79,70,229,0.2) 50%, transparent 70%)",
+              filter: "blur(8px)",
+            }}
+            initial={{ width: 0, height: 0, opacity: 0 }}
+            animate={{ 
+              width: [100, 500],
+              height: [100, 500],
+              opacity: [0.7, 0]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatType: "loop",
+              ease: "easeOut",
+              times: [0, 1]
+            }}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isNameHovered, setIsNameHovered] = useState(false);
@@ -310,6 +415,10 @@ const Hero = () => {
       {/* Enhanced background */}
       <GradientElements />
       
+      {/* Add new animation components */}
+      <OutwardDuct />
+      <SplashCursor />
+      
       {/* Main Content with better layout */}
       <div className="relative z-20 w-full max-w-7xl mx-auto px-6 py-12 md:py-0">
         {/* Large centered welcome text - ADJUSTED: smaller and shifted up */}
@@ -336,15 +445,25 @@ const Hero = () => {
             initial="hidden"
             animate="visible"
           >
-            {/* Primary heading with perfect alignment */}
+            {/* Primary heading with enhanced typography and animations */}
             <motion.h1 
               className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight flex flex-col md:block"
               variants={contentVariants}
             >
               <div className="w-full text-center md:text-left">
-                <span className="bg-clip-text text-transparent bg-gradient-to-br from-blue-300 to-cyan-200 font-semibold leading-tight inline-block">
+                <motion.span 
+                  className="bg-clip-text text-transparent bg-gradient-to-br from-blue-300 to-cyan-200 font-semibold leading-tight inline-block"
+                  animate={{
+                    textShadow: ["0 0 5px rgba(96, 165, 250, 0)", "0 0 15px rgba(96, 165, 250, 0.5)", "0 0 5px rgba(96, 165, 250, 0)"]
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    repeatType: "reverse"
+                  }}
+                >
                   Hello I am,
-                </span>
+                </motion.span>
               </div>
               <motion.div
                 className="w-full text-center md:text-left mt-1 font-normal"
@@ -358,9 +477,13 @@ const Hero = () => {
                     <MatrixWord word="Joshi" delay={1} />
                   </div>
                   <motion.div 
-                    className="absolute -bottom-3 left-0 w-full h-[2px] bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-500"
+                    className="absolute -bottom-3 left-0 w-full h-[3px] bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-500"
                     initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: "100%", opacity: 1 }}
+                    animate={{ 
+                      width: isNameHovered ? "100%" : "80%", 
+                      opacity: 1,
+                      boxShadow: isNameHovered ? "0 2px 10px rgba(139, 92, 246, 0.7)" : "0 2px 5px rgba(139, 92, 246, 0.3)"
+                    }}
                     transition={{ delay: 1.5, duration: 0.8 }}
                   />
                 </div>
@@ -416,28 +539,79 @@ const Hero = () => {
               </motion.span>
             </motion.div>
             
-            {/* CTA buttons */}
+            {/* CTA buttons - ENHANCED */}
             <motion.div 
               variants={contentVariants}
               className="flex gap-4 mt-8 md:justify-start justify-center items-center"
             >
-              <button 
-                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-medium rounded-lg shadow-lg shadow-blue-700/30 transition-all duration-300"
+              <motion.button 
+                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg shadow-lg shadow-indigo-700/30 transition-all duration-300 btn-3d overflow-hidden relative"
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: "0 15px 25px rgba(79, 70, 229, 0.4)"
+                }}
+                whileTap={{ scale: 0.95 }}
               >
-                <a href="#projects" onClick={(e) => { e.preventDefault(); scrollTo('projects'); }}>
-                  View Projects
+                <motion.span 
+                  className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 opacity-0"
+                  animate={{ opacity: [0, 0.5, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <a href="#projects" onClick={(e) => { e.preventDefault(); scrollTo('projects'); }}
+                   className="flex items-center justify-center gap-2 relative z-10">
+                  <span>View Projects</span>
+                  <motion.svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="18" 
+                    height="18" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </motion.svg>
                 </a>
-              </button>
+              </motion.button>
               
-              <button 
+              <motion.button 
                 onClick={handleScrollDown}
-                className="flex items-center gap-2 px-6 py-3 bg-transparent border border-gray-600 hover:border-gray-400 rounded-lg text-gray-300 transition-colors duration-300"
+                className="flex items-center gap-2 px-6 py-3 bg-transparent border border-gray-600 hover:border-indigo-400 rounded-lg text-gray-300 transition-all duration-300 relative overflow-hidden group"
+                whileHover={{ 
+                  borderColor: "rgba(99, 102, 241, 0.8)",
+                  color: "#ffffff",
+                  boxShadow: "0 0 15px rgba(99, 102, 241, 0.3)"
+                }}
+                whileTap={{ scale: 0.95 }}
               >
-                Learn More
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <motion.span 
+                  className="absolute inset-0 bg-indigo-900/20 scale-x-0 origin-left"
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+                <span className="relative z-10">Learn More</span>
+                <motion.svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="18" 
+                  height="18" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  className="relative z-10"
+                  animate={{ y: [0, 3, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
                   <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
-                </svg>
-              </button>
+                </motion.svg>
+              </motion.button>
             </motion.div>
             
             {/* Social media links */}
