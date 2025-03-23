@@ -1,44 +1,206 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 
-// Consolidate all skills into a single flat array
-const skills = [
+// Define types for skill data
+interface Skill {
+  name: string;
+  category: string;
+  level: number;
+  color: string;
+}
+
+interface Category {
+  name: string;
+  color: string;
+}
+
+// Enhanced skills with categories and proficiency levels
+const skillsData: Skill[] = [
   // Frontend
-  "React.js", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion", "Three.js",
+  { name: "React.js", category: "Frontend", level: 0.9, color: "#61DAFB" },
+  { name: "TypeScript", category: "Frontend", level: 0.85, color: "#3178C6" },
+  { name: "Next.js", category: "Frontend", level: 0.8, color: "#000000" },
+  { name: "Tailwind CSS", category: "Frontend", level: 0.9, color: "#38B2AC" },
+  { name: "Framer Motion", category: "Frontend", level: 0.75, color: "#0055FF" },
+  { name: "Three.js", category: "Frontend", level: 0.7, color: "#049EF4" },
+  
   // Backend
-  "Node.js", "MongoDB", "C/C++",
+  { name: "Node.js", category: "Backend", level: 0.8, color: "#539E43" },
+  { name: "MongoDB", category: "Backend", level: 0.75, color: "#47A248" },
+  { name: "C/C++", category: "Backend", level: 0.7, color: "#00599C" },
+  
   // Creative
-  "Cinematography", "VideoEditing", "UI/UX Design", "Photography",
+  { name: "Cinematography", category: "Creative", level: 0.85, color: "#FF5C5C" },
+  { name: "VideoEditing", category: "Creative", level: 0.8, color: "#9146FF" },
+  { name: "UI/UX Design", category: "Creative", level: 0.75, color: "#FF7262" },
+  { name: "Photography", category: "Creative", level: 0.9, color: "#5D3FD3" },
+  
   // Languages
-  "JavaScript", "HTML"
+  { name: "JavaScript", category: "Languages", level: 0.9, color: "#F7DF1E" },
+  { name: "HTML", category: "Languages", level: 0.85, color: "#E34F26" }
 ];
 
-// Skill categories for better organization (commented out as we're not using categories anymore)
-/*
-const skillCategories = [
-  {
-    name: "Frontend",
-    skills: ["React.js", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion", "Three.js"]
-  },
-  {
-    name: "Backend",
-    skills: ["Node.js", "Express", "RESTful APIs"]
-  },
-  {
-    name: "Creative",
-    skills: ["Cinematography", "VideoEditing", "UI/UX Design", "Photography"]
-  },
-  {
-    name: "Languages",
-    skills: ["JavaScript", "TypeScript", "HTML", "CSS/SCSS"]
-  }
+// Categories with distinct colors
+const categories: Category[] = [
+  { name: "Frontend", color: "from-blue-500 to-cyan-400" },
+  { name: "Backend", color: "from-green-500 to-emerald-400" },
+  { name: "Creative", color: "from-purple-500 to-pink-400" },
+  { name: "Languages", color: "from-yellow-500 to-amber-400" }
 ];
-*/
+
+// 3D Skill Orb Component
+interface SkillOrbProps {
+  skill: Skill;
+  index: number;
+  active: boolean;
+  onClick: (skill: Skill) => void;
+}
+
+const SkillOrb = ({ skill, index, active, onClick }: SkillOrbProps) => {
+  // Scale based on skill level
+  const scale = 0.85 + (skill.level * 0.15);
+  
+  // Animation variants
+  const orbVariants = {
+    hidden: { opacity: 0, scale: 0 },
+    visible: {
+      opacity: 1,
+      scale,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15,
+        delay: index * 0.05,
+        duration: 0.4
+      }
+    },
+    hover: {
+      scale: scale * 1.05,
+      y: -5,
+      boxShadow: `0 0 15px ${skill.color}90`,
+      zIndex: 10,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 15
+      }
+    }
+  };
+  
+  return (
+    <motion.div
+      className="cursor-pointer select-none"
+      variants={orbVariants}
+      initial="hidden"
+      animate="visible"
+      whileHover="hover"
+      onClick={() => onClick(skill)}
+    >
+      <div 
+        className={`flex items-center justify-center shadow-lg backdrop-blur-sm ${active ? 'ring-2 ring-offset-2 ring-offset-zinc-900' : ''}`}
+        style={{
+          background: `linear-gradient(135deg, ${skill.color}20, ${skill.color}40)`,
+          border: `2px solid ${skill.color}60`,
+          color: skill.color,
+          width: '100%',
+          height: '80px',
+          borderRadius: "8px",
+          transform: active ? 'scale(1.05)' : 'scale(1)',
+          transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+          boxShadow: active ? `0 0 20px ${skill.color}60` : `0 4px 12px rgba(0,0,0,0.2)`,
+          fontSize: `${Math.min(15, 100 / skill.name.length)}px`,
+          fontWeight: "bold",
+          textShadow: "0 1px 2px rgba(0,0,0,0.3)",
+          position: "relative",
+          overflow: "hidden"
+        }}
+      >
+        {/* Skill level indicator on bottom of card */}
+        <div className="absolute bottom-0 left-0 h-1.5 bg-gradient-to-r from-transparent"
+          style={{
+            width: `${skill.level * 100}%`,
+            backgroundColor: skill.color,
+            opacity: 0.7
+          }}
+        />
+        
+        {/* Category indicator dot */}
+        <div className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full"
+          style={{ backgroundColor: skill.color }}
+        />
+        
+        <span>{skill.name}</span>
+      </div>
+    </motion.div>
+  );
+};
+
+// Group skills by category for easier rendering
+const groupedSkills = (): Record<string, Skill[]> => {
+  const grouped: Record<string, Skill[]> = {};
+  
+  categories.forEach(category => {
+    grouped[category.name] = skillsData.filter(skill => skill.category === category.name);
+  });
+  
+  return grouped;
+};
+
+// Skill Detail Panel Component
+interface SkillDetailPanelProps {
+  skill: Skill | null;
+}
+
+const SkillDetailPanel = ({ skill }: SkillDetailPanelProps) => {
+  if (!skill) return null;
+
+  // Get the matching category color
+  const categoryData = categories.find(c => c.name === skill.category);
+  const gradientClass = categoryData ? categoryData.color : "from-blue-500 to-purple-500";
+  
+  return (
+    <motion.div
+      className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-lg p-6 mt-10 md:mt-0 md:ml-8"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3 }}
+    >
+      <h3 className={`text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r ${gradientClass}`}>
+        {skill.name}
+      </h3>
+      
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-gray-400">Proficiency</span>
+          <span className="text-gray-300">{Math.round(skill.level * 100)}%</span>
+        </div>
+        <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+          <motion.div 
+            className={`h-full bg-gradient-to-r ${gradientClass}`}
+            initial={{ width: 0 }}
+            animate={{ width: `${skill.level * 100}%` }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          />
+        </div>
+      </div>
+      
+      <div className="flex items-center mt-4">
+        <span className={`px-3 py-1 rounded-full text-sm bg-gradient-to-r ${gradientClass} text-white`}>
+          {skill.category}
+        </span>
+      </div>
+    </motion.div>
+  );
+};
 
 const About = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: false, amount: 0.2 });
   const sectionRef = useRef<HTMLElement>(null);
+  const skillCloudRef = useRef<HTMLDivElement>(null);
+  
+  const [activeSkill, setActiveSkill] = useState<Skill | null>(null);
   
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -50,10 +212,16 @@ const About = () => {
   
   // Animation variants
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { 
+      opacity: 0,
+      transition: {
+        when: "afterChildren"
+      }
+    },
     visible: {
       opacity: 1,
       transition: {
+        when: "beforeChildren",
         staggerChildren: 0.12,
         delayChildren: 0.1
       }
@@ -79,20 +247,8 @@ const About = () => {
     }
   };
 
-  const skillVariants = {
-    hidden: { scale: 0.8, opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      scale: 1,
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 10,
-        delay: i * 0.04,
-        duration: 0.5
-      }
-    })
+  const handleSkillClick = (skill: Skill) => {
+    setActiveSkill(skill);
   };
 
   return (
@@ -222,6 +378,7 @@ const About = () => {
             </motion.div>
           </div>
           
+          {/* 3D Skill Cloud Showcase */}
           <motion.div 
             variants={itemVariants}
             className="lg:col-span-2"
@@ -236,27 +393,83 @@ const About = () => {
                   </div>
                   <h3 className="text-2xl font-bold">Skills & Technologies</h3>
                 </div>
+                
+                <div className="hidden md:flex space-x-2">
+                  {categories.map(category => (
+                    <div 
+                      key={category.name}
+                      className="flex items-center text-sm"
+                    >
+                      <div 
+                        className={`w-3 h-3 rounded-full mr-1 bg-gradient-to-r ${category.color}`}
+                      />
+                      <span className="text-gray-400">{category.name}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
               
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {skills.map((skill, index) => (
+              <div className="flex flex-col md:flex-row">
+                <div 
+                  ref={skillCloudRef}
+                  className="relative w-full md:w-2/3 overflow-y-auto h-[500px] pr-2"
+                  style={{
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: 'rgba(60, 60, 70, 0.5) transparent'
+                  }}
+                >
+                  <div className="space-y-6">
+                    {Object.entries(groupedSkills()).map(([category, skills]) => (
+                      <div key={category} className="mb-6">
+                        <div className="flex items-center mb-3">
+                          <div 
+                            className={`w-2 h-2 rounded-full mr-2 bg-gradient-to-r ${categories.find(c => c.name === category)?.color}`}
+                          />
+                          <h4 className="text-sm font-medium text-gray-400">{category}</h4>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {skills.map((skill, idx) => (
+                            <SkillOrb
+                              key={skill.name}
+                              skill={skill}
+                              index={idx}
+                              active={activeSkill?.name === skill.name}
+                              onClick={handleSkillClick}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Instruction hint */}
                   <motion.div
-                    key={skill}
-                    className="p-3 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-lg flex items-center justify-center hover:border-blue-500/50 transition-colors duration-300 h-full"
-                    variants={skillVariants}
-                    custom={index}
-                    whileHover={{ 
-                      scale: 1.05,
-                      backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                      transition: { duration: 0.2 } 
-                    }}
-                    data-scroll
-                    data-scroll-offset="30%"
+                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-gray-400 text-sm bg-zinc-800/70 px-3 py-1 rounded-full"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1, duration: 0.5 }}
                   >
-                    <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-                    <span className="text-center">{skill}</span>
+                    <span>Click a skill to view details</span>
                   </motion.div>
-                ))}
+                </div>
+                
+                {/* Skill detail panel */}
+                <div className="md:w-1/3 mt-6 md:mt-0 md:ml-6">
+                  {activeSkill ? (
+                    <SkillDetailPanel skill={activeSkill} />
+                  ) : (
+                    <motion.div
+                      className="h-full flex items-center justify-center text-center p-6 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-lg"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <p className="text-gray-400">
+                        Click on a skill to see more details about my proficiency and experience.
+                      </p>
+                    </motion.div>
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>
