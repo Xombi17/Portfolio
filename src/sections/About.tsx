@@ -13,13 +13,60 @@ interface Category {
   name: string;
   color: string;
 }
+// Custom hook for handling scroll inside a container
+const useContainerScroll = (ref: React.RefObject<HTMLElement>) => {
+  const [scrollPosition, setScrollPosition] = useState(0);
+  
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    
+    const handleScroll = () => {
+      const position = element.scrollTop;
+      setScrollPosition(position);
+    };
+    
+    element.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      element.removeEventListener('scroll', handleScroll);
+    };
+  }, [ref]);
+  
+  return scrollPosition;
+};
+
+// Scroll indicator component
+interface ScrollIndicatorProps {
+  scrollPosition: number;
+  maxScroll: number;
+}
+
+const ScrollIndicator = ({ scrollPosition, maxScroll }: ScrollIndicatorProps) => {
+  const scrollPercentage = Math.min(scrollPosition / maxScroll * 100, 100);
+  
+  return (
+    <motion.div 
+      className="absolute right-2 top-1/2 transform -translate-y-1/2 h-1/2 w-1 bg-zinc-800 rounded-full overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: scrollPosition > 10 ? 0.7 : 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <motion.div 
+        className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-500 to-purple-500 rounded-full"
+        style={{ height: `${scrollPercentage}%` }}
+      />
+    </motion.div>
+  );
+};
+
 
 // Enhanced skills with categories and proficiency levels
 const skillsData: Skill[] = [
   // Frontend
   { name: "React.js", category: "Frontend", level: 0.9, color: "#61DAFB" },
   { name: "TypeScript", category: "Frontend", level: 0.85, color: "#3178C6" },
-  { name: "Next.js", category: "Frontend", level: 0.8, color: "#000000" },
+  { name: "Next.js", category: "Frontend", level: 0.8, color: "#7B68EE" },
   { name: "Tailwind CSS", category: "Frontend", level: 0.9, color: "#38B2AC" },
   { name: "Framer Motion", category: "Frontend", level: 0.75, color: "#0055FF" },
   { name: "Three.js", category: "Frontend", level: 0.7, color: "#049EF4" },
@@ -103,16 +150,18 @@ const SkillOrb = ({ skill, index, active, onClick }: SkillOrbProps) => {
           border: `2px solid ${skill.color}60`,
           color: skill.color,
           width: '100%',
-          height: '80px',
+          height: '90px',
           borderRadius: "8px",
           transform: active ? 'scale(1.05)' : 'scale(1)',
           transition: 'transform 0.3s ease, box-shadow 0.3s ease',
           boxShadow: active ? `0 0 20px ${skill.color}60` : `0 4px 12px rgba(0,0,0,0.2)`,
-          fontSize: `${Math.min(15, 100 / skill.name.length)}px`,
-          fontWeight: "bold",
-          textShadow: "0 1px 2px rgba(0,0,0,0.3)",
+          fontSize: "16px",
+          fontWeight: "600",
+          letterSpacing: "0.01em",
+          textShadow: `0 2px 3px rgba(0,0,0,0.5), 0 0 5px ${skill.color}50`,
           position: "relative",
-          overflow: "hidden"
+          overflow: "hidden",
+          padding: "0 12px"
         }}
       >
         {/* Skill level indicator on bottom of card */}
@@ -129,7 +178,7 @@ const SkillOrb = ({ skill, index, active, onClick }: SkillOrbProps) => {
           style={{ backgroundColor: skill.color }}
         />
         
-        <span>{skill.name}</span>
+        <span className="text-center">{skill.name}</span>
       </div>
     </motion.div>
   );
@@ -441,16 +490,6 @@ const About = () => {
                       </div>
                     ))}
                   </div>
-                  
-                  {/* Instruction hint */}
-                  <motion.div
-                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-gray-400 text-sm bg-zinc-800/70 px-3 py-1 rounded-full"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1, duration: 0.5 }}
-                  >
-                    <span>Click a skill to view details</span>
-                  </motion.div>
                 </div>
                 
                 {/* Skill detail panel */}
@@ -459,13 +498,26 @@ const About = () => {
                     <SkillDetailPanel skill={activeSkill} />
                   ) : (
                     <motion.div
-                      className="h-full flex items-center justify-center text-center p-6 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-lg"
+                      className="h-full flex flex-col items-center justify-center text-center p-6 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-lg"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3 }}
                     >
+                      <motion.div
+                        className="bg-zinc-800/80 px-4 py-2 rounded-full mb-4"
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <span className="text-blue-300 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Click a skill to view details
+                        </span>
+                      </motion.div>
                       <p className="text-gray-400">
-                        Click on a skill to see more details about my proficiency and experience.
+                        Select any skill card to see more information about my proficiency and experience.
                       </p>
                     </motion.div>
                   )}
