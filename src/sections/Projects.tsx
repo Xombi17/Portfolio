@@ -61,6 +61,23 @@ const projects: Project[] = [
     featured: true
   },
   {
+    id: 'web-4',
+    title: "VR Travel Experience",
+    category: 'web',
+    description: "An immersive virtual reality platform that allows users to explore various travel destinations from the comfort of their home. Experience stunning visuals and interactive elements.",
+    technologies: ["React", "Three.js", "WebXR", "Node.js"],
+    images: [
+      "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80",
+      "https://images.unsplash.com/photo-1521747116042-5a810fda9664?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80"
+    ],
+    projectUrl: "https://vr-travel-livid.vercel.app/",
+    githubUrl: "https://github.com/Xombi17/VR_travel",
+    color: "#3B82F6", // blue
+    icon: "🌍",
+    featured: true
+  },
+  {
     id: 'film-1',
     title: "Short Film: 'Wakeup'",
     category: 'film',
@@ -179,7 +196,7 @@ const projects: Project[] = [
     icon: "🚀",
     featured: true
   }
-  
+
 ];
 
 // Add a throttle utility function for performance
