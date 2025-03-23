@@ -39,6 +39,25 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
+      
+      /* Section animation classes */
+      .section-active {
+        z-index: 1;
+      }
+      
+      /* Animation helper classes */
+      .animate-text, 
+      .animate-image,
+      .animate-paragraph-container p,
+      .animate-paragraph-container li,
+      .stagger-item {
+        will-change: transform, opacity;
+      }
+      
+      /* Ensure smooth animations */
+      * {
+        backface-visibility: hidden;
+      }
     </style>
     
     <title>My portfolio</title>

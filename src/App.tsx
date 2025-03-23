@@ -3,7 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Utilities
 import { initScroll, disableScroll, enableScroll, initSmoothScroll } from './utils/scrollUtils';
-import { initSmoothScrolling, setupParallaxEffects, refreshScrollTrigger } from './utils/gsapScrollUtils';
+import { 
+  initSmoothScrolling, 
+  setupParallaxEffects, 
+  refreshScrollTrigger,
+  initAllScrollAnimations
+} from './utils/gsapScrollUtils';
 
 // Components
 import Navbar from './components/Navbar';
@@ -47,14 +52,15 @@ function App() {
         // Initialize GSAP-based smooth scrolling
         cleanup = initSmoothScrolling();
         
-        // Setup parallax effects for elements with data-speed attribute
-        setupParallaxEffects();
+        // Setup all scroll animations at once
+        const animationCleanup = initAllScrollAnimations();
         
         // Refresh ScrollTrigger when all content is loaded
         window.addEventListener('load', refreshScrollTrigger);
         
         return () => {
           if (cleanup) cleanup();
+          if (animationCleanup) animationCleanup();
           window.removeEventListener('load', refreshScrollTrigger);
         };
       } else {

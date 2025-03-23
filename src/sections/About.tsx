@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import AnimatedContent from '../blocks/Animations/AnimatedContent/AnimatedContent';
 
@@ -22,15 +22,21 @@ const useContainerScroll = (ref: React.RefObject<HTMLElement>) => {
     const element = ref.current;
     if (!element) return;
     
+    let rafId: number;
     const handleScroll = () => {
-      const position = element.scrollTop;
-      setScrollPosition(position);
+      // Use requestAnimationFrame for smoother scroll handling
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const position = element.scrollTop;
+        setScrollPosition(position);
+      });
     };
     
     element.addEventListener('scroll', handleScroll, { passive: true });
     
     return () => {
       element.removeEventListener('scroll', handleScroll);
+      cancelAnimationFrame(rafId);
     };
   }, [ref]);
   
@@ -46,6 +52,11 @@ interface ScrollIndicatorProps {
 const ScrollIndicator = ({ scrollPosition, maxScroll }: ScrollIndicatorProps) => {
   const scrollPercentage = Math.min(scrollPosition / maxScroll * 100, 100);
   
+  // Memoize the style to prevent unnecessary rerenders
+  const barStyle = useMemo(() => ({ 
+    height: `${scrollPercentage}%` 
+  }), [scrollPercentage]);
+  
   return (
     <motion.div 
       className="absolute right-2 top-1/2 transform -translate-y-1/2 h-1/2 w-1 bg-zinc-800 rounded-full overflow-hidden"
@@ -55,7 +66,7 @@ const ScrollIndicator = ({ scrollPosition, maxScroll }: ScrollIndicatorProps) =>
     >
       <motion.div 
         className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-500 to-purple-500 rounded-full"
-        style={{ height: `${scrollPercentage}%` }}
+        style={barStyle}
       />
     </motion.div>
   );
@@ -246,321 +257,202 @@ const SkillDetailPanel = ({ skill }: SkillDetailPanelProps) => {
 
 const About = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: false, amount: 0.2 });
-  const sectionRef = useRef<HTMLElement>(null);
-  const skillCloudRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const skillsRef = useRef<HTMLDivElement>(null);
+  const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
+  const isInView = useInView(containerRef, { once: false, amount: 0.1 });
   
-  const [activeSkill, setActiveSkill] = useState<Skill | null>(null);
+  // Calculate max scroll based on content height
+  const [maxScroll, setMaxScroll] = useState(0);
   
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [100, 0, 0, -100]);
-  
-  // Animation variants
-  const containerVariants = {
-    hidden: { 
-      opacity: 0,
-      transition: {
-        when: "afterChildren"
+  useEffect(() => {
+    // Update max scroll value on resize
+    const updateMaxScroll = () => {
+      if (contentRef.current && containerRef.current) {
+        setMaxScroll(contentRef.current.scrollHeight - containerRef.current.clientHeight);
       }
-    },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: 0.12,
-        delayChildren: 0.1
-      }
-    }
-  };
+    };
+    
+    updateMaxScroll();
+    
+    // Add resize listener
+    window.addEventListener('resize', updateMaxScroll);
+    
+    return () => {
+      window.removeEventListener('resize', updateMaxScroll);
+    };
+  }, []);
   
-  const itemVariants = {
-    hidden: { 
-      y: 40, 
-      opacity: 0,
-      scale: 0.95
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 12,
-        duration: 0.6
-      }
-    }
-  };
-
+  // Track scroll position with optimized hook
+  const scrollPosition = useContainerScroll(containerRef);
+  
+  // Get all skills by category (memoized)
+  const skillsByCategory = useMemo(() => groupedSkills(), []);
+  
+  // Handle skill click
   const handleSkillClick = (skill: Skill) => {
-    setActiveSkill(skill);
+    setSelectedSkill(prev => prev?.name === skill.name ? null : skill);
   };
-
+  
   return (
     <section 
       id="about" 
-      className="py-32 px-4 bg-zinc-950 relative overflow-hidden" 
+      ref={containerRef}
+      className="min-h-screen bg-black py-24 px-4 md:px-0 relative will-change-transform"
       data-scroll-section
-      ref={sectionRef}
     >
-      <motion.div 
-        ref={containerRef} 
-        className="max-w-6xl mx-auto"
-        data-scroll 
-        data-scroll-speed="0.3"
-        style={{ opacity, y }}
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.1 }}
+      <motion.div
+        ref={contentRef}
+        className="max-w-7xl mx-auto"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isInView ? 1 : 0 }}
+        transition={{ duration: 0.8 }}
       >
-        <motion.div
-          className="mb-16 text-center"
-          variants={itemVariants}
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 inline-block relative">
+        <div className="text-center mb-20">
+          <motion.h2 
+            className="text-4xl md:text-5xl font-bold mb-6 animate-text will-change-transform"
+          >
             About Me
-            <motion.span 
-              className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"
-              initial={{ width: 0 }}
-              whileInView={{ width: "100%" }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            />
-          </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Computer Engineering student with a passion for technology, photography, and creative media.
-          </p>
-        </motion.div>
-
-        <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-16"
-          variants={containerVariants}
-        >
-          <motion.div 
-            className="mb-8"
-            variants={itemVariants}
+          </motion.h2>
+          <motion.div
+            className="h-1 w-20 bg-blue-500 mx-auto animate-image will-change-transform"
+          />
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <AnimatedContent
+            distance={50}
+            direction="horizontal"
+            reverse={false}
+            config={{
+              tension: 80,
+              friction: 20
+            }}
+            initialOpacity={0.2}
+            animateOpacity={true}
+            scale={1.1}
+            threshold={0.1}
           >
-            <AnimatedContent
-              distance={150}
-              direction="horizontal"
-              reverse={false}
-              config={{ tension: 80, friction: 20 }}
-              initialOpacity={0.2}
-              animateOpacity
-              scale={1.1}
-              threshold={0.2}
-          >
-            <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-8 hover:border-blue-500/30 transition-colors duration-300 hover-lift h-full">
-              <div className="flex items-center mb-6">
-                <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mr-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold">My Background</h3>
-              </div>
-              
-              <p className="text-gray-300 mb-4 leading-relaxed">
-                I'm a Computer Engineering student with a deep passion for technology, photography, and creative media. Whether it's capturing high-quality images, producing engaging videos, or managing large-scale events, I always bring my creativity and technical skills to the table.
+            <div className="lg:col-span-1 animate-paragraph-container">
+              <h3 className="text-2xl font-bold mb-4 text-white animate-text">My Background</h3>
+              <p className="text-gray-400 mb-4">
+                I'm a creative developer and designer based in India with a passion for building beautiful, functional digital experiences. With a strong foundation in both design and development, I bring a unique perspective to every project.
               </p>
-              <p className="text-gray-300 leading-relaxed">
-                I also have a strong background in sports, having competed at state-level events in Table Tennis and Throwball. My ability to lead teams and think critically has helped me excel both in sports and in my professional endeavors.
+              <p className="text-gray-400 mb-4">
+                My journey began with exploring the intersection of design and technology, which led me to specialize in front-end development and interactive design. I believe in the power of elegant code and thoughtful design to solve complex problems.
+              </p>
+              <p className="text-gray-400">
+                When I'm not coding or designing, you'll find me behind a camera, creating short films, or exploring new photography techniques to tell compelling visual stories.
               </p>
             </div>
-            </AnimatedContent>
-          </motion.div>
+          </AnimatedContent>
           
-          <div className="grid grid-cols-1 gap-8">
-            <motion.div 
-              variants={itemVariants}
-            >
+          <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <AnimatedContent
-                distance={150}
+                distance={50}
                 direction="horizontal"
                 reverse={true}
-                config={{ tension: 80, friction: 20 }}
+                config={{
+                  tension: 80,
+                  friction: 20
+                }}
                 initialOpacity={0.2}
-                animateOpacity
+                animateOpacity={true}
                 scale={1.1}
-                threshold={0.2}
+                threshold={0.1}
               >
-              <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6 hover:border-blue-500/30 transition-colors duration-300 hover-lift">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
-                      <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                      <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                    </svg>
+                <div className="animate-paragraph-container">
+                  <h3 className="text-2xl font-bold mb-4 text-white animate-text">Education</h3>
+                  <div className="relative border-l border-blue-500 pl-6 py-2 mt-8">
+                    <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[6px] top-0"></div>
+                    <div className="mb-6">
+                      <h4 className="text-xl font-semibold text-blue-400 stagger-item">Computer Science Engineering</h4>
+                      <p className="text-gray-500 stagger-item">Mumbai University | 2020 - 2024</p>
+                      <p className="mt-2 text-gray-400 stagger-item">Specializing in Machine Learning, Cloud Computing, and Web Technologies.</p>
+                    </div>
+                    <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[6px] top-1/2"></div>
+                    <div>
+                      <h4 className="text-xl font-semibold text-blue-400 stagger-item">High School Diploma</h4>
+                      <p className="text-gray-500 stagger-item">Maharashtra State Board | 2018 - 2020</p>
+                      <p className="mt-2 text-gray-400 stagger-item">Focused on Computer Science and Mathematics.</p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold">Education</h3>
                 </div>
-                
-                <div className="ml-13">
-                  <h4 className="text-lg font-semibold">Bachelor of Technology in Computer Engineering</h4>
-                  <p className="text-gray-400">Fr. Conceicao Rodrigues College of Engineering</p>
-                  <p className="text-gray-500 text-sm mt-1">2024 - 2028</p>
-                </div>
-              </div>
               </AnimatedContent>
-            </motion.div>
-            
-            <motion.div 
-              variants={itemVariants}
-            >
+              
               <AnimatedContent
-                distance={150}
+                distance={50}
                 direction="horizontal"
                 reverse={false}
-                config={{ tension: 80, friction: 20 }}
+                config={{
+                  tension: 80,
+                  friction: 20
+                }}
                 initialOpacity={0.2}
-                animateOpacity
+                animateOpacity={true}
                 scale={1.1}
-                threshold={0.2}
+                threshold={0.1}
               >
-              <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6 hover:border-purple-500/30 transition-colors duration-300 hover-lift">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
-                      <path d="M8 2v4"></path>
-                      <path d="M16 2v4"></path>
-                      <path d="M3 10h18"></path>
-                      <path d="M8 14h.01"></path>
-                      <path d="M12 14h.01"></path>
-                      <path d="M16 14h.01"></path>
-                      <path d="M8 18h.01"></path>
-                      <path d="M12 18h.01"></path>
-                      <path d="M16 18h.01"></path>
-                      <rect width="18" height="20" x="3" y="2" rx="2"></rect>
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold">Sports Achievements</h3>
-                </div>
-                
-                <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <span className="text-purple-400 mr-2">🏆</span>
-                    <span>State-Level Table Tennis – Gold Medalist (Team Event)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-purple-400 mr-2">🏆</span>
-                    <span>State-Level Throwball Player</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-purple-400 mr-2">🏏</span>
-                    <span>Cricket & Badminton – Active participant in tournaments</span>
-                  </li>
-                </ul>
-              </div>
-              </AnimatedContent>
-            </motion.div>
-          </div>
-          
-          {/* 3D Skill Cloud Showcase */}
-          <motion.div 
-            variants={itemVariants}
-            className="lg:col-span-2"
-          >
-            <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-8 hover:border-blue-500/30 transition-colors duration-300">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
-                      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-bold">Skills & Technologies</h3>
-                </div>
-                
-                <div className="hidden md:flex space-x-2">
-                  {categories.map(category => (
-                    <div 
-                      key={category.name}
-                      className="flex items-center text-sm"
-                    >
-                      <div 
-                        className={`w-3 h-3 rounded-full mr-1 bg-gradient-to-r ${category.color}`}
-                      />
-                      <span className="text-gray-400">{category.name}</span>
+                <div className="animate-paragraph-container">
+                  <h3 className="text-2xl font-bold mb-4 text-white animate-text">Sports Achievements</h3>
+                  <div className="relative border-l border-purple-500 pl-6 py-2 mt-8">
+                    <div className="absolute w-3 h-3 bg-purple-500 rounded-full -left-[6px] top-0"></div>
+                    <div className="mb-6">
+                      <h4 className="text-xl font-semibold text-purple-400 stagger-item">National-Level Table Tennis</h4>
+                      <p className="text-gray-500 stagger-item">National Sports Competition | 2022</p>
+                      <p className="mt-2 text-gray-400 stagger-item">Represented state university and secured 2nd position in national inter-university tournament.</p>
                     </div>
-                  ))}
+                    <div className="absolute w-3 h-3 bg-purple-500 rounded-full -left-[6px] top-1/2"></div>
+                    <div>
+                      <h4 className="text-xl font-semibold text-purple-400 stagger-item">State-Level Cricket</h4>
+                      <p className="text-gray-500 stagger-item">Maharashtra Cricket Association | 2019</p>
+                      <p className="mt-2 text-gray-400 stagger-item">Captain of college team that reached semi-finals in state championship.</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex flex-col md:flex-row">
-                <div 
-                  ref={skillCloudRef}
-                  className="relative w-full md:w-2/3 overflow-y-auto h-[500px] pr-2"
-                  style={{
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: 'rgba(60, 60, 70, 0.5) transparent'
-                  }}
-                >
-                  <div className="space-y-6">
-                    {Object.entries(groupedSkills()).map(([category, skills]) => (
-                      <div key={category} className="mb-6">
-                        <div className="flex items-center mb-3">
-                          <div 
-                            className={`w-2 h-2 rounded-full mr-2 bg-gradient-to-r ${categories.find(c => c.name === category)?.color}`}
-                          />
-                          <h4 className="text-sm font-medium text-gray-400">{category}</h4>
-                        </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                          {skills.map((skill, idx) => (
-                            <SkillOrb
-                              key={skill.name}
-                              skill={skill}
-                              index={idx}
-                              active={activeSkill?.name === skill.name}
-                              onClick={handleSkillClick}
-                            />
+              </AnimatedContent>
+            </div>
+          </div>
+        </div>
+        
+        {/* Skills section */}
+        <div className="mt-20 relative" ref={skillsRef}>
+          <h3 className="text-3xl font-bold mb-10 text-center animate-text">My Skills</h3>
+          
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Skills grid with categories */}
+            <div className="w-full lg:w-2/3 animate-image">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {Object.entries(skillsByCategory).map(([category, skills]) => (
+                  <div key={category} className="col-span-full">
+                    <h4 className="text-lg font-semibold text-blue-400 mb-3">{category}</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                      {skills.map((skill, index) => (
+                        <SkillOrb 
+                          key={skill.name}
+                          skill={skill}
+                          index={index}
+                          active={selectedSkill?.name === skill.name}
+                          onClick={handleSkillClick}
+                        />
                       ))}
                     </div>
                   </div>
                 ))}
-                  </div>
-                </div>
-                
-                {/* Skill detail panel */}
-                <div className="md:w-1/3 mt-6 md:mt-0 md:ml-6">
-                  {activeSkill ? (
-                    <SkillDetailPanel skill={activeSkill} />
-                  ) : (
-                    <motion.div
-                      className="h-full flex flex-col items-center justify-center text-center p-6 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-lg"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <motion.div
-                        className="bg-zinc-800/80 px-4 py-2 rounded-full mb-4"
-                        initial={{ y: 10, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        <span className="text-blue-300 flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          Click a skill to view details
-                        </span>
-                      </motion.div>
-                      <p className="text-gray-400">
-                        Select any skill card to see more information about my proficiency and experience.
-                      </p>
-                    </motion.div>
-                  )}
-                </div>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+            
+            {/* Skill details panel */}
+            <div className="w-full lg:w-1/3 min-h-[300px] animate-image">
+              <SkillDetailPanel skill={selectedSkill} />
+            </div>
+          </div>
+        </div>
       </motion.div>
+      
+      {/* Scroll indicator */}
+      <ScrollIndicator scrollPosition={scrollPosition} maxScroll={maxScroll} />
     </section>
   );
 };
