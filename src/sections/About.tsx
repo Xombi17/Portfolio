@@ -354,25 +354,25 @@ const About = () => {
               animateOpacity
               scale={1.1}
               threshold={0.2}
-            >
-              <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-8 hover:border-blue-500/30 transition-colors duration-300 hover-lift h-full">
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-bold">My Background</h3>
+          >
+            <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-8 hover:border-blue-500/30 transition-colors duration-300 hover-lift h-full">
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mr-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
                 </div>
-                
-                <p className="text-gray-300 mb-4 leading-relaxed">
-                  I'm a Computer Engineering student with a deep passion for technology, photography, and creative media. Whether it's capturing high-quality images, producing engaging videos, or managing large-scale events, I always bring my creativity and technical skills to the table.
-                </p>
-                <p className="text-gray-300 leading-relaxed">
-                  I also have a strong background in sports, having competed at state-level events in Table Tennis and Throwball. My ability to lead teams and think critically has helped me excel both in sports and in my professional endeavors.
-                </p>
+                <h3 className="text-2xl font-bold">My Background</h3>
               </div>
+              
+              <p className="text-gray-300 mb-4 leading-relaxed">
+                I'm a Computer Engineering student with a deep passion for technology, photography, and creative media. Whether it's capturing high-quality images, producing engaging videos, or managing large-scale events, I always bring my creativity and technical skills to the table.
+              </p>
+              <p className="text-gray-300 leading-relaxed">
+                I also have a strong background in sports, having competed at state-level events in Table Tennis and Throwball. My ability to lead teams and think critically has helped me excel both in sports and in my professional endeavors.
+              </p>
+            </div>
             </AnimatedContent>
           </motion.div>
           
@@ -390,23 +390,23 @@ const About = () => {
                 scale={1.1}
                 threshold={0.2}
               >
-                <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6 hover:border-blue-500/30 transition-colors duration-300 hover-lift">
-                  <div className="flex items-center mb-4">
-                    <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
-                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-bold">Education</h3>
+              <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6 hover:border-blue-500/30 transition-colors duration-300 hover-lift">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
+                      <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                      <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                    </svg>
                   </div>
-                  
-                  <div className="ml-13">
-                    <h4 className="text-lg font-semibold">Bachelor of Technology in Computer Engineering</h4>
-                    <p className="text-gray-400">Fr. Conceicao Rodrigues College of Engineering</p>
-                    <p className="text-gray-500 text-sm mt-1">2024 - 2028</p>
-                  </div>
+                  <h3 className="text-xl font-bold">Education</h3>
                 </div>
+                
+                <div className="ml-13">
+                  <h4 className="text-lg font-semibold">Bachelor of Technology in Computer Engineering</h4>
+                  <p className="text-gray-400">Fr. Conceicao Rodrigues College of Engineering</p>
+                  <p className="text-gray-500 text-sm mt-1">2024 - 2028</p>
+                </div>
+              </div>
               </AnimatedContent>
             </motion.div>
             
@@ -423,40 +423,40 @@ const About = () => {
                 scale={1.1}
                 threshold={0.2}
               >
-                <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6 hover:border-purple-500/30 transition-colors duration-300 hover-lift">
-                  <div className="flex items-center mb-4">
-                    <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
-                        <path d="M8 2v4"></path>
-                        <path d="M16 2v4"></path>
-                        <path d="M3 10h18"></path>
-                        <path d="M8 14h.01"></path>
-                        <path d="M12 14h.01"></path>
-                        <path d="M16 14h.01"></path>
-                        <path d="M8 18h.01"></path>
-                        <path d="M12 18h.01"></path>
-                        <path d="M16 18h.01"></path>
-                        <rect width="18" height="20" x="3" y="2" rx="2"></rect>
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-bold">Sports Achievements</h3>
+              <div className="bg-zinc-900/30 backdrop-blur-sm border border-zinc-800 rounded-lg p-6 hover:border-purple-500/30 transition-colors duration-300 hover-lift">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
+                      <path d="M8 2v4"></path>
+                      <path d="M16 2v4"></path>
+                      <path d="M3 10h18"></path>
+                      <path d="M8 14h.01"></path>
+                      <path d="M12 14h.01"></path>
+                      <path d="M16 14h.01"></path>
+                      <path d="M8 18h.01"></path>
+                      <path d="M12 18h.01"></path>
+                      <path d="M16 18h.01"></path>
+                      <rect width="18" height="20" x="3" y="2" rx="2"></rect>
+                    </svg>
                   </div>
-                  
-                  <ul className="space-y-3">
-                    <li className="flex items-start">
-                      <span className="text-purple-400 mr-2">🏆</span>
-                      <span>State-Level Table Tennis – Gold Medalist (Team Event)</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-purple-400 mr-2">🏆</span>
-                      <span>State-Level Throwball Player</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-purple-400 mr-2">🏏</span>
-                      <span>Cricket & Badminton – Active participant in tournaments</span>
-                    </li>
-                  </ul>
+                  <h3 className="text-xl font-bold">Sports Achievements</h3>
                 </div>
+                
+                <ul className="space-y-3">
+                  <li className="flex items-start">
+                    <span className="text-purple-400 mr-2">🏆</span>
+                    <span>State-Level Table Tennis – Gold Medalist (Team Event)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-400 mr-2">🏆</span>
+                    <span>State-Level Throwball Player</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-400 mr-2">🏏</span>
+                    <span>Cricket & Badminton – Active participant in tournaments</span>
+                  </li>
+                </ul>
+              </div>
               </AnimatedContent>
             </motion.div>
           </div>
@@ -519,10 +519,10 @@ const About = () => {
                               active={activeSkill?.name === skill.name}
                               onClick={handleSkillClick}
                             />
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                  </div>
+                ))}
                   </div>
                 </div>
                 
