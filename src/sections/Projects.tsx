@@ -93,24 +93,25 @@ const projects: Project[] = [
     icon: "💻",
     featured: true
   },
-  /*
+  
   {
-    id: 'photo-2',
-    title: "Urban Photography Series",
-    category: 'photo',
-    description: "A series of urban landscape photographs capturing the essence of city life, architecture, and the interplay of light and shadow.",
-    technologies: ["Urban Photography", "Architecture", "Street", "Black & White"],
+    id: 'web-2',
+    title: "Ai Virus Checker",
+    category: 'web',
+    description: "An AI-powered virus checker that utilizes advanced algorithms to detect and analyze potential threats in urban environments, providing users with insightful data visualizations and actionable insights.",
+    technologies: ["AI Image Processing", "Machine Learning", "Data Analysis", "Computer Vision"],
     images: [
-      "https://source.unsplash.com/random/800x600?urban,photography",
-      "https://source.unsplash.com/random/800x600?city,street",
-      "https://source.unsplash.com/random/800x600?architecture,building"
+      "https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
+      "./assets/images/ai-virus.jpg",
+      "./assets/images/ai-virus.jpg"
     ],
-    projectUrl: "#",
+    projectUrl: "https://virus-ai-ten.vercel.app/",
+    githubUrl: "https://github.com/Xombi17/Virus-AI",
     color: "#6366F1", // indigo
-    icon: "🏙️",
-    featured: false
+    icon: "💻",
+    featured: true
   },
-  */
+  
   {
     id: 'film-2',
     title: "Short Film: 'Until Silence Breaks'",
@@ -125,7 +126,7 @@ const projects: Project[] = [
     projectUrl: "https://youtu.be/xrlxXv1WIwc",
     color: "#8B5CF6", // purple
     icon: "🎥",
-    featured: false
+    featured: true
   },
   {
     id: 'web-2',
@@ -142,7 +143,7 @@ const projects: Project[] = [
     githubUrl: "https://github.com/Xombi17/Health-Vault",
     color: "#F59E0B", // amber
     icon: "🛒",
-    featured: false
+    featured: true
   },
   {
     id: 'blank-1',
@@ -158,26 +159,27 @@ const projects: Project[] = [
     projectUrl: "#",
     color: "#EC4899", // pink
     icon: "✨",
-    featured: false
+    featured: true
   },
-  /*
+  
  {
-    id: 'blank-2',
-    title: "Future Project",
-    category: 'blank2',
-    description: "Another exciting project in the pipeline. Details will be revealed soon!",
-    technologies: ["TBA"],
+    id: 'web-3',
+    title: "Human Heart System",
+    category: 'web',
+    description: "Showcasing the intricate workings of the human heart, this project aims to provide an interactive experience that educates users about cardiovascular health and anatomy.",
+    technologies: ["React", "Node.js", "MongoDB", "Three.js", "Vercel"],
     images: [
-      "https://source.unsplash.com/random/800x600?future,concept",
-      "https://source.unsplash.com/random/800x600?idea,creative",
-      "https://source.unsplash.com/random/800x600?innovation,new"
+      "https://plus.unsplash.com/premium_photo-1722707492894-2839a324624e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Heart anatomy illustration
+      "https://images.unsplash.com/photo-1581091012180-2c2c2c2c2c2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80", // Heart health concept
+      "https://images.unsplash.com/photo-1581091012180-3c3c3c3c3c3c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80"  // Heartbeat visualization
     ],
-    projectUrl: "#",
+    projectUrl: "#https://hhs-heart.vercel.app/",
+    githubUrl: "https://github.com/Xombi17/HHS-HEART-local",
     color: "#0EA5E9", // sky blue
     icon: "🚀",
-    featured: false
+    featured: true
   }
-  */
+  
 ];
 
 // Add a throttle utility function for performance
