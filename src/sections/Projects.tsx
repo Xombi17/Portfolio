@@ -71,7 +71,7 @@ const projects: Project[] = [
       "https://images.unsplash.com/photo-1533101585792-27f81a845550?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
       "https://images.unsplash.com/photo-1505775561242-727b7fba20f0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
     ],
-    projectUrl: "#",
+    projectUrl: "https://youtu.be/xrlxXv1WIwc",
     color: "#EF4444", // red
     icon: "🎬",
     featured: true
@@ -1017,10 +1017,11 @@ const Projects = () => {
       {/* Modal Portal */}
       {isExpanded && activeProject && ReactDOM.createPortal(
         <div 
-          className="fixed inset-0 z-[99999] flex items-center justify-center"
+          className="fixed inset-0 flex items-center justify-center cursor-default"
           style={{
             backgroundColor: 'rgba(0, 0, 0, 0.9)',
-            backdropFilter: 'blur(8px)'
+            backdropFilter: 'blur(8px)',
+            zIndex: 9999
           }}
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -1034,7 +1035,8 @@ const Projects = () => {
           }}
         >
           <div 
-            className="bg-neutral-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto m-4 relative"
+            className="bg-neutral-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto m-4 relative cursor-default"
+            style={{ zIndex: 1001 }}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -1054,7 +1056,7 @@ const Projects = () => {
                       history.pushState('', document.title, window.location.pathname + window.location.search);
                     }
                   }}
-                  className="bg-black/50 p-2 rounded-full hover:bg-black/70 transition-colors"
+                  className="bg-black/50 p-2 rounded-full hover:bg-black/70 transition-colors cursor-pointer"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M18 6L6 18M6 6l12 12" />
@@ -1098,7 +1100,7 @@ const Projects = () => {
                         href={activeProject.projectUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-6 py-2 rounded-lg font-medium inline-block"
+                        className="px-6 py-2 rounded-lg font-medium inline-block cursor-pointer"
                         style={{
                           backgroundColor: activeProject.color,
                           color: '#000'
@@ -1114,7 +1116,7 @@ const Projects = () => {
                         href={activeProject.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium inline-block"
+                        className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium inline-block cursor-pointer"
                         onClick={(e) => e.stopPropagation()}
                       >
                         View Code
@@ -1125,14 +1127,14 @@ const Projects = () => {
               </div>
 
               {/* Navigation Arrows */}
-              <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex justify-between px-4 pointer-events-none">
+              <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex justify-between px-4">
                 <button
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     navigateProject(-1);
                   }}
-                  className="p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors pointer-events-auto"
+                  className="p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors cursor-pointer"
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M15 18l-6-6 6-6" />
@@ -1144,7 +1146,7 @@ const Projects = () => {
                     e.stopPropagation();
                     navigateProject(1);
                   }}
-                  className="p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors pointer-events-auto"
+                  className="p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors cursor-pointer"
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M9 18l6-6-6-6" />
