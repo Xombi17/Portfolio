@@ -509,11 +509,11 @@ const Projects = () => {
       unlockScroll();
     }
   }, [isExpanded]);
-
+  
   return (
     <>
-      <section 
-        id="projects" 
+    <section 
+      id="projects" 
         ref={sectionRef}
         className="py-24 px-4 bg-black relative min-h-[120vh] overflow-hidden"
       >
@@ -651,7 +651,7 @@ const Projects = () => {
                 <span className="inline-block" style={{ transform: "translateZ(10px)" }}>l</span>
                 <span className="inline-block" style={{ transform: "translateZ(5px)" }}>i</span>
                 <span className="inline-block" style={{ transform: "translateZ(0px)" }}>o</span>
-                <motion.div
+        <motion.div
                   className="h-1 w-24 bg-gradient-to-r from-blue-400 to-violet-500 mx-auto mt-4"
                   initial={{ width: 0 }}
                   whileInView={{ width: 96 }}
@@ -661,8 +661,8 @@ const Projects = () => {
             )}
             <motion.p 
               className="text-gray-400 max-w-xl mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               Explore my diverse projects across photography, filmmaking, and web development.
@@ -685,8 +685,8 @@ const Projects = () => {
           >
             <div className="flex space-x-3 md:justify-center">
               {categories.map((category, index) => (
-                <motion.button
-                  key={category.id}
+              <motion.button
+                key={category.id}
                   className={`px-5 py-3 rounded-full text-sm md:text-base flex items-center gap-2 whitespace-nowrap transition-all duration-300 ${
                     selectedCategory === category.id 
                       ? 'bg-opacity-20 border border-opacity-50 shadow-lg' 
@@ -711,21 +711,21 @@ const Projects = () => {
                     stiffness: 200,
                     damping: 20
                   }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                   <span>{category.icon}</span>
                   <span>{category.label}</span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-          
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+        
           {/* Project Grid - now with GSAP ScrollTrigger */}
-          <motion.div
+        <motion.div
             ref={projectGridRef}
-            variants={containerVariants}
-            initial="hidden"
+          variants={containerVariants}
+          initial="hidden"
             whileInView="visible"
             viewport={{ once: false, amount: 0.1, margin: "100px 0px" }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
@@ -1010,9 +1010,9 @@ const Projects = () => {
                 </motion.button>
               </motion.div>
             )}
-          </motion.div>
-        </div>
-      </section>
+        </motion.div>
+      </div>
+    </section>
 
       {/* Modal Portal */}
       {isExpanded && activeProject && ReactDOM.createPortal(
@@ -1021,7 +1021,7 @@ const Projects = () => {
           style={{
             backgroundColor: 'rgba(0, 0, 0, 0.9)',
             backdropFilter: 'blur(8px)',
-            zIndex: 9999
+            zIndex: 99999
           }}
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -1036,7 +1036,7 @@ const Projects = () => {
         >
           <div 
             className="bg-neutral-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto m-4 relative cursor-default"
-            style={{ zIndex: 1001 }}
+            style={{ zIndex: 99999 }}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
