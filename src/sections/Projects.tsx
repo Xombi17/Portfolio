@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, useInView, useMotionValue, useTransform, useSpring } from 'framer-motion';
 
 // Project Category Types
@@ -173,7 +173,37 @@ const projects: Project[] = [
   */
 ];
 
+// Add a throttle utility function for performance
+const throttle = (func: Function, limit: number) => {
+  let inThrottle: boolean;
+  return function(this: any, ...args: any[]) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+};
+
+// Detect low-performance devices
+const useDevicePerformance = () => {
+  const [isLowPerfDevice, setIsLowPerfDevice] = useState(false);
+  
+  useEffect(() => {
+    // Simple heuristic for device performance detection
+    const isLowEnd = 
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    setIsLowPerfDevice(isLowEnd);
+  }, []);
+  
+  return isLowPerfDevice;
+};
+
 const Projects = () => {
+  // Check device performance to adjust effects
+  const isLowPerfDevice = useDevicePerformance();
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: false, amount: 0.2 });
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | 'all'>('all');
@@ -188,9 +218,12 @@ const Projects = () => {
   // Mouse position state for section background parallax
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
-  // Effect for parallax background movement
+  // Effect for parallax background movement - throttled for performance
   useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
+    // Skip mouse tracking on low performance devices
+    if (isLowPerfDevice) return;
+    
+    const handleMouseMove = throttle((event: MouseEvent) => {
       const { clientX, clientY } = event;
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
@@ -202,11 +235,11 @@ const Projects = () => {
       
       // Update the 3D text motion value based on mouse position
       textY.set((clientY / windowHeight - 0.5) * 100);
-    };
+    }, 16); // Throttle to ~60fps
     
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [textY]);
+  }, [textY, isLowPerfDevice]);
 
   // Initialize with a featured project
   useEffect(() => {
@@ -258,7 +291,10 @@ const Projects = () => {
     { id: 'web', label: 'Web Development', icon: '💻', color: '#10B981' }
   ];
 
-  // Animation variants
+  // Reduce particle count based on device performance
+  const particleCount = isLowPerfDevice ? 10 : 25;
+  
+  // Optimize animation variants based on device capability
   const containerVariants = {
     hidden: { 
       opacity: 0,
@@ -270,8 +306,8 @@ const Projects = () => {
       opacity: 1,
       transition: {
         when: "beforeChildren",
-        staggerChildren: 0.2,
-        delayChildren: 0.1
+        staggerChildren: isLowPerfDevice ? 0.08 : 0.2,
+        delayChildren: isLowPerfDevice ? 0 : 0.1
       }
     }
   };
@@ -287,10 +323,10 @@ const Projects = () => {
       opacity: 1,
       scale: 1,
       transition: {
-        type: "spring",
-        stiffness: 100,
+        type: isLowPerfDevice ? "tween" : "spring",
+        stiffness: isLowPerfDevice ? 50 : 100,
         damping: 12,
-        duration: 0.6
+        duration: isLowPerfDevice ? 0.3 : 0.6
       }
     }
   };
@@ -305,29 +341,31 @@ const Projects = () => {
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-80" />
         
-        {/* Background gradient with parallax effect */}
+        {/* Background gradient with parallax effect - optimized */}
         <motion.div 
           className="absolute inset-0"
+          style={{
+            filter: 'blur(120px)',
+            willChange: 'transform, opacity',
+            transform: 'translateZ(0)',
+          }}
           initial={{ opacity: 0 }}
           animate={{ 
             opacity: isInView ? 0.2 : 0,
             backgroundColor: activeProject?.color || '#6366F1',
-            x: mousePosition.x,
-            y: mousePosition.y
+            x: isLowPerfDevice ? 0 : mousePosition.x,
+            y: isLowPerfDevice ? 0 : mousePosition.y
           }}
           transition={{ 
             duration: 1.5,
             x: { duration: 0.5, ease: "easeOut" },
             y: { duration: 0.5, ease: "easeOut" }
           }}
-          style={{
-            filter: 'blur(120px)',
-          }}
         />
         
-        {/* Enhanced floating particles with 3D effect */}
+        {/* Enhanced floating particles - reduced count and complexity */}
         <div className="absolute inset-0">
-          {Array.from({ length: 40 }).map((_, i) => (
+          {Array.from({ length: particleCount }).map((_, i) => (
             <motion.div
               key={i}
               className="absolute rounded-full"
@@ -339,18 +377,20 @@ const Projects = () => {
                 y: Math.random() * window.innerHeight,
                 opacity: Math.random() * 0.5 + 0.1,
                 filter: `blur(${Math.random() * 2}px)`,
-                zIndex: Math.floor(Math.random() * 10) - 5
+                willChange: 'transform, opacity',
+                transform: 'translateZ(0)',
               }}
-              animate={{
+              animate={isLowPerfDevice ? {
+                y: [null, Math.random() * -200 - 50],
+                opacity: [null, 0],
+              } : {
                 y: [null, Math.random() * -400 - 50],
                 x: [null, Math.random() * 100 - 50],
                 opacity: [null, 0],
                 scale: [1, Math.random() * 0.5 + 0.5, 0],
-                rotateX: [0, Math.random() * 360],
-                rotateY: [0, Math.random() * 360],
               }}
               transition={{
-                duration: Math.random() * 15 + 15,
+                duration: Math.random() * 10 + 15,
                 repeat: Infinity,
                 ease: "linear",
               }}
@@ -360,7 +400,7 @@ const Projects = () => {
       </div>
       
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Section Header with 3D text effect */}
+        {/* Section Header - optimized */}
         <motion.div
           className="mb-16 text-center"
           initial={{ opacity: 0, y: 30 }}
@@ -368,49 +408,73 @@ const Projects = () => {
           viewport={{ once: false, amount: 0.2 }}
           transition={{ 
             duration: 0.8,
-            type: "spring",
+            type: isLowPerfDevice ? "tween" : "spring",
             stiffness: 100,
             damping: 20
           }}
         >
-          <motion.h2 
-            className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4"
-            style={{
-              textShadow: "0 10px 20px rgba(99, 102, 241, 0.6)",
-              transformStyle: "preserve-3d",
-              perspective: "1000px",
-              rotateX: textRotateX,
-              z: textZ
-            }}
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <span className="inline-block" style={{ transform: "translateZ(20px)" }}>C</span>
-            <span className="inline-block" style={{ transform: "translateZ(25px)" }}>r</span>
-            <span className="inline-block" style={{ transform: "translateZ(30px)" }}>e</span>
-            <span className="inline-block" style={{ transform: "translateZ(35px)" }}>a</span>
-            <span className="inline-block" style={{ transform: "translateZ(40px)" }}>t</span>
-            <span className="inline-block" style={{ transform: "translateZ(35px)" }}>i</span>
-            <span className="inline-block" style={{ transform: "translateZ(30px)" }}>v</span>
-            <span className="inline-block" style={{ transform: "translateZ(25px)" }}>e</span>
-            <span className="inline-block mx-4" style={{ transform: "translateZ(15px)" }}></span>
-            <span className="inline-block" style={{ transform: "translateZ(40px)" }}>P</span>
-            <span className="inline-block" style={{ transform: "translateZ(35px)" }}>o</span>
-            <span className="inline-block" style={{ transform: "translateZ(30px)" }}>r</span>
-            <span className="inline-block" style={{ transform: "translateZ(25px)" }}>t</span>
-            <span className="inline-block" style={{ transform: "translateZ(20px)" }}>f</span>
-            <span className="inline-block" style={{ transform: "translateZ(15px)" }}>o</span>
-            <span className="inline-block" style={{ transform: "translateZ(10px)" }}>l</span>
-            <span className="inline-block" style={{ transform: "translateZ(5px)" }}>i</span>
-            <span className="inline-block" style={{ transform: "translateZ(0px)" }}>o</span>
-            <motion.div
-              className="h-1 w-24 bg-gradient-to-r from-blue-400 to-violet-500 mx-auto mt-4"
-              initial={{ width: 0 }}
-              whileInView={{ width: 96 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-            />
-          </motion.h2>
+          {isLowPerfDevice ? (
+            // Simple header for low-performance devices
+            <motion.h2 
+              className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4"
+              style={{
+                textShadow: "0 10px 20px rgba(99, 102, 241, 0.6)",
+              }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              Creative Portfolio
+              <motion.div
+                className="h-1 w-24 bg-gradient-to-r from-blue-400 to-violet-500 mx-auto mt-4"
+                initial={{ width: 0 }}
+                whileInView={{ width: 96 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              />
+            </motion.h2>
+          ) : (
+            // 3D header with hardware acceleration
+            <motion.h2 
+              className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4"
+              style={{
+                textShadow: "0 10px 20px rgba(99, 102, 241, 0.6)",
+                transformStyle: "preserve-3d",
+                perspective: "1000px",
+                rotateX: textRotateX,
+                z: textZ,
+                willChange: 'transform',
+                transform: 'translateZ(0)',
+              }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <span className="inline-block" style={{ transform: "translateZ(20px)" }}>C</span>
+              <span className="inline-block" style={{ transform: "translateZ(25px)" }}>r</span>
+              <span className="inline-block" style={{ transform: "translateZ(30px)" }}>e</span>
+              <span className="inline-block" style={{ transform: "translateZ(35px)" }}>a</span>
+              <span className="inline-block" style={{ transform: "translateZ(40px)" }}>t</span>
+              <span className="inline-block" style={{ transform: "translateZ(35px)" }}>i</span>
+              <span className="inline-block" style={{ transform: "translateZ(30px)" }}>v</span>
+              <span className="inline-block" style={{ transform: "translateZ(25px)" }}>e</span>
+              <span className="inline-block mx-4" style={{ transform: "translateZ(15px)" }}></span>
+              <span className="inline-block" style={{ transform: "translateZ(40px)" }}>P</span>
+              <span className="inline-block" style={{ transform: "translateZ(35px)" }}>o</span>
+              <span className="inline-block" style={{ transform: "translateZ(30px)" }}>r</span>
+              <span className="inline-block" style={{ transform: "translateZ(25px)" }}>t</span>
+              <span className="inline-block" style={{ transform: "translateZ(20px)" }}>f</span>
+              <span className="inline-block" style={{ transform: "translateZ(15px)" }}>o</span>
+              <span className="inline-block" style={{ transform: "translateZ(10px)" }}>l</span>
+              <span className="inline-block" style={{ transform: "translateZ(5px)" }}>i</span>
+              <span className="inline-block" style={{ transform: "translateZ(0px)" }}>o</span>
+              <motion.div
+                className="h-1 w-24 bg-gradient-to-r from-blue-400 to-violet-500 mx-auto mt-4"
+                initial={{ width: 0 }}
+                whileInView={{ width: 96 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              />
+            </motion.h2>
+          )}
           <motion.p 
             className="text-gray-400 max-w-xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
@@ -421,7 +485,7 @@ const Projects = () => {
           </motion.p>
         </motion.div>
         
-        {/* Category Filters - Horizontal Scrollable Menu */}
+        {/* Category Filters - optimized */}
         <motion.div 
           className="mb-12 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent"
           initial={{ opacity: 0, y: 20 }}
@@ -430,7 +494,7 @@ const Projects = () => {
           transition={{ 
             duration: 0.5, 
             delay: 0.4,
-            type: "spring",
+            type: isLowPerfDevice ? "tween" : "spring",
             stiffness: 100,
             damping: 20
           }}
@@ -448,15 +512,17 @@ const Projects = () => {
                   backgroundColor: selectedCategory === category.id ? `${category.color}20` : '',
                   borderColor: selectedCategory === category.id ? category.color : '',
                   color: selectedCategory === category.id ? category.color : 'white',
-                  boxShadow: selectedCategory === category.id ? `0 4px 20px ${category.color}20` : ''
+                  boxShadow: selectedCategory === category.id ? `0 4px 20px ${category.color}20` : '',
+                  willChange: 'transform',
+                  transform: 'translateZ(0)',
                 }}
                 onClick={() => setSelectedCategory(category.id as ProjectCategory | 'all')}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ 
                   duration: 0.3, 
-                  delay: index * 0.1,
-                  type: "spring",
+                  delay: index * (isLowPerfDevice ? 0.05 : 0.1),
+                  type: isLowPerfDevice ? "tween" : "spring",
                   stiffness: 200,
                   damping: 20
                 }}
@@ -470,36 +536,41 @@ const Projects = () => {
           </div>
         </motion.div>
         
-        {/* Project Grid */}
+        {/* Project Grid - optimized with better viewport detection */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.1, margin: "100px 0px" }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
           {filteredProjects.map((project, index) => {
-            // Setup for 3D tilt effect
+            // Setup for 3D tilt effect - optimized for performance
             const x = useMotionValue(0);
             const y = useMotionValue(0);
             
-            const rotateX = useTransform(y, [-100, 100], [10, -10]);
-            const rotateY = useTransform(x, [-100, 100], [-10, 10]);
+            // Skip complex transforms on low-performance devices
+            const rotateX = !isLowPerfDevice ? useTransform(y, [-100, 100], [10, -10]) : useMotionValue(0);
+            const rotateY = !isLowPerfDevice ? useTransform(x, [-100, 100], [-10, 10]) : useMotionValue(0);
             
-            // Smoother spring physics for rotation
-            const springX = useSpring(rotateX, { stiffness: 300, damping: 30 });
-            const springY = useSpring(rotateY, { stiffness: 300, damping: 30 });
+            // Smoother spring physics for rotation - only on high-performance devices
+            const springX = !isLowPerfDevice ? useSpring(rotateX, { stiffness: 300, damping: 30 }) : rotateX;
+            const springY = !isLowPerfDevice ? useSpring(rotateY, { stiffness: 300, damping: 30 }) : rotateY;
             
-            const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+            // Throttled mouse handler for 3D effect
+            const handleMouseMove = throttle((e: React.MouseEvent<HTMLDivElement>) => {
+              if (isLowPerfDevice) return;
+              
               const rect = e.currentTarget.getBoundingClientRect();
               const centerX = rect.left + rect.width / 2;
               const centerY = rect.top + rect.height / 2;
               
               x.set(e.clientX - centerX);
               y.set(e.clientY - centerY);
-            };
+            }, 16);
             
             const handleMouseLeave = () => {
+              if (isLowPerfDevice) return;
               x.set(0);
               y.set(0);
             };
@@ -513,10 +584,14 @@ const Projects = () => {
                 style={{ 
                   backgroundColor: `${project.color}10`,
                   borderColor: `${project.color}30`,
-                  perspective: "1000px",
-                  transformStyle: "preserve-3d",
-                  rotateX: springX,
-                  rotateY: springY
+                  willChange: 'transform, opacity, box-shadow',
+                  transform: 'translateZ(0)',
+                  ...(isLowPerfDevice ? {} : {
+                    perspective: "1000px",
+                    transformStyle: "preserve-3d",
+                    rotateX: springX,
+                    rotateY: springY
+                  })
                 }}
                 onClick={() => {
                   setActiveProject(project);
@@ -528,40 +603,50 @@ const Projects = () => {
                   y: -10, 
                   scale: 1.02,
                   boxShadow: `0 20px 40px ${project.color}40`,
-                  borderWidth: "2px"
+                  borderWidth: isLowPerfDevice ? "1px" : "2px"
                 }}
                 transition={{ 
                   duration: 0.3,
-                  type: "spring",
+                  type: isLowPerfDevice ? "tween" : "spring",
                   stiffness: 300,
                   damping: 20
                 }}
               >
-                {/* Project Image with 3D effect */}
+                {/* Project Image with optimized 3D effect */}
                 <motion.div 
                   className="h-60 overflow-hidden relative"
                   style={{
-                    transformStyle: "preserve-3d",
-                    zIndex: 1,
-                    translateZ: "20px"
+                    willChange: isLowPerfDevice ? 'auto' : 'transform',
+                    transform: 'translateZ(0)',
+                    ...(isLowPerfDevice ? {} : {
+                      transformStyle: "preserve-3d",
+                      zIndex: 1,
+                      translateZ: "20px"
+                    })
                   }}
                 >
                   <img 
                     src={project.images[0]} 
                     alt={project.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    style={{
+                      willChange: 'transform',
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80" />
                   
-                  {/* Category Tag with floating effect */}
+                  {/* Category Tag - simplified for performance */}
                   <motion.div 
                     className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs uppercase tracking-wider"
                     style={{ 
                       backgroundColor: `${project.color}90`,
-                      translateZ: "30px",
-                      boxShadow: `0 10px 20px ${project.color}40`,
+                      willChange: isLowPerfDevice ? 'auto' : 'transform',
+                      ...(isLowPerfDevice ? {} : {
+                        translateZ: "30px",
+                        boxShadow: `0 10px 20px ${project.color}40`,
+                      })
                     }}
-                    animate={{
+                    animate={isLowPerfDevice ? {} : {
                       y: [0, -5, 0],
                       rotateZ: [0, 2, 0, -2, 0],
                       scale: [1, 1.05, 1]
@@ -578,12 +663,12 @@ const Projects = () => {
                   </motion.div>
                 </motion.div>
                 
-                {/* Project Info with 3D depth */}
+                {/* Project Info - simplified for performance */}
                 <motion.div 
                   className="p-6"
                   style={{
-                    transformStyle: "preserve-3d",
-                    translateZ: "10px"
+                    willChange: 'transform',
+                    transform: 'translateZ(0)',
                   }}
                 >
                   <div className="flex items-start justify-between mb-2">
@@ -592,7 +677,7 @@ const Projects = () => {
                     </h3>
                     <motion.span 
                       className="text-2xl"
-                      style={{ translateZ: "35px" }}
+                      style={{ willChange: 'transform', transform: 'translateZ(35px)' }}
                       animate={{
                         y: [0, -8, 0],
                         rotateY: [0, 180, 360],
@@ -620,8 +705,8 @@ const Projects = () => {
                         style={{ 
                           backgroundColor: `${project.color}20`,
                           color: project.color,
-                          transformStyle: "preserve-3d",
-                          translateZ: 20 + i * 10 + "px",
+                          willChange: 'transform',
+                          transform: 'translateZ(20px)',
                           boxShadow: `0 ${5 + i * 2}px ${10 + i * 5}px ${project.color}30`
                         }}
                         animate={{
@@ -644,8 +729,8 @@ const Projects = () => {
                         className="inline-block px-2 py-1 rounded-full text-xs text-gray-400"
                         style={{ 
                           backgroundColor: '#ffffff10',
-                          transformStyle: "preserve-3d",
-                          translateZ: "15px"
+                          willChange: 'transform',
+                          transform: 'translateZ(15px)'
                         }}
                         animate={{
                           y: [0, -4, 0],
@@ -667,8 +752,8 @@ const Projects = () => {
                 <motion.div 
                   className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
                   style={{
-                    transformStyle: "preserve-3d",
-                    translateZ: "25px"
+                    willChange: 'transform',
+                    transform: 'translateZ(25px)'
                   }}
                 >
                   {project.category !== 'blank1' && project.category !== 'blank2' && (
@@ -676,7 +761,9 @@ const Projects = () => {
                       className="px-6 py-3 rounded-full"
                       style={{ 
                         backgroundColor: project.color,
-                        boxShadow: `0 10px 30px ${project.color}80`
+                        boxShadow: `0 10px 30px ${project.color}80`,
+                        willChange: 'transform',
+                        transform: 'translateZ(0)'
                       }}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -693,7 +780,7 @@ const Projects = () => {
           })}
         </motion.div>
         
-        {/* Expanded Project Modal */}
+        {/* Expanded Project Modal - optimized for performance */}
         <AnimatePresence>
           {isExpanded && activeProject && (
             <motion.div
@@ -728,7 +815,8 @@ const Projects = () => {
                       y: Math.random() * window.innerHeight,
                       opacity: Math.random() * 0.2 + 0.05,
                       filter: `blur(${Math.random() * 2}px)`,
-                      zIndex: 0
+                      willChange: 'transform, opacity',
+                      transform: 'translateZ(0)'
                     }}
                     animate={{
                       y: [Math.random() * window.innerHeight, (Math.random() - 0.5) * window.innerHeight],
@@ -752,8 +840,9 @@ const Projects = () => {
                 style={{ 
                   borderColor: `${activeProject.color}30`,
                   boxShadow: `0 20px 60px ${activeProject.color}30`,
+                  willChange: 'transform',
+                  transform: 'translateZ(0)',
                   perspective: "1500px",
-                  transformStyle: "preserve-3d"
                 }}
                 initial={{ scale: 0.9, y: 20, opacity: 0, rotateX: 15 }}
                 animate={{ scale: 1, y: 0, opacity: 1, rotateX: 0 }}
@@ -820,8 +909,9 @@ const Projects = () => {
                 <motion.div 
                   className="md:w-1/2 h-72 md:h-auto relative overflow-hidden"
                   style={{
+                    willChange: 'transform',
+                    transform: 'translateZ(0)',
                     perspective: "1000px",
-                    transformStyle: "preserve-3d"
                   }}
                   whileHover={{
                     z: 20
@@ -830,8 +920,8 @@ const Projects = () => {
                   <motion.div
                     className="absolute inset-0 flex"
                     style={{
-                      transformStyle: "preserve-3d",
-                      translateZ: "30px",
+                      willChange: 'transform',
+                      transform: 'translateZ(30px)',
                     }}
                     initial={{ x: 0 }}
                     animate={{ 
@@ -849,7 +939,8 @@ const Projects = () => {
                         className="w-full h-full flex-shrink-0"
                         style={{ 
                           aspectRatio: "16/9",
-                          transformStyle: "preserve-3d"
+                          willChange: 'transform',
+                          transform: 'translateZ(0)',
                         }}
                         whileHover={{ z: 20 }}
                       >
@@ -870,9 +961,9 @@ const Projects = () => {
                     className="absolute top-4 left-4 px-4 py-2 rounded-full text-sm uppercase tracking-wider"
                     style={{ 
                       backgroundColor: `${activeProject.color}90`,
+                      willChange: 'transform',
                       boxShadow: `0 10px 30px ${activeProject.color}50`,
-                      transformStyle: "preserve-3d",
-                      translateZ: "50px"
+                      transform: 'translateZ(50px)'
                     }}
                     animate={{
                       y: [0, -5, 0],
@@ -895,7 +986,8 @@ const Projects = () => {
                 <motion.div 
                   className="md:w-1/2 p-8 overflow-y-auto custom-scrollbar max-h-[60vh] md:max-h-[90vh]"
                   style={{
-                    transformStyle: "preserve-3d",
+                    willChange: 'transform',
+                    transform: 'translateZ(0)',
                     perspective: "1000px"
                   }}
                 >
@@ -904,18 +996,20 @@ const Projects = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                     style={{
-                      transformStyle: "preserve-3d"
+                      willChange: 'transform',
+                      transform: 'translateZ(0)'
                     }}
                   >
                     <motion.div 
                       className="flex items-center gap-3 mb-6"
                       style={{
-                        transformStyle: "preserve-3d"
+                        willChange: 'transform',
+                        transform: 'translateZ(0)'
                       }}
                     >
                       <motion.span 
                         className="text-3xl"
-                        style={{ translateZ: "40px" }}
+                        style={{ willChange: 'transform', transform: 'translateZ(40px)' }}
                         animate={{
                           rotateY: [0, 360],
                           scale: [1, 1.2, 1]
@@ -931,7 +1025,8 @@ const Projects = () => {
                         style={{ 
                           color: activeProject.color,
                           textShadow: `0 5px 15px ${activeProject.color}70`,
-                          translateZ: "20px"
+                          willChange: 'transform',
+                          transform: 'translateZ(20px)'
                         }}
                       >
                         {activeProject.title}
@@ -940,24 +1035,24 @@ const Projects = () => {
             
                     <motion.p 
                       className="text-gray-300 mb-8"
-                      style={{ translateZ: "10px" }}
+                      style={{ willChange: 'transform', transform: 'translateZ(10px)' }}
                     >
                       {activeProject.description}
                     </motion.p>
                     
                     <motion.div 
                       className="mb-8"
-                      style={{ transformStyle: "preserve-3d" }}
+                      style={{ willChange: 'transform', transform: 'translateZ(0)' }}
                     >
                       <motion.h4 
                         className="text-lg font-semibold mb-3 text-white"
-                        style={{ translateZ: "15px" }}
+                        style={{ willChange: 'transform', transform: 'translateZ(15px)' }}
                       >
                         Technologies & Skills
                       </motion.h4>
                       <motion.div 
                         className="flex flex-wrap gap-2"
-                        style={{ transformStyle: "preserve-3d" }}
+                        style={{ willChange: 'transform', transform: 'translateZ(0)' }}
                       >
                         {activeProject.technologies.map((tech, i) => (
                           <motion.span 
@@ -967,8 +1062,9 @@ const Projects = () => {
                               backgroundColor: `${activeProject.color}15`,
                               borderColor: `${activeProject.color}30`,
                               color: activeProject.color,
-                              translateZ: 20 + (i % 3) * 10 + "px",
-                              boxShadow: `0 ${5 + (i % 3) * 2}px ${10 + (i % 3) * 3}px ${activeProject.color}20`
+                              willChange: 'transform',
+                              transform: 'translateZ(20px)',
+                              boxShadow: `0 ${5 + i * 2}px ${10 + i * 5}px ${activeProject.color}20`
                             }}
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ 
@@ -1003,7 +1099,7 @@ const Projects = () => {
                     {activeProject.category !== 'blank1' && activeProject.category !== 'blank2' && (
                       <motion.div 
                         className="flex flex-wrap gap-4"
-                        style={{ transformStyle: "preserve-3d" }}
+                        style={{ willChange: 'transform', transform: 'translateZ(0)' }}
                       >
                         <motion.a 
                           href={activeProject.projectUrl} 
@@ -1013,7 +1109,8 @@ const Projects = () => {
                           style={{ 
                             backgroundColor: activeProject.color,
                             color: '#000',
-                            translateZ: "25px",
+                            willChange: 'transform',
+                            transform: 'translateZ(25px)',
                             boxShadow: `0 10px 30px ${activeProject.color}50`
                           }}
                           whileHover={{ 
@@ -1034,7 +1131,8 @@ const Projects = () => {
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 border border-gray-700 rounded-full px-6 py-3 text-base text-gray-300 hover:text-white"
                             style={{
-                              translateZ: "25px",
+                              willChange: 'transform',
+                              transform: 'translateZ(25px)',
                               boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)"
                             }}
                             whileHover={{ 
