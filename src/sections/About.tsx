@@ -336,13 +336,10 @@ const About = () => {
             <div className="lg:col-span-1 animate-paragraph-container">
               <h3 className="text-2xl font-bold mb-4 text-white animate-text">My Background</h3>
               <p className="text-gray-400 mb-4">
-                I'm a creative developer and designer based in India with a passion for building beautiful, functional digital experiences. With a strong foundation in both design and development, I bring a unique perspective to every project.
+                I'm a Computer Engineering student with a deep passion for technology, photography, and creative media. Whether it's capturing high-quality images, producing engaging videos, or managing large-scale events, I always bring my creativity and technical skills to the table.
               </p>
               <p className="text-gray-400 mb-4">
-                My journey began with exploring the intersection of design and technology, which led me to specialize in front-end development and interactive design. I believe in the power of elegant code and thoughtful design to solve complex problems.
-              </p>
-              <p className="text-gray-400">
-                When I'm not coding or designing, you'll find me behind a camera, creating short films, or exploring new photography techniques to tell compelling visual stories.
+                I also have a strong background in sports, having competed at state-level events in Table Tennis and Throwball. My ability to lead teams and think critically has helped me excel both in sports and in my professional endeavors.
               </p>
             </div>
           </AnimatedContent>
