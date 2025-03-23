@@ -367,15 +367,15 @@ const About = () => {
                   <div className="relative border-l border-blue-500 pl-6 py-2 mt-8">
                     <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[6px] top-0"></div>
                     <div className="mb-6">
-                      <h4 className="text-xl font-semibold text-blue-400 stagger-item">Computer Science Engineering</h4>
-                      <p className="text-gray-500 stagger-item">Mumbai University | 2020 - 2024</p>
-                      <p className="mt-2 text-gray-400 stagger-item">Specializing in Machine Learning, Cloud Computing, and Web Technologies.</p>
+                      <h4 className="text-xl font-semibold text-blue-400 stagger-item">Computer  Engineering</h4>
+                      <p className="text-gray-500 stagger-item">Fr Conceicao Rodrigues College of Engineering | 2024-2028</p>
+                      <p className="mt-2 text-gray-400 stagger-item">Learning Web Development and Computer Technology</p>
                     </div>
                     <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[6px] top-1/2"></div>
                     <div>
-                      <h4 className="text-xl font-semibold text-blue-400 stagger-item">High School Diploma</h4>
-                      <p className="text-gray-500 stagger-item">Maharashtra State Board | 2018 - 2020</p>
-                      <p className="mt-2 text-gray-400 stagger-item">Focused on Computer Science and Mathematics.</p>
+                      <h4 className="text-xl font-semibold text-blue-400 stagger-item">High School & Junior College</h4>
+                      <p className="text-gray-500 stagger-item">Vasant Vihar High School & Jr College | 2009 - 2024</p>
+                      <p className="mt-2 text-gray-400 stagger-item">Sports and Computer Science</p>
                     </div>
                   </div>
                 </div>
@@ -399,15 +399,15 @@ const About = () => {
                   <div className="relative border-l border-purple-500 pl-6 py-2 mt-8">
                     <div className="absolute w-3 h-3 bg-purple-500 rounded-full -left-[6px] top-0"></div>
                     <div className="mb-6">
-                      <h4 className="text-xl font-semibold text-purple-400 stagger-item">National-Level Table Tennis</h4>
-                      <p className="text-gray-500 stagger-item">National Sports Competition | 2022</p>
-                      <p className="mt-2 text-gray-400 stagger-item">Represented state university and secured 2nd position in national inter-university tournament.</p>
+                      <h4 className="text-xl font-semibold text-purple-400 stagger-item">State Level Table Tennis</h4>
+                      <p className="text-gray-500 stagger-item">Under Pinnacle Table Tennis Club | 2023</p>
+                      <p className="mt-2 text-gray-400 stagger-item">Represented College and secured 1st position in state level tournament.</p>
                     </div>
                     <div className="absolute w-3 h-3 bg-purple-500 rounded-full -left-[6px] top-1/2"></div>
                     <div>
-                      <h4 className="text-xl font-semibold text-purple-400 stagger-item">State-Level Cricket</h4>
-                      <p className="text-gray-500 stagger-item">Maharashtra Cricket Association | 2019</p>
-                      <p className="mt-2 text-gray-400 stagger-item">Captain of college team that reached semi-finals in state championship.</p>
+                      <h4 className="text-xl font-semibold text-purple-400 stagger-item">State-Level Throwball</h4>
+                      <p className="text-gray-500 stagger-item">Under Vasant Vihar High School & Jr College | 2017</p>
+                      <p className="mt-2 text-gray-400 stagger-item">Captain of college team that reached finals in state championship.</p>
                     </div>
                   </div>
                 </div>

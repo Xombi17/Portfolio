@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useInView, useMotionValue, useTransform, useSp
 import '../font-loader.css'; // Corrected import path
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ReactDOM from 'react-dom';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
@@ -86,7 +87,7 @@ const projects: Project[] = [
       "https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
       "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
     ],
-    projectUrl: "https://portfolio-bay-seven-10.vercel.app/#hero",
+    projectUrl: "https://varad-joshi.vercel.app/#hero",
     githubUrl: "https://github.com/Xombi17/Portfolio",
     color: "#10B981", // green
     icon: "💻",
@@ -280,24 +281,13 @@ const Projects = () => {
     if (featured) setActiveProject(featured);
   }, []);
 
-  // Add keyboard navigation for modal
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isExpanded) {
-        setIsExpanded(false);
-      } else if (e.key === 'ArrowRight' && isExpanded) {
-        navigateProject(1);
-      } else if (e.key === 'ArrowLeft' && isExpanded) {
-        navigateProject(-1);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isExpanded, activeProject]);
+  // Filter projects by selected category
+  const filteredProjects = selectedCategory === 'all' 
+    ? projects 
+    : projects.filter(project => project.category === selectedCategory);
 
   // Function to navigate between projects
-  const navigateProject = (direction: number) => {
+  const navigateProject = useCallback((direction: number) => {
     if (!activeProject) return;
 
     const currentProjects = selectedCategory === 'all' 
@@ -309,12 +299,28 @@ const Projects = () => {
     
     const nextIndex = (currentIndex + direction + currentProjects.length) % currentProjects.length;
     setActiveProject(currentProjects[nextIndex]);
-  };
+  }, [activeProject, selectedCategory]);
+  
+  // Add keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isExpanded) return;
 
-  // Filter projects by selected category
-  const filteredProjects = selectedCategory === 'all' 
-    ? projects 
-    : projects.filter(project => project.category === selectedCategory);
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setIsExpanded(false);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        navigateProject(1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        navigateProject(-1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isExpanded, navigateProject]);
 
   // Category data for filter buttons
   const categories = [
@@ -464,228 +470,268 @@ const Projects = () => {
     };
   }, [filteredProjects, selectedCategory, isLowPerfDevice]);
   
+  const previousOverflow = useRef("");
+  const previousPosition = useRef("");
+  const previousTop = useRef("");
+  const previousWidth = useRef("");
+  const scrollY = useRef(0);
+
+  const lockScroll = () => {
+    // Save current scroll position and body styles
+    scrollY.current = window.scrollY;
+    previousOverflow.current = document.body.style.overflow;
+    previousPosition.current = document.body.style.position;
+    previousTop.current = document.body.style.top;
+    previousWidth.current = document.body.style.width;
+    
+    // Apply scroll lock
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY.current}px`;
+    document.body.style.width = '100%';
+  };
+
+  const unlockScroll = () => {
+    // Restore body styles
+    document.body.style.overflow = previousOverflow.current;
+    document.body.style.position = previousPosition.current;
+    document.body.style.top = previousTop.current;
+    document.body.style.width = previousWidth.current;
+    
+    // Restore scroll position
+    window.scrollTo(0, scrollY.current);
+  };
+
+  useEffect(() => {
+    if (isExpanded) {
+      lockScroll();
+    } else {
+      unlockScroll();
+    }
+  }, [isExpanded]);
+
   return (
-    <section 
-      id="projects" 
-      ref={sectionRef}
-      className="py-24 px-4 bg-black relative min-h-screen overflow-hidden"
-    >
-      {/* Dynamic background with gradient and particles */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-80" />
-        
-        {/* Background gradient with parallax effect - optimized */}
-        <motion.div 
-          className="absolute inset-0"
-          style={{
-            filter: 'blur(120px)',
-            willChange: 'transform, opacity',
-            transform: 'translateZ(0)',
-            position: 'relative' /* Add position property */
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: isInView ? 0.2 : 0,
-            backgroundColor: activeProject?.color || '#6366F1',
-            x: isLowPerfDevice ? 0 : mousePosition.x,
-            y: isLowPerfDevice ? 0 : mousePosition.y
-          }}
-          transition={{ 
-            duration: 1.5,
-            x: { duration: 0.5, ease: "easeOut" },
-            y: { duration: 0.5, ease: "easeOut" }
-          }}
-        />
-        
-        {/* Enhanced floating particles - reduced count and complexity */}
-        <div className="absolute inset-0">
-          {Array.from({ length: particleCount }).map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full"
-              style={{
-                backgroundColor: i % 3 === 0 ? '#3B82F6' : i % 3 === 1 ? '#8B5CF6' : '#10B981',
-                width: Math.random() * 8 + 2,
-                height: Math.random() * 8 + 2,
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                opacity: Math.random() * 0.5 + 0.1,
-                filter: `blur(${Math.random() * 2}px)`,
-                willChange: 'transform, opacity',
-                transform: 'translateZ(0)',
-                position: 'relative' /* Add position property */
-              }}
-              animate={isLowPerfDevice ? {
-                y: [null, Math.random() * -200 - 50],
-                opacity: [null, 0],
-              } : {
-                y: [null, Math.random() * -400 - 50],
-                x: [null, Math.random() * 100 - 50],
-                opacity: [null, 0],
-                scale: [1, Math.random() * 0.5 + 0.5, 0],
-              }}
-              transition={{
-                duration: Math.random() * 10 + 15,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-            />
-          ))}
-        </div>
-      </div>
-      
-      <div className="max-w-7xl mx-auto relative z-10">
-        {/* Section Header - optimized */}
-        <motion.div
-          className="mb-16 text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.2 }}
-          transition={{ 
-            duration: 0.8,
-            type: isLowPerfDevice ? "tween" : "spring",
-            stiffness: 100,
-            damping: 20
-          }}
-        >
-          {isLowPerfDevice ? (
-            // Simple header for low-performance devices
-            <motion.h2 
-              className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4"
-              style={{
-                textShadow: "0 10px 20px rgba(99, 102, 241, 0.6)",
-                position: 'relative' /* Add position property */
-              }}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              Creative Portfolio
+    <>
+      <section 
+        id="projects" 
+        ref={sectionRef}
+        className="py-24 px-4 bg-black relative min-h-[120vh] overflow-hidden"
+      >
+        {/* Dynamic background with gradient and particles */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-80" />
+          
+          {/* Background gradient with parallax effect - optimized */}
+          <motion.div 
+            className="absolute inset-0"
+            style={{
+              filter: 'blur(120px)',
+              willChange: 'transform, opacity',
+              transform: 'translateZ(0)',
+              position: 'relative' /* Add position property */
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: isInView ? 0.2 : 0,
+              backgroundColor: activeProject?.color || '#6366F1',
+              x: isLowPerfDevice ? 0 : mousePosition.x,
+              y: isLowPerfDevice ? 0 : mousePosition.y
+            }}
+            transition={{ 
+              duration: 1.5,
+              x: { duration: 0.5, ease: "easeOut" },
+              y: { duration: 0.5, ease: "easeOut" }
+            }}
+          />
+          
+          {/* Enhanced floating particles - reduced count and complexity */}
+          <div className="absolute inset-0">
+            {Array.from({ length: particleCount }).map((_, i) => (
               <motion.div
-                className="h-1 w-24 bg-gradient-to-r from-blue-400 to-violet-500 mx-auto mt-4"
-                initial={{ width: 0 }}
-                whileInView={{ width: 96 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              />
-            </motion.h2>
-          ) : (
-            // 3D header with hardware acceleration
-            <motion.h2 
-              className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4"
-              style={{
-                textShadow: "0 10px 20px rgba(99, 102, 241, 0.6)",
-                transformStyle: "preserve-3d",
-                perspective: "1000px",
-                rotateX: textRotateX,
-                z: textZ,
-                willChange: 'transform',
-                transform: 'translateZ(0)',
-                position: 'relative' /* Add position property */
-              }}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <span className="inline-block" style={{ transform: "translateZ(20px)" }}>C</span>
-              <span className="inline-block" style={{ transform: "translateZ(25px)" }}>r</span>
-              <span className="inline-block" style={{ transform: "translateZ(30px)" }}>e</span>
-              <span className="inline-block" style={{ transform: "translateZ(35px)" }}>a</span>
-              <span className="inline-block" style={{ transform: "translateZ(40px)" }}>t</span>
-              <span className="inline-block" style={{ transform: "translateZ(35px)" }}>i</span>
-              <span className="inline-block" style={{ transform: "translateZ(30px)" }}>v</span>
-              <span className="inline-block" style={{ transform: "translateZ(25px)" }}>e</span>
-              <span className="inline-block mx-4" style={{ transform: "translateZ(15px)" }}></span>
-              <span className="inline-block" style={{ transform: "translateZ(40px)" }}>P</span>
-              <span className="inline-block" style={{ transform: "translateZ(35px)" }}>o</span>
-              <span className="inline-block" style={{ transform: "translateZ(30px)" }}>r</span>
-              <span className="inline-block" style={{ transform: "translateZ(25px)" }}>t</span>
-              <span className="inline-block" style={{ transform: "translateZ(20px)" }}>f</span>
-              <span className="inline-block" style={{ transform: "translateZ(15px)" }}>o</span>
-              <span className="inline-block" style={{ transform: "translateZ(10px)" }}>l</span>
-              <span className="inline-block" style={{ transform: "translateZ(5px)" }}>i</span>
-              <span className="inline-block" style={{ transform: "translateZ(0px)" }}>o</span>
-              <motion.div
-                className="h-1 w-24 bg-gradient-to-r from-blue-400 to-violet-500 mx-auto mt-4"
-                initial={{ width: 0 }}
-                whileInView={{ width: 96 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              />
-            </motion.h2>
-          )}
-          <motion.p 
-            className="text-gray-400 max-w-xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            Explore my diverse projects across photography, filmmaking, and web development.
-          </motion.p>
-        </motion.div>
-        
-        {/* Category Filters - optimized */}
-        <motion.div 
-          className="mb-12 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.2 }}
-          transition={{ 
-            duration: 0.5, 
-            delay: 0.4,
-            type: isLowPerfDevice ? "tween" : "spring",
-            stiffness: 100,
-            damping: 20
-          }}
-        >
-          <div className="flex space-x-3 md:justify-center">
-            {categories.map((category, index) => (
-              <motion.button
-                key={category.id}
-                className={`px-5 py-3 rounded-full text-sm md:text-base flex items-center gap-2 whitespace-nowrap transition-all duration-300 ${
-                  selectedCategory === category.id 
-                    ? 'bg-opacity-20 border border-opacity-50 shadow-lg' 
-                    : 'bg-black/30 border-gray-800 hover:border-gray-700'
-                }`}
+                key={i}
+                className="absolute rounded-full"
                 style={{
-                  backgroundColor: selectedCategory === category.id ? `${category.color}20` : '',
-                  borderColor: selectedCategory === category.id ? category.color : '',
-                  color: selectedCategory === category.id ? category.color : 'white',
-                  boxShadow: selectedCategory === category.id ? `0 4px 20px ${category.color}20` : '',
+                  backgroundColor: i % 3 === 0 ? '#3B82F6' : i % 3 === 1 ? '#8B5CF6' : '#10B981',
+                  width: Math.random() * 8 + 2,
+                  height: Math.random() * 8 + 2,
+                  x: Math.random() * window.innerWidth,
+                  y: Math.random() * window.innerHeight,
+                  opacity: Math.random() * 0.5 + 0.1,
+                  filter: `blur(${Math.random() * 2}px)`,
+                  willChange: 'transform, opacity',
+                  transform: 'translateZ(0)',
+                  position: 'relative' /* Add position property */
+                }}
+                animate={isLowPerfDevice ? {
+                  y: [null, Math.random() * -200 - 50],
+                  opacity: [null, 0],
+                } : {
+                  y: [null, Math.random() * -400 - 50],
+                  x: [null, Math.random() * 100 - 50],
+                  opacity: [null, 0],
+                  scale: [1, Math.random() * 0.5 + 0.5, 0],
+                }}
+                transition={{
+                  duration: Math.random() * 10 + 15,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          {/* Section Header - optimized */}
+          <motion.div
+            className="mb-16 text-center"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ 
+              duration: 0.8,
+              type: isLowPerfDevice ? "tween" : "spring",
+              stiffness: 100,
+              damping: 20
+            }}
+          >
+            {isLowPerfDevice ? (
+              // Simple header for low-performance devices
+              <motion.h2 
+                className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4"
+                style={{
+                  textShadow: "0 10px 20px rgba(99, 102, 241, 0.6)",
+                  position: 'relative' /* Add position property */
+                }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                Creative Portfolio
+                <motion.div
+                  className="h-1 w-24 bg-gradient-to-r from-blue-400 to-violet-500 mx-auto mt-4"
+                  initial={{ width: 0 }}
+                  whileInView={{ width: 96 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                />
+              </motion.h2>
+            ) : (
+              // 3D header with hardware acceleration
+              <motion.h2 
+                className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4"
+                style={{
+                  textShadow: "0 10px 20px rgba(99, 102, 241, 0.6)",
+                  transformStyle: "preserve-3d",
+                  perspective: "1000px",
+                  rotateX: textRotateX,
+                  z: textZ,
                   willChange: 'transform',
                   transform: 'translateZ(0)',
                   position: 'relative' /* Add position property */
                 }}
-                onClick={() => setSelectedCategory(category.id as ProjectCategory | 'all')}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  duration: 0.3, 
-                  delay: index * (isLowPerfDevice ? 0.05 : 0.1),
-                  type: isLowPerfDevice ? "tween" : "spring",
-                  stiffness: 200,
-                  damping: 20
-                }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <span>{category.icon}</span>
-                <span>{category.label}</span>
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
-        
-        {/* Project Grid - now with GSAP ScrollTrigger */}
-        <motion.div
-          ref={projectGridRef}
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.1, margin: "100px 0px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-          style={{ position: 'relative' }}
-          key={selectedCategory}
-        >
-          <AnimatePresence mode="wait">
+                <span className="inline-block" style={{ transform: "translateZ(20px)" }}>C</span>
+                <span className="inline-block" style={{ transform: "translateZ(25px)" }}>r</span>
+                <span className="inline-block" style={{ transform: "translateZ(30px)" }}>e</span>
+                <span className="inline-block" style={{ transform: "translateZ(35px)" }}>a</span>
+                <span className="inline-block" style={{ transform: "translateZ(40px)" }}>t</span>
+                <span className="inline-block" style={{ transform: "translateZ(35px)" }}>i</span>
+                <span className="inline-block" style={{ transform: "translateZ(30px)" }}>v</span>
+                <span className="inline-block" style={{ transform: "translateZ(25px)" }}>e</span>
+                <span className="inline-block mx-4" style={{ transform: "translateZ(15px)" }}></span>
+                <span className="inline-block" style={{ transform: "translateZ(40px)" }}>P</span>
+                <span className="inline-block" style={{ transform: "translateZ(35px)" }}>o</span>
+                <span className="inline-block" style={{ transform: "translateZ(30px)" }}>r</span>
+                <span className="inline-block" style={{ transform: "translateZ(25px)" }}>t</span>
+                <span className="inline-block" style={{ transform: "translateZ(20px)" }}>f</span>
+                <span className="inline-block" style={{ transform: "translateZ(15px)" }}>o</span>
+                <span className="inline-block" style={{ transform: "translateZ(10px)" }}>l</span>
+                <span className="inline-block" style={{ transform: "translateZ(5px)" }}>i</span>
+                <span className="inline-block" style={{ transform: "translateZ(0px)" }}>o</span>
+                <motion.div
+                  className="h-1 w-24 bg-gradient-to-r from-blue-400 to-violet-500 mx-auto mt-4"
+                  initial={{ width: 0 }}
+                  whileInView={{ width: 96 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                />
+              </motion.h2>
+            )}
+            <motion.p 
+              className="text-gray-400 max-w-xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              Explore my diverse projects across photography, filmmaking, and web development.
+            </motion.p>
+          </motion.div>
+          
+          {/* Category Filters - optimized */}
+          <motion.div 
+            className="mb-12 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ 
+              duration: 0.5, 
+              delay: 0.4,
+              type: isLowPerfDevice ? "tween" : "spring",
+              stiffness: 100,
+              damping: 20
+            }}
+          >
+            <div className="flex space-x-3 md:justify-center">
+              {categories.map((category, index) => (
+                <motion.button
+                  key={category.id}
+                  className={`px-5 py-3 rounded-full text-sm md:text-base flex items-center gap-2 whitespace-nowrap transition-all duration-300 ${
+                    selectedCategory === category.id 
+                      ? 'bg-opacity-20 border border-opacity-50 shadow-lg' 
+                      : 'bg-black/30 border-gray-800 hover:border-gray-700'
+                  }`}
+                  style={{
+                    backgroundColor: selectedCategory === category.id ? `${category.color}20` : '',
+                    borderColor: selectedCategory === category.id ? category.color : '',
+                    color: selectedCategory === category.id ? category.color : 'white',
+                    boxShadow: selectedCategory === category.id ? `0 4px 20px ${category.color}20` : '',
+                    willChange: 'transform',
+                    transform: 'translateZ(0)',
+                    position: 'relative' /* Add position property */
+                  }}
+                  onClick={() => setSelectedCategory(category.id as ProjectCategory | 'all')}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ 
+                    duration: 0.3, 
+                    delay: index * (isLowPerfDevice ? 0.05 : 0.1),
+                    type: isLowPerfDevice ? "tween" : "spring",
+                    stiffness: 200,
+                    damping: 20
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span>{category.icon}</span>
+                  <span>{category.label}</span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+          
+          {/* Project Grid - now with GSAP ScrollTrigger */}
+          <motion.div
+            ref={projectGridRef}
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.1, margin: "100px 0px" }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+            style={{ position: 'relative' }}
+            key={selectedCategory}
+          >
             {filteredProjects.length > 0 ? (
               filteredProjects.map((project, index) => (
                 <motion.div
@@ -705,9 +751,16 @@ const Projects = () => {
                     })
                   }}
                   data-speed={0.5 + (index % 3) * 0.2} // Varying speeds for parallax effect
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     setActiveProject(project);
                     setIsExpanded(true);
+                    // Prevent hash change
+                    if (window.location.hash) {
+                      history.pushState('', document.title, window.location.pathname + window.location.search);
+                    }
+                    return false; // Explicitly prevent default
                   }}
                   onMouseMove={handleTileMouseMove}
                   onMouseLeave={handleTileMouseLeave}
@@ -715,7 +768,6 @@ const Projects = () => {
                     y: -10, 
                     scale: 1.02,
                     boxShadow: `0 20px 40px ${project.color}40`,
-                    borderWidth: isLowPerfDevice ? "1px" : "2px"
                   }}
                   transition={{ 
                     duration: 0.3,
@@ -779,9 +831,9 @@ const Projects = () => {
                       project.category === 'web' ? 'Web Dev' : 'Coming Soon'}
                     </motion.div>
                   </motion.div>
-                    
+                  
                   {/* Project Info - simplified for performance */}
-                  <motion.div 
+                  <motion.div
                     className="p-6"
                     style={{
                       willChange: 'transform',
@@ -822,7 +874,7 @@ const Projects = () => {
                     <div className="flex flex-wrap gap-2 mt-auto">
                       {project.technologies.slice(0, 2).map((tech, i) => (
                         <motion.span 
-                          key={i}
+                          key={i} 
                           className="inline-block px-2 py-1 rounded-full text-xs" 
                           style={{ 
                             backgroundColor: `${project.color}20`,
@@ -880,6 +932,16 @@ const Projects = () => {
                       transform: 'translateZ(25px)',
                       position: 'absolute'
                     }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveProject(project);
+                      setIsExpanded(true);
+                      // Prevent hash change
+                      if (window.location.hash) {
+                        history.pushState('', document.title, window.location.pathname + window.location.search);
+                      }
+                    }}
                   >
                     {project.category !== 'blank1' && project.category !== 'blank2' && (
                       <motion.div 
@@ -896,6 +958,16 @@ const Projects = () => {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setActiveProject(project);
+                          setIsExpanded(true);
+                          // Prevent hash change
+                          if (window.location.hash) {
+                            history.pushState('', document.title, window.location.pathname + window.location.search);
+                          }
+                        }}
                       >
                         <span className="text-black font-semibold">View Project</span>
                       </motion.div>
@@ -938,388 +1010,153 @@ const Projects = () => {
                 </motion.button>
               </motion.div>
             )}
-          </AnimatePresence>
-        </motion.div>
-        
-        {/* Expanded Project Modal - optimized for performance */}
-        <AnimatePresence>
-          {isExpanded && activeProject && (
-            <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-10"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              style={{ position: 'fixed' }}
-            >
-              {/* Backdrop with 3D particles */}
-              <motion.div 
-                className="absolute inset-0 bg-black/80 backdrop-blur-md overflow-hidden"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsExpanded(false)}
-                style={{ position: 'absolute' }}
-              >
-                {/* 3D floating particles in modal background */}
-                {isExpanded && modalParticles.map((particle, i) => (
-                  <motion.div
-                    key={`modal-particle-${i}`}
-                    className="absolute rounded-full"
-                    style={{
-                      backgroundColor: particle.color === 'active' && activeProject 
-                        ? activeProject.color 
-                        : particle.color,
-                      width: particle.width,
-                      height: particle.height,
-                      x: particle.initialX,
-                      y: particle.initialY,
-                      opacity: particle.opacity,
-                      filter: `blur(${particle.blur}px)`,
-                      willChange: 'transform, opacity',
-                      transform: 'translateZ(0)',
-                      position: 'absolute'
-                    }}
-                    animate={{
-                      y: [particle.initialY, particle.targetY],
-                      x: [particle.initialX, particle.targetX],
-                      rotate: [0, particle.rotate],
-                      scale: [1, particle.scale],
-                    }}
-                    transition={{
-                      duration: particle.duration,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                      ease: "easeInOut",
-                    }}
-                  />
-                ))}
-              </motion.div>
-              
-              {/* Modal Content with 3D effect */}
-              <motion.div
-                className="relative bg-zinc-900 border border-gray-800 rounded-2xl overflow-hidden max-w-5xl w-full max-h-[90vh] shadow-2xl flex flex-col md:flex-row"
-                style={{ 
-                  borderColor: `${activeProject.color}30`,
-                  boxShadow: `0 20px 60px ${activeProject.color}30`,
-                  willChange: 'transform',
-                  transform: 'translateZ(0)',
-                  perspective: "1500px",
-                  position: 'relative'
-                }}
-                initial={{ scale: 0.9, y: 20, opacity: 0, rotateX: 15 }}
-                animate={{ scale: 1, y: 0, opacity: 1, rotateX: 0 }}
-                exit={{ scale: 0.9, y: 20, opacity: 0, rotateX: -15 }}
-                transition={{ duration: 0.5, type: "spring", damping: 20 }}
-              >
-                {/* Navigation arrows with 3D hover effect */}
-                <motion.button 
-                  className="absolute top-1/2 left-4 z-10 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-gray-400 hover:text-white transition-colors transform -translate-y-1/2"
-                  whileHover={{ 
-                    scale: 1.1, 
-                    backgroundColor: activeProject.color,
-                    color: "black",
-                    z: 50,
-                    boxShadow: `0 5px 15px ${activeProject.color}50` 
-                  }}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Modal Portal */}
+      {isExpanded && activeProject && ReactDOM.createPortal(
+        <div 
+          className="fixed inset-0 z-[99999] flex items-center justify-center"
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            backdropFilter: 'blur(8px)'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsExpanded(false);
+              if (window.location.hash) {
+                history.pushState('', document.title, window.location.pathname + window.location.search);
+              }
+            }
+          }}
+        >
+          <div 
+            className="bg-neutral-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto m-4 relative"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold" style={{color: activeProject.color}}>
+                  {activeProject.title}
+                </h2>
+                <button 
                   onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsExpanded(false);
+                    if (window.location.hash) {
+                      history.pushState('', document.title, window.location.pathname + window.location.search);
+                    }
+                  }}
+                  className="bg-black/50 p-2 rounded-full hover:bg-black/70 transition-colors"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="md:w-1/2">
+                  <img 
+                    src={activeProject.images[0]} 
+                    alt={activeProject.title}
+                    className="w-full rounded-lg"
+                  />
+                </div>
+                
+                <div className="md:w-1/2">
+                  <p className="text-gray-300 mb-6">{activeProject.description}</p>
+                  
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold mb-2">Technologies</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {activeProject.technologies.map((tech, i) => (
+                        <span 
+                          key={i}
+                          className="px-3 py-1 rounded-full text-sm"
+                          style={{
+                            backgroundColor: `${activeProject.color}20`,
+                            color: activeProject.color
+                          }}
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    {activeProject.projectUrl && activeProject.projectUrl !== '#' && (
+                      <a
+                        href={activeProject.projectUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-6 py-2 rounded-lg font-medium inline-block"
+                        style={{
+                          backgroundColor: activeProject.color,
+                          color: '#000'
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        View Project
+                      </a>
+                    )}
+                    
+                    {activeProject.githubUrl && (
+                      <a
+                        href={activeProject.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium inline-block"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        View Code
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation Arrows */}
+              <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex justify-between px-4 pointer-events-none">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     navigateProject(-1);
                   }}
+                  className="p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors pointer-events-auto"
                 >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M15 18l-6-6 6-6" />
                   </svg>
-                </motion.button>
-                
-                <motion.button 
-                  className="absolute top-1/2 right-4 z-10 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-gray-400 hover:text-white transition-colors transform -translate-y-1/2"
-                  whileHover={{ 
-                    scale: 1.1, 
-                    backgroundColor: activeProject.color,
-                    color: "black",
-                    z: 50,
-                    boxShadow: `0 5px 15px ${activeProject.color}50` 
-                  }}
+                </button>
+                <button
                   onClick={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     navigateProject(1);
                   }}
+                  className="p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors pointer-events-auto"
                 >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 18l6-6-6-6" />
                   </svg>
-                </motion.button>
-
-                {/* Close Button with 3D hover effect */}
-                <motion.button 
-                  className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
-                  whileHover={{ 
-                    scale: 1.1, 
-                    backgroundColor: "#EF4444",
-                    color: "white",
-                    z: 50,
-                    boxShadow: "0 5px 15px rgba(239, 68, 68, 0.5)" 
-                  }}
-                  onClick={() => setIsExpanded(false)}
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </motion.button>
-                
-                {/* Project Images with 3D parallax effect */}
-    <motion.div
-                  className="md:w-1/2 h-72 md:h-auto relative overflow-hidden"
-                  style={{
-                    willChange: 'transform',
-                    transform: 'translateZ(0)',
-                    perspective: "1000px",
-                  }}
-      whileHover={{ 
-                    z: 20
-                  }}
-                >
-                  <motion.div
-                    className="absolute inset-0 flex"
-                    style={{
-                      willChange: 'transform',
-                      transform: 'translateZ(30px)',
-                    }}
-                    initial={{ x: 0 }}
-                    animate={{ 
-                      x: [-activeProject.images.length * 100, 0],
-                      transition: { 
-                        repeat: Infinity, 
-                        duration: 20,
-                        ease: "linear" 
-                      }
-                    }}
-                  >
-                    {[...activeProject.images, ...activeProject.images].map((image, index) => (
-                      <motion.div 
-                        key={index} 
-                        className="w-full h-full flex-shrink-0"
-                        style={{ 
-                          aspectRatio: "16/9",
-                          willChange: 'transform',
-                          transform: 'translateZ(0)',
-                        }}
-                        whileHover={{ z: 20 }}
-                      >
-                        <motion.img 
-                          src={image} 
-                          alt={`${activeProject.title} ${index + 1}`}
-                          className="w-full h-full object-cover"
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.3 }}
-                        />
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent opacity-50" />
-                  
-                  {/* Category Badge with 3D floating effect */}
-                  <motion.div 
-                    className="absolute top-4 left-4 px-4 py-2 rounded-full text-sm uppercase tracking-wider"
-                    style={{ 
-                      backgroundColor: `${activeProject.color}90`,
-                      willChange: 'transform',
-                      boxShadow: `0 10px 30px ${activeProject.color}50`,
-                      transform: 'translateZ(50px)'
-                    }}
-                    animate={{
-                      y: [0, -5, 0],
-                      rotateZ: [0, 2, 0, -2, 0],
-                      scale: [1, 1.05, 1]
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    {activeProject.category === 'photo' ? 'Photography' : 
-                      activeProject.category === 'film' ? 'Film' : 
-                      activeProject.category === 'web' ? 'Web Dev' : 'Coming Soon'}
-                  </motion.div>
-                </motion.div>
-                
-                {/* Project Details with 3D depth */}
-                <motion.div 
-                  className="md:w-1/2 p-8 overflow-y-auto custom-scrollbar max-h-[60vh] md:max-h-[90vh]"
-                  style={{
-                    willChange: 'transform',
-                    transform: 'translateZ(0)',
-                    perspective: "1000px"
-                  }}
-                >
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    style={{
-                      willChange: 'transform',
-                      transform: 'translateZ(0)'
-                    }}
-                  >
-                    <motion.div 
-                      className="flex items-center gap-3 mb-6"
-                      style={{
-                        willChange: 'transform',
-                        transform: 'translateZ(0)'
-                      }}
-                    >
-                      <motion.span 
-                        className="text-3xl"
-                        style={{ willChange: 'transform', transform: 'translateZ(40px)' }}
-                        animate={{
-                          rotateY: [0, 360],
-                          scale: [1, 1.2, 1]
-                        }}
-                        transition={{
-                          duration: 8,
-                          repeat: Infinity,
-                          ease: "linear"
-                        }}
-                      >{activeProject.icon}</motion.span>
-                      <motion.h3 
-                        className="text-2xl md:text-3xl font-bold"
-                        style={{ 
-                          color: activeProject.color,
-                          textShadow: `0 5px 15px ${activeProject.color}70`,
-                          willChange: 'transform',
-                          transform: 'translateZ(20px)'
-                        }}
-                      >
-                        {activeProject.title}
-                      </motion.h3>
-                    </motion.div>
-            
-                    <motion.p 
-                      className="text-gray-300 mb-8"
-                      style={{ willChange: 'transform', transform: 'translateZ(10px)' }}
-                    >
-                      {activeProject.description}
-                    </motion.p>
-                    
-                    <motion.div 
-                      className="mb-8"
-                      style={{ willChange: 'transform', transform: 'translateZ(0)' }}
-                    >
-                      <motion.h4 
-                        className="text-lg font-semibold mb-3 text-white"
-                        style={{ willChange: 'transform', transform: 'translateZ(15px)' }}
-                      >
-                        Technologies & Skills
-                      </motion.h4>
-                      <motion.div 
-                        className="flex flex-wrap gap-2"
-                        style={{ willChange: 'transform', transform: 'translateZ(0)' }}
-                      >
-                        {activeProject.technologies.map((tech, i) => (
-                          <motion.span 
-                key={i} 
-                            className="px-3 py-1.5 text-sm rounded-full border"
-                            style={{ 
-                              backgroundColor: `${activeProject.color}15`,
-                              borderColor: `${activeProject.color}30`,
-                              color: activeProject.color,
-                              willChange: 'transform',
-                              transform: 'translateZ(20px)',
-                              boxShadow: `0 ${5 + i * 2}px ${10 + i * 5}px ${activeProject.color}20`
-                            }}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ 
-                              opacity: 1, 
-                              scale: 1,
-                              y: [0, -2 - (i % 3), 0]
-                            }}
-                            transition={{ 
-                              delay: 0.1 * i, 
-                              duration: 0.3,
-                              y: {
-                                duration: 2 + (i % 3),
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                                delay: i * 0.1
-                              }
-                            }}
-                            whileHover={{
-                              scale: 1.1,
-                              backgroundColor: `${activeProject.color}30`,
-                              boxShadow: `0 10px 20px ${activeProject.color}30`,
-                              y: -5
-                            }}
-              >
-                {tech}
-                          </motion.span>
-                        ))}
-                      </motion.div>
-                    </motion.div>
-
-                    {/* Only show buttons for non-coming soon projects */}
-                    {activeProject.category !== 'blank1' && activeProject.category !== 'blank2' && (
-                      <motion.div 
-                        className="flex flex-wrap gap-4"
-                        style={{ willChange: 'transform', transform: 'translateZ(0)' }}
-                      >
-                        <motion.a 
-                          href={activeProject.projectUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-                          className="flex items-center gap-2 font-medium rounded-full px-6 py-3 text-base"
-                          style={{ 
-                            backgroundColor: activeProject.color,
-                            color: '#000',
-                            willChange: 'transform',
-                            transform: 'translateZ(25px)',
-                            boxShadow: `0 10px 30px ${activeProject.color}50`
-                          }}
-                          whileHover={{ 
-                            scale: 1.05,
-                            boxShadow: `0 15px 30px ${activeProject.color}70`,
-                            y: -5
-                          }}
-                          whileTap={{ scale: 0.95 }}
-          >
-            <ExternalLinkIcon />
-            <span>View Project</span>
-                        </motion.a>
-                        
-                        {activeProject.githubUrl && (
-                          <motion.a 
-                            href={activeProject.githubUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-                            className="flex items-center gap-2 border border-gray-700 rounded-full px-6 py-3 text-base text-gray-300 hover:text-white"
-                            style={{
-                              willChange: 'transform',
-                              transform: 'translateZ(25px)',
-                              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)"
-                            }}
-                            whileHover={{ 
-                              scale: 1.05, 
-                              borderColor: activeProject.color,
-                              boxShadow: `0 15px 30px ${activeProject.color}30`,
-                              y: -5
-                            }}
-                            whileTap={{ scale: 0.95 }}
-            >
-              <GithubIcon />
-                            <span>View Code</span>
-                          </motion.a>
-                        )}
-                      </motion.div>
-                    )}
-                  </motion.div>
-                </motion.div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </section>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
   );
 };
 
