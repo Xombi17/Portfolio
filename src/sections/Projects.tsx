@@ -319,6 +319,42 @@ const Projects = () => {
     { id: 'web', label: 'Web Development', icon: '💻', color: '#10B981' }
   ];
 
+  // Text reveal animation variants - inspired by Bennet
+  const revealVariants = {
+    hidden: { y: 100, opacity: 0 },
+    visible: (i = 0) => ({
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        damping: 15,
+        stiffness: 100,
+        delay: i * 0.1,
+        duration: 0.8
+      }
+    })
+  };
+
+  // Image container variants - inspired by Bennet
+  const imageContainerVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { 
+        duration: 0.8,
+        ease: [0.165, 0.84, 0.44, 1]
+      }
+    },
+    hover: {
+      scale: 1.05,
+      transition: { 
+        duration: 0.5,
+        ease: [0.165, 0.84, 0.44, 1]
+      }
+    }
+  };
+
   // Reduce particle count based on device performance
   const particleCount = isLowPerfDevice ? 10 : 25;
   
@@ -466,490 +502,250 @@ const Projects = () => {
       </div>
       
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Section Header - optimized */}
+        {/* Section Header - with Bennet style */}
         <motion.div
-          className="mb-16 text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          className="mb-32 text-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: false, amount: 0.2 }}
-          transition={{ 
-            duration: 0.8,
-            type: isLowPerfDevice ? "tween" : "spring",
-            stiffness: 100,
-            damping: 20
-          }}
+          transition={{ duration: 0.8 }}
         >
-          {isLowPerfDevice ? (
-            // Simple header for low-performance devices
-            <motion.h2 
-              className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4"
-              style={{
-                textShadow: "0 10px 20px rgba(99, 102, 241, 0.6)",
-                position: 'relative' /* Add position property */
-              }}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              Creative Portfolio
-              <motion.div
-                className="h-1 w-24 bg-gradient-to-r from-blue-400 to-violet-500 mx-auto mt-4"
-                initial={{ width: 0 }}
-                whileInView={{ width: 96 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              />
-            </motion.h2>
-          ) : (
-            // 3D header with hardware acceleration
-            <motion.h2 
-              className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500 mb-4"
-              style={{
-                textShadow: "0 10px 20px rgba(99, 102, 241, 0.6)",
-                transformStyle: "preserve-3d",
-                perspective: "1000px",
-                rotateX: textRotateX,
-                z: textZ,
-                willChange: 'transform',
-                transform: 'translateZ(0)',
-                position: 'relative' /* Add position property */
-              }}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <span className="inline-block" style={{ transform: "translateZ(20px)" }}>C</span>
-              <span className="inline-block" style={{ transform: "translateZ(25px)" }}>r</span>
-              <span className="inline-block" style={{ transform: "translateZ(30px)" }}>e</span>
-              <span className="inline-block" style={{ transform: "translateZ(35px)" }}>a</span>
-              <span className="inline-block" style={{ transform: "translateZ(40px)" }}>t</span>
-              <span className="inline-block" style={{ transform: "translateZ(35px)" }}>i</span>
-              <span className="inline-block" style={{ transform: "translateZ(30px)" }}>v</span>
-              <span className="inline-block" style={{ transform: "translateZ(25px)" }}>e</span>
-              <span className="inline-block mx-4" style={{ transform: "translateZ(15px)" }}></span>
-              <span className="inline-block" style={{ transform: "translateZ(40px)" }}>P</span>
-              <span className="inline-block" style={{ transform: "translateZ(35px)" }}>o</span>
-              <span className="inline-block" style={{ transform: "translateZ(30px)" }}>r</span>
-              <span className="inline-block" style={{ transform: "translateZ(25px)" }}>t</span>
-              <span className="inline-block" style={{ transform: "translateZ(20px)" }}>f</span>
-              <span className="inline-block" style={{ transform: "translateZ(15px)" }}>o</span>
-              <span className="inline-block" style={{ transform: "translateZ(10px)" }}>l</span>
-              <span className="inline-block" style={{ transform: "translateZ(5px)" }}>i</span>
-              <span className="inline-block" style={{ transform: "translateZ(0px)" }}>o</span>
-              <motion.div
-                className="h-1 w-24 bg-gradient-to-r from-blue-400 to-violet-500 mx-auto mt-4"
-                initial={{ width: 0 }}
-                whileInView={{ width: 96 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              />
-            </motion.h2>
-          )}
-          <motion.p 
-            className="text-gray-400 max-w-xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="overflow-hidden mb-2"
           >
-            Explore my diverse projects across photography, filmmaking, and web development.
-          </motion.p>
+            <motion.h2 
+              className="text-8xl md:text-9xl font-bold text-white/10 uppercase tracking-tighter"
+              initial={{ y: 100 }}
+              whileInView={{ y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.165, 0.84, 0.44, 1] }}
+            >
+              Projects
+            </motion.h2>
+          </motion.div>
+          
+          <div className="overflow-hidden relative">
+            <motion.div 
+              className="h-px w-24 bg-white/20 mx-auto my-8"
+              initial={{ width: 0 }}
+              whileInView={{ width: 96 }}
+              transition={{ duration: 1.2, delay: 0.6 }}
+            />
+          </div>
+          
+          <div className="overflow-hidden">
+            <motion.p 
+              className="text-gray-400 max-w-xl mx-auto"
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              Explore my diverse projects across photography, filmmaking, and web development.
+            </motion.p>
+          </div>
         </motion.div>
         
-        {/* Category Filters - optimized */}
+        {/* Category Filters - Bennet inspired minimal style */}
         <motion.div 
-          className="mb-12 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent"
+          className="mb-20 overflow-x-auto scrollbar-none"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.2 }}
-          transition={{ 
-            duration: 0.5, 
-            delay: 0.4,
-            type: isLowPerfDevice ? "tween" : "spring",
-            stiffness: 100,
-            damping: 20
-          }}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <div className="flex space-x-3 md:justify-center">
+          <div className="flex space-x-8 md:justify-center text-sm uppercase tracking-widest">
             {categories.map((category, index) => (
               <motion.button
                 key={category.id}
-                className={`px-5 py-3 rounded-full text-sm md:text-base flex items-center gap-2 whitespace-nowrap transition-all duration-300 ${
+                className={`py-2 relative transition-all duration-300 ${
                   selectedCategory === category.id 
-                    ? 'bg-opacity-20 border border-opacity-50 shadow-lg' 
-                    : 'bg-black/30 border-gray-800 hover:border-gray-700'
+                    ? 'text-white' 
+                    : 'text-gray-500 hover:text-gray-300'
                 }`}
                 style={{
-                  backgroundColor: selectedCategory === category.id ? `${category.color}20` : '',
-                  borderColor: selectedCategory === category.id ? category.color : '',
-                  color: selectedCategory === category.id ? category.color : 'white',
-                  boxShadow: selectedCategory === category.id ? `0 4px 20px ${category.color}20` : '',
                   willChange: 'transform',
-                  transform: 'translateZ(0)',
-                  position: 'relative' /* Add position property */
+                  transform: 'translateZ(0)'
                 }}
                 onClick={() => setSelectedCategory(category.id as ProjectCategory | 'all')}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  duration: 0.3, 
-                  delay: index * (isLowPerfDevice ? 0.05 : 0.1),
-                  type: isLowPerfDevice ? "tween" : "spring",
-                  stiffness: 200,
-                  damping: 20
-                }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                whileHover={{ y: -2 }}
+                whileTap={{ y: 0 }}
               >
-                <span>{category.icon}</span>
                 <span>{category.label}</span>
+                {selectedCategory === category.id && (
+                  <motion.div 
+                    className="absolute bottom-0 left-0 h-px w-full bg-white"
+                    layoutId="categoryIndicator"
+                    transition={{ duration: 0.6, type: "spring", damping: 20 }}
+                  />
+                )}
               </motion.button>
             ))}
           </div>
         </motion.div>
         
-        {/* Project Grid - optimized with better viewport detection */}
+        {/* Project Grid - Bennet styled with numbers and improved hover */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.1, margin: "100px 0px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-          style={{ position: 'relative' }} /* Add position property */
+          viewport={{ once: false, amount: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-16"
+          style={{ position: 'relative' }}
         >
           {filteredProjects.map((project, index) => (
             <motion.div
               key={project.id}
               variants={itemVariants}
               custom={index}
-              className="relative group rounded-xl overflow-hidden cursor-pointer"
-              style={{ 
-                backgroundColor: `${project.color}10`,
-                borderColor: `${project.color}30`,
-                willChange: 'transform, opacity, box-shadow',
-                transform: 'translateZ(0)',
-                position: 'relative', /* Add position property */
-                ...(isLowPerfDevice ? {} : {
-                  perspective: "1000px",
-                  transformStyle: "preserve-3d",
-                  rotateX: springX,
-                  rotateY: springY
-                })
-              }}
+              className="relative group overflow-hidden cursor-pointer"
               onClick={() => {
                 setActiveProject(project);
                 setIsExpanded(true);
               }}
-              onMouseMove={handleTileMouseMove}
-              onMouseLeave={handleTileMouseLeave}
-              whileHover={{ 
-                y: -10, 
-                scale: 1.02,
-                boxShadow: `0 20px 40px ${project.color}40`,
-                borderWidth: isLowPerfDevice ? "1px" : "2px"
-              }}
-              transition={{ 
-                duration: 0.3,
-                type: isLowPerfDevice ? "tween" : "spring",
-                stiffness: 300,
-                damping: 20
-              }}
+              whileHover="hover"
             >
-              {/* Project Image with optimized 3D effect */}
-              <motion.div 
-                className="h-60 overflow-hidden relative"
-                style={{
-                  willChange: isLowPerfDevice ? 'auto' : 'transform',
-                  transform: 'translateZ(0)',
-                  position: 'relative', /* Add position property */
-                  ...(isLowPerfDevice ? {} : {
-                    transformStyle: "preserve-3d",
-                    zIndex: 1,
-                    translateZ: "20px"
-                  })
-                }}
+              {/* Project Number - Bennet style */}
+              <motion.div
+                className="absolute top-0 left-0 text-xs font-light z-10 p-8"
+                variants={revealVariants}
+                custom={index * 0.2}
               >
-                <img 
+                <div className="flex items-center">
+                  <span className="text-white/50">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <div className="h-px w-12 bg-white/20 ml-2"></div>
+                  <span className="ml-2 text-white/80">
+                    {project.technologies[0]}
+                  </span>
+                </div>
+              </motion.div>
+              
+              {/* Project Image with Bennet hover effect */}
+              <motion.div 
+                className="aspect-[4/3] overflow-hidden relative mb-8"
+                variants={imageContainerVariants}
+              >
+                <motion.div
+                  className="absolute inset-0 bg-black/20 z-10 opacity-0 transition-opacity duration-500"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                />
+                
+                <motion.img 
                   src={project.images[0]} 
                   alt={project.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover"
                   style={{
-                    willChange: 'transform',
+                    willChange: 'transform'
                   }}
+                  animate={{ scale: 1 }}
+                  whileHover={{ 
+                    scale: 1.1,
+                    transition: { duration: 1.2, ease: [0.215, 0.610, 0.355, 1.000] }
+                  }}
+                  transition={{ duration: 0.8 }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80" />
                 
-                {/* Category Tag - simplified for performance */}
+                {/* Category Tag */}
                 <motion.div 
                   className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs uppercase tracking-wider"
                   style={{ 
                     backgroundColor: `${project.color}90`,
-                    willChange: isLowPerfDevice ? 'auto' : 'transform',
-                    position: 'absolute', /* Add position property */
-                    ...(isLowPerfDevice ? {} : {
-                      translateZ: "30px",
-                      boxShadow: `0 10px 20px ${project.color}40`,
-                    })
+                    position: 'absolute'
                   }}
-                  animate={isLowPerfDevice ? {} : {
-                    y: [0, -5, 0],
-                    rotateZ: [0, 2, 0, -2, 0],
-                    scale: [1, 1.05, 1]
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
+                  variants={revealVariants}
+                  custom={index * 0.3}
                 >
                   {project.category === 'photo' ? 'Photography' : 
-                  project.category === 'film' ? 'Film' : 
-                  project.category === 'web' ? 'Web Dev' : 'Coming Soon'}
+                   project.category === 'film' ? 'Film' : 
+                   project.category === 'web' ? 'Web Dev' : 'Coming Soon'}
                 </motion.div>
               </motion.div>
                 
-              {/* Project Info - simplified for performance */}
-              <motion.div 
-                className="p-6"
-                style={{
-                  willChange: 'transform',
-                  transform: 'translateZ(0)',
-                  position: 'relative' /* Add position property */
-                }}
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-xl font-semibold" style={{ color: project.color }}>
-                    {project.title}
-                  </h3>
-                  <motion.span 
-                    className="text-2xl"
-                    style={{ 
-                      willChange: 'transform', 
-                      transform: 'translateZ(35px)',
-                      position: 'relative' /* Add position property */
-                    }}
-                    animate={{
-                      y: [0, -8, 0],
-                      rotateY: [0, 180, 360],
-                      scale: [1, 1.2, 1]
-                    }}
-                    transition={{
-                      duration: 5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      times: [0, 0.5, 1]
-                    }}
-                  >{project.icon}</motion.span>
-                </div>
-                
-                <p className="text-gray-400 text-sm line-clamp-2 mb-4">
-                  {project.description}
-                </p>
-                
-                {/* Tech Tags with 3D floating effect */}
-                <div className="flex flex-wrap gap-2 mt-auto">
-                  {project.technologies.slice(0, 2).map((tech, i) => (
-                    <motion.span 
-                      key={i}
-                      className="inline-block px-2 py-1 rounded-full text-xs" 
-                      style={{ 
-                        backgroundColor: `${project.color}20`,
-                        color: project.color,
-                        willChange: 'transform',
-                        transform: 'translateZ(20px)',
-                        position: 'relative', /* Add position property */
-                        boxShadow: `0 ${5 + i * 2}px ${10 + i * 5}px ${project.color}30`
-                      }}
-                      animate={{
-                        y: [0, -5 - i * 2, 0],
-                        scale: [1, 1.05, 1],
-                        rotateZ: [0, i % 2 === 0 ? 2 : -2, 0]
-                      }}
-                      transition={{
-                        duration: 2 + i * 0.5,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: i * 0.2
-                      }}
-                    >
-                      {tech}
-                    </motion.span>
-                  ))}
-                  {project.technologies.length > 2 && (
-                    <motion.span 
-                      className="inline-block px-2 py-1 rounded-full text-xs text-gray-400"
-                      style={{ 
-                        backgroundColor: '#ffffff10',
-                        willChange: 'transform',
-                        transform: 'translateZ(15px)',
-                        position: 'relative' /* Add position property */
-                      }}
-                      animate={{
-                        y: [0, -4, 0],
-                        rotateZ: [0, -1, 0, 1, 0]
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    >
-                      +{project.technologies.length - 2} more
-                    </motion.span>
-                  )}
-                </div>
-              </motion.div>
+              {/* Project Title - Bennet style text reveal */}
+              <div className="overflow-hidden mb-1">
+                <motion.h3 
+                  className="text-2xl font-light tracking-tight text-white"
+                  variants={revealVariants}
+                  custom={index * 0.25}
+                >
+                  {project.title}
+                </motion.h3>
+              </div>
               
-              {/* Hover Overlay with 3D effect */}
+              {/* Project Description - Bennet style text reveal */}
+              <div className="overflow-hidden h-12">
+                <motion.p 
+                  className="text-gray-400 text-sm line-clamp-2"
+                  variants={revealVariants}
+                  custom={index * 0.3}
+                >
+                  {project.description}
+                </motion.p>
+              </div>
+              
+              {/* View Project - Bennet style hover reveal */}
               <motion.div 
-                className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
-                style={{
-                  willChange: 'transform',
-                  transform: 'translateZ(25px)',
-                  position: 'absolute' /* Add position property */
-                }}
+                className="mt-6 inline-flex items-center gap-2 text-sm text-white/60 group-hover:text-white overflow-hidden"
+                variants={revealVariants}
+                custom={index * 0.35}
               >
-                {project.category !== 'blank1' && project.category !== 'blank2' && (
-                  <motion.div 
-                    className="px-6 py-3 rounded-full"
-                    style={{ 
-                      backgroundColor: project.color,
-                      boxShadow: `0 10px 30px ${project.color}80`,
-                      willChange: 'transform',
-                      transform: 'translateZ(0)',
-                      position: 'relative' /* Add position property */
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <span className="text-black font-semibold">View Project</span>
-                  </motion.div>
-                )}
+                <span className="transition-transform group-hover:translate-x-2 duration-300">
+                  View Project
+                </span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="transition-transform group-hover:translate-x-2 duration-300">
+                  <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </motion.div>
             </motion.div>
           ))}
         </motion.div>
         
-        {/* Expanded Project Modal - optimized for performance */}
+        {/* Expanded Project Modal - Bennet-inspired */}
         <AnimatePresence>
           {isExpanded && activeProject && (
             <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-10"
+              className="fixed inset-0 z-50 flex items-center justify-center p-0"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.5 }}
               style={{ position: 'fixed' }}
             >
-              {/* Backdrop with 3D particles */}
+              {/* Backdrop with minimal look */}
               <motion.div 
-                className="absolute inset-0 bg-black/80 backdrop-blur-md overflow-hidden"
+                className="absolute inset-0 bg-black/95"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setIsExpanded(false)}
                 style={{ position: 'absolute' }}
-              >
-                {/* 3D floating particles in modal background */}
-                {isExpanded && modalParticles.map((particle, i) => (
-                  <motion.div
-                    key={`modal-particle-${i}`}
-                    className="absolute rounded-full"
-                    style={{
-                      backgroundColor: particle.color === 'active' && activeProject 
-                        ? activeProject.color 
-                        : particle.color,
-                      width: particle.width,
-                      height: particle.height,
-                      x: particle.initialX,
-                      y: particle.initialY,
-                      opacity: particle.opacity,
-                      filter: `blur(${particle.blur}px)`,
-                      willChange: 'transform, opacity',
-                      transform: 'translateZ(0)',
-                      position: 'absolute'
-                    }}
-                    animate={{
-                      y: [particle.initialY, particle.targetY],
-                      x: [particle.initialX, particle.targetX],
-                      rotate: [0, particle.rotate],
-                      scale: [1, particle.scale],
-                    }}
-                    transition={{
-                      duration: particle.duration,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                      ease: "easeInOut",
-                    }}
-                  />
-                ))}
-              </motion.div>
+              />
               
-              {/* Modal Content with 3D effect */}
+              {/* Modal Content - Bennet inspired */}
               <motion.div
-                className="relative bg-zinc-900 border border-gray-800 rounded-2xl overflow-hidden max-w-5xl w-full max-h-[90vh] shadow-2xl flex flex-col md:flex-row"
+                className="relative w-full h-full md:max-w-5xl md:max-h-[90vh] md:h-auto flex flex-col md:flex-row"
                 style={{ 
-                  borderColor: `${activeProject.color}30`,
-                  boxShadow: `0 20px 60px ${activeProject.color}30`,
                   willChange: 'transform',
                   transform: 'translateZ(0)',
-                  perspective: "1500px",
                   position: 'relative'
                 }}
-                initial={{ scale: 0.9, y: 20, opacity: 0, rotateX: 15 }}
-                animate={{ scale: 1, y: 0, opacity: 1, rotateX: 0 }}
-                exit={{ scale: 0.9, y: 20, opacity: 0, rotateX: -15 }}
-                transition={{ duration: 0.5, type: "spring", damping: 20 }}
+                initial={{ opacity: 0, y: 100 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 100 }}
+                transition={{ duration: 0.7, ease: [0.165, 0.84, 0.44, 1] }}
               >
-                {/* Navigation arrows with 3D hover effect */}
+                {/* Close Button - Bennet style */}
                 <motion.button 
-                  className="absolute top-1/2 left-4 z-10 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-gray-400 hover:text-white transition-colors transform -translate-y-1/2"
-                  whileHover={{ 
-                    scale: 1.1, 
-                    backgroundColor: activeProject.color,
-                    color: "black",
-                    z: 50,
-                    boxShadow: `0 5px 15px ${activeProject.color}50` 
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigateProject(-1);
-                  }}
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </motion.button>
-                
-                <motion.button 
-                  className="absolute top-1/2 right-4 z-10 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-gray-400 hover:text-white transition-colors transform -translate-y-1/2"
-                  whileHover={{ 
-                    scale: 1.1, 
-                    backgroundColor: activeProject.color,
-                    color: "black",
-                    z: 50,
-                    boxShadow: `0 5px 15px ${activeProject.color}50` 
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigateProject(1);
-                  }}
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </motion.button>
-
-                {/* Close Button with 3D hover effect */}
-                <motion.button 
-                  className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
-                  whileHover={{ 
-                    scale: 1.1, 
-                    backgroundColor: "#EF4444",
-                    color: "white",
-                    z: 50,
-                    boxShadow: "0 5px 15px rgba(239, 68, 68, 0.5)" 
-                  }}
+                  className="absolute top-8 right-8 z-10 w-10 h-10 mix-blend-difference text-white flex items-center justify-center"
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => setIsExpanded(false)}
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -957,251 +753,181 @@ const Projects = () => {
                   </svg>
                 </motion.button>
                 
-                {/* Project Images with 3D parallax effect */}
+                {/* Project Images - Bennet style horizontal scroll */}
                 <motion.div 
-                  className="md:w-1/2 h-72 md:h-auto relative overflow-hidden"
-                  style={{
-                    willChange: 'transform',
-                    transform: 'translateZ(0)',
-                    perspective: "1000px",
-                  }}
-                  whileHover={{
-                    z: 20
-                  }}
+                  className="md:w-2/3 h-[40vh] md:h-[90vh] relative overflow-hidden"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.8, delay: 0.3 }}
                 >
                   <motion.div
-                    className="absolute inset-0 flex"
-                    style={{
-                      willChange: 'transform',
-                      transform: 'translateZ(30px)',
-                    }}
-                    initial={{ x: 0 }}
+                    className="absolute inset-0 flex h-full"
+                    initial={{ x: '100%' }}
                     animate={{ 
-                      x: [-activeProject.images.length * 100, 0],
+                      x: 0,
                       transition: { 
-                        repeat: Infinity, 
-                        duration: 20,
-                        ease: "linear" 
+                        duration: 1.2,
+                        ease: [0.165, 0.84, 0.44, 1]
                       }
                     }}
                   >
-                    {[...activeProject.images, ...activeProject.images].map((image, index) => (
+                    {activeProject.images.map((image, index) => (
                       <motion.div 
                         key={index} 
                         className="w-full h-full flex-shrink-0"
                         style={{ 
-                          aspectRatio: "16/9",
-                          willChange: 'transform',
-                          transform: 'translateZ(0)',
+                          width: '100%',
+                          height: '100%',
+                          willChange: 'transform'
                         }}
-                        whileHover={{ z: 20 }}
                       >
                         <motion.img 
                           src={image} 
                           alt={`${activeProject.title} ${index + 1}`}
                           className="w-full h-full object-cover"
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.3 }}
+                          initial={{ scale: 1.1 }}
+                          animate={{ scale: 1 }}
+                          transition={{ duration: 1.4, ease: [0.165, 0.84, 0.44, 1] }}
                         />
                       </motion.div>
                     ))}
                   </motion.div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent opacity-50" />
                   
-                  {/* Category Badge with 3D floating effect */}
-                  <motion.div 
-                    className="absolute top-4 left-4 px-4 py-2 rounded-full text-sm uppercase tracking-wider"
-                    style={{ 
-                      backgroundColor: `${activeProject.color}90`,
-                      willChange: 'transform',
-                      boxShadow: `0 10px 30px ${activeProject.color}50`,
-                      transform: 'translateZ(50px)'
-                    }}
-                    animate={{
-                      y: [0, -5, 0],
-                      rotateZ: [0, 2, 0, -2, 0],
-                      scale: [1, 1.05, 1]
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    {activeProject.category === 'photo' ? 'Photography' : 
-                      activeProject.category === 'film' ? 'Film' : 
-                      activeProject.category === 'web' ? 'Web Dev' : 'Coming Soon'}
-                  </motion.div>
-                </motion.div>
-                
-                {/* Project Details with 3D depth */}
-                <motion.div 
-                  className="md:w-1/2 p-8 overflow-y-auto custom-scrollbar max-h-[60vh] md:max-h-[90vh]"
-                  style={{
-                    willChange: 'transform',
-                    transform: 'translateZ(0)',
-                    perspective: "1000px"
-                  }}
-                >
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    style={{
-                      willChange: 'transform',
-                      transform: 'translateZ(0)'
-                    }}
-                  >
-                    <motion.div 
-                      className="flex items-center gap-3 mb-6"
-                      style={{
-                        willChange: 'transform',
-                        transform: 'translateZ(0)'
+                  {/* Navigation arrows - Bennet style */}
+                  <div className="absolute bottom-8 right-8 flex space-x-4">
+                    <motion.button 
+                      className="w-12 h-12 border border-white/20 text-white/80 flex items-center justify-center"
+                      whileHover={{ borderColor: 'rgba(255,255,255,0.5)', color: '#fff' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateProject(-1);
                       }}
                     >
-                      <motion.span 
-                        className="text-3xl"
-                        style={{ willChange: 'transform', transform: 'translateZ(40px)' }}
-                        animate={{
-                          rotateY: [0, 360],
-                          scale: [1, 1.2, 1]
-                        }}
-                        transition={{
-                          duration: 8,
-                          repeat: Infinity,
-                          ease: "linear"
-                        }}
-                      >{activeProject.icon}</motion.span>
-                      <motion.h3 
-                        className="text-2xl md:text-3xl font-bold"
-                        style={{ 
-                          color: activeProject.color,
-                          textShadow: `0 5px 15px ${activeProject.color}70`,
-                          willChange: 'transform',
-                          transform: 'translateZ(20px)'
-                        }}
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </motion.button>
+                    
+                    <motion.button 
+                      className="w-12 h-12 border border-white/20 text-white/80 flex items-center justify-center"
+                      whileHover={{ borderColor: 'rgba(255,255,255,0.5)', color: '#fff' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateProject(1);
+                      }}
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </motion.button>
+                  </div>
+                </motion.div>
+                
+                {/* Project Details - Bennet style text reveal */}
+                <motion.div 
+                  className="md:w-1/3 p-12 md:p-16 overflow-y-auto custom-scrollbar h-[60vh] md:h-[90vh]"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                >
+                  <div className="space-y-8">
+                    {/* Project Number and Category */}
+                    <div className="overflow-hidden">
+                      <motion.div 
+                        className="text-sm text-white/50 uppercase tracking-wider flex items-center"
+                        initial={{ y: 50 }}
+                        animate={{ y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.6 }}
+                      >
+                        <span>{String(filteredProjects.findIndex(p => p.id === activeProject.id) + 1).padStart(2, '0')}</span>
+                        <div className="h-px w-8 bg-white/20 mx-3"></div>
+                        <span className="text-white">
+                          {activeProject.category === 'photo' ? 'Photography' : 
+                          activeProject.category === 'film' ? 'Film' : 
+                          activeProject.category === 'web' ? 'Web Development' : 'Coming Soon'}
+                        </span>
+                      </motion.div>
+                    </div>
+                    
+                    {/* Project Title */}
+                    <div className="overflow-hidden">
+                      <motion.h2 
+                        className="text-4xl font-light text-white"
+                        initial={{ y: 100 }}
+                        animate={{ y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.7 }}
                       >
                         {activeProject.title}
-                      </motion.h3>
-                    </motion.div>
-            
-                    <motion.p 
-                      className="text-gray-300 mb-8"
-                      style={{ willChange: 'transform', transform: 'translateZ(10px)' }}
-                    >
-                      {activeProject.description}
-                    </motion.p>
+                      </motion.h2>
+                    </div>
                     
-                    <motion.div 
-                      className="mb-8"
-                      style={{ willChange: 'transform', transform: 'translateZ(0)' }}
-                    >
-                      <motion.h4 
-                        className="text-lg font-semibold mb-3 text-white"
-                        style={{ willChange: 'transform', transform: 'translateZ(15px)' }}
+                    {/* Project Description */}
+                    <div className="overflow-hidden">
+                      <motion.p 
+                        className="text-white/70"
+                        initial={{ y: 100 }}
+                        animate={{ y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.8 }}
                       >
-                        Technologies & Skills
-                      </motion.h4>
-                      <motion.div 
-                        className="flex flex-wrap gap-2"
-                        style={{ willChange: 'transform', transform: 'translateZ(0)' }}
+                        {activeProject.description}
+                      </motion.p>
+                    </div>
+                    
+                    {/* Technologies */}
+                    <div className="overflow-hidden">
+                      <motion.div
+                        initial={{ y: 100 }}
+                        animate={{ y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.9 }}
                       >
-                        {activeProject.technologies.map((tech, i) => (
-                          <motion.span 
-                            key={i} 
-                            className="px-3 py-1.5 text-sm rounded-full border"
-                            style={{ 
-                              backgroundColor: `${activeProject.color}15`,
-                              borderColor: `${activeProject.color}30`,
-                              color: activeProject.color,
-                              willChange: 'transform',
-                              transform: 'translateZ(20px)',
-                              boxShadow: `0 ${5 + i * 2}px ${10 + i * 5}px ${activeProject.color}20`
-                            }}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ 
-                              opacity: 1, 
-                              scale: 1,
-                              y: [0, -2 - (i % 3), 0]
-                            }}
-                            transition={{ 
-                              delay: 0.1 * i, 
-                              duration: 0.3,
-                              y: {
-                                duration: 2 + (i % 3),
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                                delay: i * 0.1
-                              }
-                            }}
-                            whileHover={{
-                              scale: 1.1,
-                              backgroundColor: `${activeProject.color}30`,
-                              boxShadow: `0 10px 20px ${activeProject.color}30`,
-                              y: -5
-                            }}
-                          >
-                            {tech}
-                          </motion.span>
-                        ))}
+                        <h4 className="text-white uppercase text-sm tracking-wider mb-4">Technologies</h4>
+                        <div className="flex flex-wrap gap-3">
+                          {activeProject.technologies.map((tech, i) => (
+                            <span 
+                              key={i} 
+                              className="px-3 py-1.5 text-xs rounded-full border border-white/10 text-white/70"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
                       </motion.div>
-                    </motion.div>
-
-                    {/* Only show buttons for non-coming soon projects */}
+                    </div>
+                    
+                    {/* Buttons - Only for non-blank projects */}
                     {activeProject.category !== 'blank1' && activeProject.category !== 'blank2' && (
-                      <motion.div 
-                        className="flex flex-wrap gap-4"
-                        style={{ willChange: 'transform', transform: 'translateZ(0)' }}
-                      >
-                        <motion.a 
-                          href={activeProject.projectUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 font-medium rounded-full px-6 py-3 text-base"
-                          style={{ 
-                            backgroundColor: activeProject.color,
-                            color: '#000',
-                            willChange: 'transform',
-                            transform: 'translateZ(25px)',
-                            boxShadow: `0 10px 30px ${activeProject.color}50`
-                          }}
-                          whileHover={{ 
-                            scale: 1.05,
-                            boxShadow: `0 15px 30px ${activeProject.color}70`,
-                            y: -5
-                          }}
-                          whileTap={{ scale: 0.95 }}
+                      <div className="overflow-hidden pt-4">
+                        <motion.div
+                          className="flex flex-col space-y-4"
+                          initial={{ y: 100 }}
+                          animate={{ y: 0 }}
+                          transition={{ duration: 0.8, delay: 1 }}
                         >
-                          <ExternalLinkIcon />
-                          <span>View Project</span>
-                        </motion.a>
-                        
-                        {activeProject.githubUrl && (
-                          <motion.a 
-                            href={activeProject.githubUrl} 
+                          <a 
+                            href={activeProject.projectUrl} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2 border border-gray-700 rounded-full px-6 py-3 text-base text-gray-300 hover:text-white"
-                            style={{
-                              willChange: 'transform',
-                              transform: 'translateZ(25px)',
-                              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)"
-                            }}
-                            whileHover={{ 
-                              scale: 1.05, 
-                              borderColor: activeProject.color,
-                              boxShadow: `0 15px 30px ${activeProject.color}30`,
-                              y: -5
-                            }}
-                            whileTap={{ scale: 0.95 }}
+                            className="flex items-center justify-between px-6 py-4 border border-white/20 text-white hover:bg-white hover:text-black transition-all duration-300"
                           >
-                            <GithubIcon />
-                            <span>View Code</span>
-                          </motion.a>
-                        )}
-                      </motion.div>
+                            <span className="uppercase text-sm tracking-wider">View Project</span>
+                            <ExternalLinkIcon />
+                          </a>
+                          
+                          {activeProject.githubUrl && (
+                            <a 
+                              href={activeProject.githubUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-between px-6 py-4 border border-white/20 text-white hover:bg-white hover:text-black transition-all duration-300"
+                            >
+                              <span className="uppercase text-sm tracking-wider">Source Code</span>
+                              <GithubIcon />
+                            </a>
+                          )}
+                        </motion.div>
+                      </div>
                     )}
-                  </motion.div>
+                  </div>
                 </motion.div>
               </motion.div>
             </motion.div>
