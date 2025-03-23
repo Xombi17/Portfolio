@@ -612,178 +612,92 @@ const Projects = () => {
           whileInView="visible"
           viewport={{ once: false, amount: 0.1, margin: "100px 0px" }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-          style={{ position: 'relative' }} /* Add position property */
+          style={{ position: 'relative' }}
+          key={selectedCategory}
         >
-          {filteredProjects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              variants={itemVariants} 
-              custom={index}
-              className="relative group rounded-xl overflow-hidden cursor-pointer"
-              style={{ 
-                backgroundColor: `${project.color}10`,
-                borderColor: `${project.color}30`,
-                willChange: 'transform, opacity, box-shadow',
-                transform: 'translateZ(0)',
-                position: 'relative', /* Add position property */
-                ...(isLowPerfDevice ? {} : {
-                  perspective: "1000px",
-                  transformStyle: "preserve-3d",
-                  rotateX: springX,
-                  rotateY: springY
-                })
-              }}
-              onClick={() => {
-                setActiveProject(project);
-                setIsExpanded(true);
-              }}
-              onMouseMove={handleTileMouseMove}
-              onMouseLeave={handleTileMouseLeave}
-              whileHover={{ 
-                y: -10, 
-                scale: 1.02,
-                boxShadow: `0 20px 40px ${project.color}40`,
-                borderWidth: isLowPerfDevice ? "1px" : "2px"
-              }}
-              transition={{ 
-                duration: 0.3,
-                type: isLowPerfDevice ? "tween" : "spring",
-                stiffness: 300,
-                damping: 20
-              }}
-            >
-              {/* Project Image with optimized 3D effect */}
-              <motion.div 
-                className="h-60 overflow-hidden relative"
-                style={{
-                  willChange: isLowPerfDevice ? 'auto' : 'transform',
-                  transform: 'translateZ(0)',
-                  position: 'relative', /* Add position property */
-                  ...(isLowPerfDevice ? {} : {
-                    transformStyle: "preserve-3d",
-                    zIndex: 1,
-                    translateZ: "20px"
-                  })
-                }}
-              >
-                <img 
-                  src={project.images[0]} 
-                  alt={project.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  style={{
-                    willChange: 'transform',
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80" />
-                
-                {/* Category Tag - simplified for performance */}
-                <motion.div 
-                  className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs uppercase tracking-wider"
+          <AnimatePresence mode="wait">
+            {filteredProjects.length > 0 ? (
+              filteredProjects.map((project, index) => (
+                <motion.div
+                  key={project.id}
+                  variants={itemVariants} 
+                  custom={index}
+                  className="relative group rounded-xl overflow-hidden cursor-pointer"
                   style={{ 
-                    backgroundColor: `${project.color}90`,
-                    willChange: isLowPerfDevice ? 'auto' : 'transform',
-                    position: 'absolute', /* Add position property */
+                    backgroundColor: `${project.color}10`,
+                    borderColor: `${project.color}30`,
+                    willChange: 'transform, opacity, box-shadow',
+                    transform: 'translateZ(0)',
+                    position: 'relative',
                     ...(isLowPerfDevice ? {} : {
-                      translateZ: "30px",
-                      boxShadow: `0 10px 20px ${project.color}40`,
+                      perspective: "1000px",
+                      transformStyle: "preserve-3d",
+                      rotateX: springX,
+                      rotateY: springY
                     })
                   }}
-                  animate={isLowPerfDevice ? {} : {
-                    y: [0, -5, 0],
-                    rotateZ: [0, 2, 0, -2, 0],
-                    scale: [1, 1.05, 1]
+                  onClick={() => {
+                    setActiveProject(project);
+                    setIsExpanded(true);
                   }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
+                  onMouseMove={handleTileMouseMove}
+                  onMouseLeave={handleTileMouseLeave}
+                  whileHover={{ 
+                    y: -10, 
+                    scale: 1.02,
+                    boxShadow: `0 20px 40px ${project.color}40`,
+                    borderWidth: isLowPerfDevice ? "1px" : "2px"
                   }}
+                  transition={{ 
+                    duration: 0.3,
+                    type: isLowPerfDevice ? "tween" : "spring",
+                    stiffness: 300,
+                    damping: 20
+                  }}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -50 }}
                 >
-                  {project.category === 'photo' ? 'Photography' : 
-                  project.category === 'film' ? 'Film' : 
-                  project.category === 'web' ? 'Web Dev' : 'Coming Soon'}
-                </motion.div>
-              </motion.div>
-                
-              {/* Project Info - simplified for performance */}
-              <motion.div 
-                className="p-6"
-                style={{
-                  willChange: 'transform',
-                  transform: 'translateZ(0)',
-                  position: 'relative' /* Add position property */
-                }}
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-xl font-semibold" style={{ color: project.color }}>
-                    {project.title}
-                  </h3>
-                  <motion.span 
-                    className="text-2xl"
-                    style={{ 
-                      willChange: 'transform', 
-                      transform: 'translateZ(35px)',
-                      position: 'relative' /* Add position property */
+                  {/* Project Image with optimized 3D effect */}
+                  <motion.div 
+                    className="h-60 overflow-hidden relative"
+                    style={{
+                      willChange: isLowPerfDevice ? 'auto' : 'transform',
+                      transform: 'translateZ(0)',
+                      position: 'relative',
+                      ...(isLowPerfDevice ? {} : {
+                        transformStyle: "preserve-3d",
+                        zIndex: 1,
+                        translateZ: "20px"
+                      })
                     }}
-                    animate={{
-                      y: [0, -8, 0],
-                      rotateY: [0, 180, 360],
-                      scale: [1, 1.2, 1]
-                    }}
-                    transition={{
-                      duration: 5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      times: [0, 0.5, 1]
-                    }}
-                  >{project.icon}</motion.span>
-                </div>
-                
-                <p className="text-gray-400 text-sm line-clamp-2 mb-4">
-                  {project.description}
-                </p>
-                
-                {/* Tech Tags with 3D floating effect */}
-                <div className="flex flex-wrap gap-2 mt-auto">
-                  {project.technologies.slice(0, 2).map((tech, i) => (
-                    <motion.span 
-                      key={i}
-                      className="inline-block px-2 py-1 rounded-full text-xs" 
-                      style={{ 
-                        backgroundColor: `${project.color}20`,
-                        color: project.color,
+                  >
+                    <img 
+                      src={project.images[0]} 
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      style={{
                         willChange: 'transform',
-                        transform: 'translateZ(20px)',
-                        position: 'relative', /* Add position property */
-                        boxShadow: `0 ${5 + i * 2}px ${10 + i * 5}px ${project.color}30`
                       }}
-                      animate={{
-                        y: [0, -5 - i * 2, 0],
-                        scale: [1, 1.05, 1],
-                        rotateZ: [0, i % 2 === 0 ? 2 : -2, 0]
-                      }}
-                      transition={{
-                        duration: 2 + i * 0.5,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: i * 0.2
-                      }}
-                    >
-                      {tech}
-                    </motion.span>
-                  ))}
-                  {project.technologies.length > 2 && (
-                    <motion.span 
-                      className="inline-block px-2 py-1 rounded-full text-xs text-gray-400"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80" />
+                    
+                    {/* Category Tag - simplified for performance */}
+                    <motion.div 
+                      className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs uppercase tracking-wider"
                       style={{ 
-                        backgroundColor: '#ffffff10',
-                        willChange: 'transform',
-                        transform: 'translateZ(15px)',
-                        position: 'relative' /* Add position property */
+                        backgroundColor: `${project.color}90`,
+                        willChange: isLowPerfDevice ? 'auto' : 'transform',
+                        position: 'absolute',
+                        ...(isLowPerfDevice ? {} : {
+                          translateZ: "30px",
+                          boxShadow: `0 10px 20px ${project.color}40`,
+                        })
                       }}
-                      animate={{
-                        y: [0, -4, 0],
-                        rotateZ: [0, -1, 0, 1, 0]
+                      animate={isLowPerfDevice ? {} : {
+                        y: [0, -5, 0],
+                        rotateZ: [0, 2, 0, -2, 0],
+                        scale: [1, 1.05, 1]
                       }}
                       transition={{
                         duration: 3,
@@ -791,43 +705,171 @@ const Projects = () => {
                         ease: "easeInOut"
                       }}
                     >
-                      +{project.technologies.length - 2} more
-                    </motion.span>
-                  )}
-                </div>
-              </motion.div>
-              
-              {/* Hover Overlay with 3D effect */}
-              <motion.div 
-                className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
-                style={{
-                  willChange: 'transform',
-                  transform: 'translateZ(25px)',
-                  position: 'absolute' /* Add position property */
-                }}
-              >
-                {project.category !== 'blank1' && project.category !== 'blank2' && (
+                      {project.category === 'photo' ? 'Photography' : 
+                      project.category === 'film' ? 'Film' : 
+                      project.category === 'web' ? 'Web Dev' : 'Coming Soon'}
+                    </motion.div>
+                  </motion.div>
+                    
+                  {/* Project Info - simplified for performance */}
                   <motion.div 
-                    className="px-6 py-3 rounded-full"
-                    style={{ 
-                      backgroundColor: project.color,
-                      boxShadow: `0 10px 30px ${project.color}80`,
+                    className="p-6"
+                    style={{
                       willChange: 'transform',
                       transform: 'translateZ(0)',
-                      position: 'relative' /* Add position property */
+                      position: 'relative'
                     }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
                   >
-                    <span className="text-black font-semibold">View Project</span>
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="text-xl font-semibold" style={{ color: project.color }}>
+                        {project.title}
+                      </h3>
+                      <motion.span 
+                        className="text-2xl"
+                        style={{ 
+                          willChange: 'transform', 
+                          transform: 'translateZ(35px)',
+                          position: 'relative'
+                        }}
+                        animate={{
+                          y: [0, -8, 0],
+                          rotateY: [0, 180, 360],
+                          scale: [1, 1.2, 1]
+                        }}
+                        transition={{
+                          duration: 5,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          times: [0, 0.5, 1]
+                        }}
+                      >{project.icon}</motion.span>
+                    </div>
+                    
+                    <p className="text-gray-400 text-sm line-clamp-2 mb-4">
+                      {project.description}
+                    </p>
+                    
+                    {/* Tech Tags with 3D floating effect */}
+                    <div className="flex flex-wrap gap-2 mt-auto">
+                      {project.technologies.slice(0, 2).map((tech, i) => (
+                        <motion.span 
+                          key={i}
+                          className="inline-block px-2 py-1 rounded-full text-xs" 
+                          style={{ 
+                            backgroundColor: `${project.color}20`,
+                            color: project.color,
+                            willChange: 'transform',
+                            transform: 'translateZ(20px)',
+                            position: 'relative',
+                            boxShadow: `0 ${5 + i * 2}px ${10 + i * 5}px ${project.color}30`
+                          }}
+                          animate={{
+                            y: [0, -5 - i * 2, 0],
+                            scale: [1, 1.05, 1],
+                            rotateZ: [0, i % 2 === 0 ? 2 : -2, 0]
+                          }}
+                          transition={{
+                            duration: 2 + i * 0.5,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: i * 0.2
+                          }}
+                        >
+                          {tech}
+                        </motion.span>
+                      ))}
+                      {project.technologies.length > 2 && (
+                        <motion.span 
+                          className="inline-block px-2 py-1 rounded-full text-xs text-gray-400"
+                          style={{ 
+                            backgroundColor: '#ffffff10',
+                            willChange: 'transform',
+                            transform: 'translateZ(15px)',
+                            position: 'relative'
+                          }}
+                          animate={{
+                            y: [0, -4, 0],
+                            rotateZ: [0, -1, 0, 1, 0]
+                          }}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                        >
+                          +{project.technologies.length - 2} more
+                        </motion.span>
+                      )}
+                    </div>
                   </motion.div>
-                )}
+                  
+                  {/* Hover Overlay with 3D effect */}
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                    style={{
+                      willChange: 'transform',
+                      transform: 'translateZ(25px)',
+                      position: 'absolute'
+                    }}
+                  >
+                    {project.category !== 'blank1' && project.category !== 'blank2' && (
+                      <motion.div 
+                        className="px-6 py-3 rounded-full"
+                        style={{ 
+                          backgroundColor: project.color,
+                          boxShadow: `0 10px 30px ${project.color}80`,
+                          willChange: 'transform',
+                          transform: 'translateZ(0)',
+                          position: 'relative'
+                        }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <span className="text-black font-semibold">View Project</span>
+                      </motion.div>
+                    )}
+                  </motion.div>
+                </motion.div>
+              ))
+            ) : (
+              // Display a "no projects" message when filtered results are empty
+              <motion.div 
+                className="col-span-full flex flex-col items-center justify-center py-20 text-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <motion.div 
+                  className="text-6xl mb-4"
+                  animate={{ 
+                    y: [0, -10, 0],
+                    rotateY: [0, 360],
+                    scale: [1, 1.2, 1]
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  🔍
+                </motion.div>
+                <h3 className="text-2xl font-bold text-gray-300 mb-2">No projects found</h3>
+                <p className="text-gray-500 max-w-md">No projects match the selected category. Try selecting a different category.</p>
+                <motion.button
+                  className="mt-6 px-6 py-2 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(59, 130, 246, 0.3)' }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setSelectedCategory('all')}
+                >
+                  View All Projects
+                </motion.button>
               </motion.div>
-            </motion.div>
-          ))}
+            )}
+          </AnimatePresence>
         </motion.div>
         
         {/* Expanded Project Modal - optimized for performance */}
