@@ -156,7 +156,7 @@ const projects: Project[] = [
       "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
       "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
     ],
-    projectUrl: "https://he6dqskmv7ghd4np.vercel.app/",
+    projectUrl: "https://unplug-health-vault.vercel.app/",
     githubUrl: "https://github.com/Xombi17/Health-Vault",
     color: "#F59E0B", // amber
     icon: "🛒",
@@ -173,7 +173,7 @@ const projects: Project[] = [
       "https://images.unsplash.com/photo-1581091012180-2c2c2c2c2c2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80", // Heart health concept
       "https://images.unsplash.com/photo-1581091012180-3c3c3c3c3c3c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80"  // Heartbeat visualization
     ],
-    projectUrl: "#https://hhs-heart.vercel.app/",
+    projectUrl: "https://hhs-heart.vercel.app/",
     githubUrl: "https://github.com/Xombi17/HHS-HEART-local",
     color: "#0EA5E9", // sky blue
     icon: "🚀",
