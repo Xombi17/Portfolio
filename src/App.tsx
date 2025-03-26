@@ -143,55 +143,6 @@ function App() {
     }
   };
 
-  const _projects = [
-    {
-      title: "HUMAN HEART WEBSITE",
-      description: "A website which showcases the human heart and its functions.",
-      image: "",
-      link: "https://hhs-heart.vercel.app/"
-    },
-    {
-      title: "E-commerce Solution",
-      description: "Modern e-commerce platform with real-time inventory",
-      image: "https://source.unsplash.com/random/800x600?business",
-      link: "#"
-    },
-    {
-      title: "AI-Powered Analytics",
-      description: "Data visualization dashboard with machine learning",
-      image: "https://source.unsplash.com/random/800x600?data",
-      link: "#"
-    },
-    {
-      title: "Mobile Banking App",
-      description: "Secure and intuitive mobile banking solution",
-      image: "https://source.unsplash.com/random/800x600?finance",
-      link: "#"
-    }
-  ];
-
-  const _services = [
-    {
-      icon: <div className="w-8 h-8 flex items-center justify-center">{'</>'}</div>,
-      title: "Web Development",
-      description: "Creating robust and scalable web applications using modern technologies"
-    },
-    {
-      icon: <div className="w-8 h-8 flex items-center justify-center">🎨</div>,
-      title: "UI/UX Design",
-      description: "Designing intuitive and beautiful user interfaces"
-    },
-    {
-      icon: <div className="w-8 h-8 flex items-center justify-center">📱</div>,
-      title: "Frontend Architecture",
-      description: "Building maintainable and performant frontend systems"
-    },
-    {
-      icon: <div className="w-8 h-8 flex items-center justify-center">💻</div>,
-      title: "Technical Leadership",
-      description: "Leading teams and making architectural decisions"
-    }
-  ];
 
   return (
     <div className="bg-black text-white" id="smooth-wrapper">
