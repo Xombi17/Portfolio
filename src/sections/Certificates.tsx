@@ -41,7 +41,7 @@ const certificates: Certificate[] = [
     category: 'hackathon'
   },
   // Add more placeholder certificates
-  {
+  /*{
     id: 'cert-004',
     title: 'To be added',
     issuer: 'To be added',
@@ -88,8 +88,8 @@ const certificates: Certificate[] = [
     date: 'To be added',
     image: 'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600&q=80',
     category: 'tbd'
-  }
-  /*{
+  },
+  {
     id: 'cert-004',
     title: 'Video Editing Masterclass',
     issuer: 'Udemy',

@@ -67,9 +67,7 @@ const projects: Project[] = [
     description: "An immersive virtual reality platform that allows users to explore various travel destinations from the comfort of their home. Experience stunning visuals and interactive elements.",
     technologies: ["React", "Three.js", "WebXR", "Node.js"],
     images: [
-      "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1521747116042-5a810fda9664?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80"
+      "./assets/images/VrTravel.png",
     ],
     projectUrl: "https://vr-travel-livid.vercel.app/",
     githubUrl: "https://github.com/Xombi17/VR_travel",
@@ -84,9 +82,7 @@ const projects: Project[] = [
     description: "A short film exploring the cyclical nature of daily routines, depicting a person caught in an endless time loop of mundane moments that gradually become surreal and meaningful.",
     technologies: ["Direction", "Cinematography", "Editing", "Sound Design"],
     images: [
-      "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1533101585792-27f81a845550?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1505775561242-727b7fba20f0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
+      "./assets/images/wakeup.jpg",
     ],
     projectUrl: "https://youtu.be/xrlxXv1WIwc",
     color: "#EF4444", // red
@@ -99,10 +95,8 @@ const projects: Project[] = [
     category: 'web',
     description: "My personal portfolio website showcasing my work in web development, photography, and filmmaking. Built with React, TypeScript, and Framer Motion, featuring interactive animations, floating elements, and matrix-style text effects.",
     technologies: ["React", "TypeScript", "Tailwind CSS", "Framer Motion","Next.js", "GSAP", "Lucide Icons", "Vercel"],
-    images: [
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
+    images: [ 
+      "./assets/images/portfolio.png",
     ],
     projectUrl: "https://varad-joshi.vercel.app/#hero",
     githubUrl: "https://github.com/Xombi17/Portfolio",
@@ -118,9 +112,8 @@ const projects: Project[] = [
     description: "An AI-powered virus checker that utilizes advanced algorithms to detect and analyze potential threats in urban environments, providing users with insightful data visualizations and actionable insights.",
     technologies: ["AI Image Processing", "Machine Learning", "Data Analysis", "Computer Vision"],
     images: [
-      "https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
-      "./assets/images/ai-virus.jpg",
-      "./assets/images/ai-virus.jpg"
+      "./assets/images/virusai.png",
+      "/assets/images/ai-virus.jpg"
     ],
     projectUrl: "https://virus-ai-ten.vercel.app/",
     githubUrl: "https://github.com/Xombi17/Virus-AI",
@@ -136,9 +129,7 @@ const projects: Project[] = [
     description: "A poignant short film exploring the bond between a student and their mentor. When the teacher suddenly departs, the student struggles with the void left behind until discovering a mysterious USB drive containing an unexpected message that changes everything.",
     technologies: ["Narrative Filmmaking", "Cinematography", "Directing", "Editing", "Sound Design"],
     images: [
-      "https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1540655037529-dec987208707?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
+      "./assets/images/USB.png",
     ],
     projectUrl: "https://youtu.be/xrlxXv1WIwc",
     color: "#8B5CF6", // purple
@@ -152,9 +143,7 @@ const projects: Project[] = [
     description: "A comprehensive healthcare platform for securely storing and managing personal health records. Currently in development and not yet available to the public.",
     technologies: ["React", "Node.js", "MongoDB", "Stripe", "JWT"],
     images: [
-      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80",
-      "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80"
+      "./assets/images/HealthVault.png",
     ],
     projectUrl: "https://unplug-health-vault.vercel.app/",
     githubUrl: "https://github.com/Xombi17/Health-Vault",
@@ -169,9 +158,7 @@ const projects: Project[] = [
     description: "Showcasing the intricate workings of the human heart, this project aims to provide an interactive experience that educates users about cardiovascular health and anatomy.",
     technologies: ["React", "Node.js", "MongoDB", "Three.js", "Vercel"],
     images: [
-      "https://plus.unsplash.com/premium_photo-1722707492894-2839a324624e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Heart anatomy illustration
-      "https://images.unsplash.com/photo-1581091012180-2c2c2c2c2c2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80", // Heart health concept
-      "https://images.unsplash.com/photo-1581091012180-3c3c3c3c3c3c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80"  // Heartbeat visualization
+      "./assets/images/HHSheart.png",
     ],
     projectUrl: "https://hhs-heart.vercel.app/",
     githubUrl: "https://github.com/Xombi17/HHS-HEART-local",

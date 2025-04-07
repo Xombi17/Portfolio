@@ -30,6 +30,13 @@ const experiences: ExperienceItem[] = [
     period: "2024 - Present",
     description: "Building responsive web applications using modern frameworks. Learning Web development through hands-on projects. Exploring UI/UX design principles and implementing them in real-world applications.",
     skills: ["React.js", "TypeScript", "Tailwind CSS", "Next.js", "Responsive Design"]
+  },
+  {
+    title: "GDSC WORKFORCE MEMBER",
+    company: "Google Developer Student Clubs (GDSC)",
+    period: "2024 - 2025",
+    description: "Contributing to technical projects and events as part of the GDSC workforce. Helping in managing events like BIT N BUILD HACKATHON 2024 & UNPLUG BY THE BEACH 2025, Part of the Media team for the same.",
+    skills: ["Web Development", "Photography", "Video Editing", "Collaboration", "Event Management", "Community Building"]
   }
 ];
 
