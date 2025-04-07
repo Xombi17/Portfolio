@@ -76,26 +76,26 @@ const ScrollIndicator = ({ scrollPosition, maxScroll }: ScrollIndicatorProps) =>
 // Enhanced skills with categories and proficiency levels
 const skillsData: Skill[] = [
   // Frontend
-  { name: "React.js", category: "Frontend", level: 0.9, color: "#61DAFB" },
-  { name: "TypeScript", category: "Frontend", level: 0.85, color: "#3178C6" },
-  { name: "Next.js", category: "Frontend", level: 0.8, color: "#7B68EE" },
-  { name: "Tailwind CSS", category: "Frontend", level: 0.9, color: "#38B2AC" },
-  { name: "Framer Motion", category: "Frontend", level: 0.75, color: "#0055FF" },
-  { name: "Three.js", category: "Frontend", level: 0.7, color: "#049EF4" },
+  { name: "React.js", category: "Frontend", level: 0.5, color: "#61DAFB" },
+  { name: "TypeScript", category: "Frontend", level: 0.7, color: "#3178C6" },
+  { name: "Next.js", category: "Frontend", level: 0.5, color: "#7B68EE" },
+  { name: "Tailwind CSS", category: "Frontend", level: 0.7, color: "#38B2AC" },
+  { name: "Framer Motion", category: "Frontend", level: 0.7, color: "#0055FF" },
+  { name: "Three.js", category: "Frontend", level: 0.4, color: "#049EF4" },
   
   // Backend
-  { name: "Node.js", category: "Backend", level: 0.8, color: "#539E43" },
-  { name: "MongoDB", category: "Backend", level: 0.75, color: "#47A248" },
-  { name: "C/C++", category: "Backend", level: 0.7, color: "#00599C" },
+  { name: "Node.js", category: "Backend", level: 0.4, color: "#539E43" },
+  { name: "MongoDB", category: "Backend", level: 0.3, color: "#47A248" },
+  { name: "C/C++", category: "Backend", level: 0.8, color: "#00599C" },
   
   // Creative
-  { name: "Cinematography", category: "Creative", level: 0.85, color: "#FF5C5C" },
-  { name: "VideoEditing", category: "Creative", level: 0.8, color: "#9146FF" },
+  { name: "Cinematography", category: "Creative", level: 0.95, color: "#FF5C5C" },
+  { name: "VideoEditing", category: "Creative", level: 0.9, color: "#9146FF" },
   { name: "UI/UX Design", category: "Creative", level: 0.75, color: "#FF7262" },
-  { name: "Photography", category: "Creative", level: 0.9, color: "#5D3FD3" },
+  { name: "Photography", category: "Creative", level: 0.95, color: "#5D3FD3" },
   
   // Languages
-  { name: "JavaScript", category: "Languages", level: 0.9, color: "#F7DF1E" },
+  { name: "JavaScript", category: "Languages", level: 0.7, color: "#F7DF1E" },
   { name: "HTML", category: "Languages", level: 0.85, color: "#E34F26" }
 ];
 
