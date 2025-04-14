@@ -92,7 +92,7 @@ const skillsData: Skill[] = [
   { name: "Photography", category: "Creative", level: 0.95, color: "#5D3FD3" },
   
   // Languages
-  { name: "JavaScript", category: "Languages", level: 0.4, color: "#F7DF1E" },
+  { name: "JavaScript", category: "Languages", level: 0.2, color: "#F7DF1E" },
   { name: "HTML", category: "Languages", level: 0.85, color: "#E34F26" }
 ];
 
