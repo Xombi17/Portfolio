@@ -86,10 +86,10 @@ const skillsData: Skill[] = [
   // Backend
 
   // Creative
-  { name: "Cinematography", category: "Creative", level: 0.95, color: "#FF5C5C" },
-  { name: "VideoEditing", category: "Creative", level: 0.9, color: "#9146FF" },
-  { name: "UI/UX Design", category: "Creative", level: 0.75, color: "#FF7262" },
-  { name: "Photography", category: "Creative", level: 0.95, color: "#5D3FD3" },
+  { name: "Cinematography", category: "Creative", level: 0.8, color: "#FF5C5C" },
+  { name: "VideoEditing", category: "Creative", level: 0.8, color: "#9146FF" },
+  { name: "UI/UX Design", category: "Creative", level: 0.5, color: "#FF7262" },
+  { name: "Photography", category: "Creative", level: 0.9, color: "#5D3FD3" },
   
   // Languages
   { name: "JavaScript", category: "Languages", level: 0.2, color: "#F7DF1E" },
